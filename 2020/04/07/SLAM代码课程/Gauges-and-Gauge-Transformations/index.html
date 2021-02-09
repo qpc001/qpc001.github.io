@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Gauges-and-Gauge-Transformations | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="Gauges-and-Gauge-Transformations" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="1. Gauges and Gauge Transformations for Uncertainty Description of Geometric Structure with Indeterminacy  2. 摘要 本文提出了一种一致的理论，用于描述从一系列图像中进行三维重建过程中的确定性和不确定性 首先给出关于gauges和gauge transformations的相关理论，然后讨论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gauges-and-Gauge-Transformations">
+<meta property="og:url" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="1. Gauges and Gauge Transformations for Uncertainty Description of Geometric Structure with Indeterminacy  2. 摘要 本文提出了一种一致的理论，用于描述从一系列图像中进行三维重建过程中的确定性和不确定性 首先给出关于gauges和gauge transformations的相关理论，然后讨论">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-10-27-01.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-41-50.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-22-44.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-26-21.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-43-46.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-12-22-59.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-15-47-25.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-12-56-19.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-26-21.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-11-54.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-15-22.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-16-11.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-19-45.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-25-06.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-32-41.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-42-50.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-47-52.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-52-00.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-14-05-20.png">
+<meta property="og:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-14-17-44.png">
+<meta property="article:published_time" content="2020-04-07T02:26:01.000Z">
+<meta property="article:modified_time" content="2020-04-07T07:53:59.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-10-27-01.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file active"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-SLAM代码课程/Gauges-and-Gauge-Transformations" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">
+            <time datetime="2020-04-07T02:26:01.000Z" itemprop="datePublished">2020-04-07</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/SLAM代码课程/Gauges-and-Gauge-Transformations.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/SLAM代码课程/Gauges-and-Gauge-Transformations.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/SLAM代码课程/Gauges-and-Gauge-Transformations.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Gauges-and-Gauge-Transformations
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#gauges-and-gauge-transformations-for-uncertainty-description-of-geometric-structure-with-indeterminacy"><span class="toc-number">1.</span> <span class="toc-text">1. Gauges and Gauge Transformations for Uncertainty Description of Geometric Structure with Indeterminacy</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">2. 摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">3. 介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#d重建问题"><span class="toc-number">4.</span> <span class="toc-text">4. 3D重建问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#目标函数"><span class="toc-number">4.1.</span> <span class="toc-text">4.1. 目标函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#gauges"><span class="toc-number">5.</span> <span class="toc-text">5. Gauges</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#gauge-fix-approach"><span class="toc-number">5.1.</span> <span class="toc-text">5.1. gauge fix approach</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#估计的等价性定理"><span class="toc-number">6.</span> <span class="toc-text">6. 估计的等价性定理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图1的个人理解"><span class="toc-number">6.1.</span> <span class="toc-text">6.1. 图1的个人理解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于零空间的基"><span class="toc-number">6.2.</span> <span class="toc-text">6.2. 关于零空间的基</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#等价性的推导"><span class="toc-number">6.3.</span> <span class="toc-text">6.3. 等价性的推导</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数值优化"><span class="toc-number">7.</span> <span class="toc-text">7. 数值优化</span></a></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="gauges-and-gauge-transformations-for-uncertainty-description-of-geometric-structure-with-indeterminacy">1. Gauges and Gauge Transformations for Uncertainty Description of Geometric Structure with Indeterminacy</h1>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-10-27-01.png"></p>
+<h1 id="摘要">2. 摘要</h1>
+<p>本文提出了一种一致的理论，用于描述从一系列图像中进行三维重建过程中的确定性和不确定性</p>
+<p>首先给出关于<code>gauges</code>和<code>gauge transformations</code>的相关理论，然后讨论了如何评价具有不确定性的解的可靠性，并将克拉美罗下界推广到包含内部不确定性。</p>
+<p>另外还介绍了<code>free-gauge approach</code>，然后定义了独立于特定规格的协方差矩阵的标准形式</p>
+<h1 id="介绍">3. 介绍</h1>
+<p>从图像中进行3D重建包含了不确定性。</p>
+<p>这些不确定性可以通过施加一些<code>normalization</code>的约束来移除，例如:</p>
+<ul>
+<li>我们可以将坐标原点固定在对象的特定点上，并将对象的大小标准化为单位长度</li>
+<li>而固定参数则定义为没有不确定性，其他所有参数的不确定性均被改变</li>
+</ul>
+<h1 id="d重建问题">4. 3D重建问题</h1>
+<p>在本文中，我们将重点放在基于特征的方法上: 我们追踪图像序列上的可识别特征点(如角点和标记点)的运动，并利用摄像机投影模型的知识计算它们的三维位置</p>
+<p>假设我们在M幅图像上跟踪N个刚性移动的特征点，令<span class="math inline">\((x_{ka},y_{ka})\)</span>为第k帧的第a个点的像素坐标</p>
+<p>这里，我们采用以相机为中心的描述，假设一个物体在场景中相对于静止的相机移动，但是，如果我们将摄像机看作是移动的，并拍摄静止场景的图像，那么后续的分析基本上是相同的。</p>
+<h2 id="目标函数">4.1. 目标函数</h2>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-41-50.png"></p>
+<h1 id="gauges">5. Gauges</h1>
+<p><code>gauge freedom</code>的存在表明了在参数空间<span class="math inline">\(\mathcal{M}\)</span>中，存在一个光滑流形，对于任意的点<span class="math inline">\(\theta\)</span>其给出的解都能使目标函数的值一样。</p>
+<p>对于在上述的光滑流形中的两点，<span class="math inline">\(\theta\)</span>和<span class="math inline">\(\theta&#39;\)</span>是几何等价的，记为<span class="math inline">\(\theta \sim \theta&#39;\)</span>，其中<span class="math inline">\(\theta&#39;=g \theta\)</span>，<strong><span class="math inline">\(g()\)</span>代表的是该流形空间(零空间)中的两点的变换关系</strong></p>
+<p>这意味着，对于这个等价关系，真正的参数空间不是<span class="math inline">\(\mathcal{M}\)</span>，而是<span class="math inline">\(\mathcal{M}\)</span>的商空间<span class="math inline">\(\mathcal{M}/\mathcal{G}\)</span>，记为<span class="math inline">\(\mathcal{M}_\theta\)</span></p>
+<p>例如：<span class="math inline">\(\mathcal{M}\)</span>的子集包含了所有关于<span class="math inline">\(\theta\)</span>的等价</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-22-44.png"></p>
+<p>如果<code>gauge</code>的自由度为r，那么<span class="math inline">\(\mathcal{M}_\theta\)</span>则是参数空间<span class="math inline">\(\mathcal{M}\)</span>的r维<code>submanifold</code>，并且称为是与参数<span class="math inline">\(\theta\)</span>相关的叶子</p>
+<p>为了消除解的模糊性，我们定义其他流形空间，它与上面的流形相交于一点。</p>
+<p>选取特定的<span class="math inline">\(\theta\)</span>值的一个自然的想法是，对于上面的<span class="math inline">\(\mathcal{M}_\theta\)</span>分配r个等式:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-26-21.png"></p>
+<p>每一个等式去除<code>gauge freedom</code>中的一个自由度，我们称这些等式为<code>gauge condition</code>，如果这些等式满足:</p>
+<ul>
+<li>它们在代数上是独立的，共同定义了一个在参数空间<span class="math inline">\(\mathcal{M}\)</span>中的<code>submanifold</code> <span class="math inline">\(\mathcal{C}\)</span>，称为<code>gauge manifold</code></li>
+<li><code>gauge manifold</code> <span class="math inline">\(\mathcal{C}\)</span>与参数空间<span class="math inline">\(\mathcal{M}\)</span>中的所有叶子，即与<span class="math inline">\(\mathcal{M}_\theta\)</span>相交于一点</li>
+<li>对于任何<span class="math inline">\(\theta \in \mathcal{M}_\theta\)</span>和<span class="math inline">\(\theta_C=C \cap \mathcal{M}_\theta\)</span>，存在一个独特(仅有一个)的变换g()，使得<span class="math inline">\(\theta_C=g\theta\)</span></li>
+</ul>
+<p>此后，<code>gauge</code>和<code>gauge manifold</code>都是一个意思，记为<span class="math inline">\(\mathcal{C}\)</span></p>
+<p>通过引入<span class="math inline">\(\mathcal{C}\)</span>，我们可以找到一个与叶子<span class="math inline">\(\mathcal{M}_\theta\)</span>的独一无二的交点，并且同时满足目标函数最小值</p>
+<h2 id="gauge-fix-approach">5.1. <code>gauge fix approach</code></h2>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-43-46.png"></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(t_k\)</span>是平移</li>
+<li><span class="math inline">\(s_a\)</span>是尺度</li>
+</ul>
+<h1 id="估计的等价性定理">6. 估计的等价性定理</h1>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-12-22-59.png"></p>
+<ul>
+<li><span class="math inline">\(T_{\theta C}(\mathcal{M})\)</span>是参数空间<span class="math inline">\(\mathcal{M}\)</span>在参数<span class="math inline">\(\theta_C\)</span>处的正切空间(<code>tangent space</code>)，是一个n维的线性空间</li>
+<li><span class="math inline">\(T_{\theta C}(\mathcal{C})\)</span>是<code>gauge manifold</code> <span class="math inline">\(\mathcal{C}\)</span>在参数<span class="math inline">\(\theta_C\)</span>处的正切空间，它是<span class="math inline">\(T_{\theta C}(\mathcal{M})\)</span>的(n-r)维子空间</li>
+<li>n: 参数向量<span class="math inline">\(\theta\)</span>的维度数</li>
+<li>r: <code>gauge freedom</code>的自由度</li>
+<li>n-r: 可观测的维度</li>
+</ul>
+<h2 id="图1的个人理解">6.1. 图1的个人理解</h2>
+<ul>
+<li>已知在<span class="math inline">\(M_\theta\)</span>轨道上，任意一点都可以满足使得目标函数<span class="math inline">\(J()\)</span>最小化</li>
+<li>假定轨道上某一点<span class="math inline">\(\theta_C\)</span>处，求得了一个增量<span class="math inline">\(\phi_\theta\)</span>，显然，这个增量有一部分分量不会改变目标函数<span class="math inline">\(J()\)</span>的能量</li>
+<li>在点<span class="math inline">\(\theta_C\)</span>处，存在一个正切流形空间<span class="math inline">\(T_{\theta_C}(M_\theta)\)</span>，增量<span class="math inline">\(\phi_\theta\)</span>在这个正切空间上的投影量，只会使得<span class="math inline">\(\theta_C\)</span>点沿着<span class="math inline">\(M_\theta\)</span>轨道移动，而不是沿着垂直方向移动，因此，这部分分量并不改变目标函数<span class="math inline">\(J()\)</span>的能量</li>
+<li>那么这个在点<span class="math inline">\(\theta_C\)</span>处的正切流形空间<span class="math inline">\(T_{\theta_C}(M_\theta)\)</span>，也就是所说的零空间</li>
+</ul>
+<h2 id="关于零空间的基">6.2. 关于零空间的基</h2>
+<p>零空间的基，实际上就是正切流形空间<span class="math inline">\(T_{\theta_C}(M_\theta)\)</span>的基，可以通过在<span class="math inline">\(M_\theta\)</span>轨道在<span class="math inline">\(\theta_C\)</span>处使用小量来进行计算，这跟计算切向量的方法一样的</p>
+<p>举例: 求<span class="math inline">\(\theta_C\)</span>处，关于位姿的平移量x值的零空间基</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-15-47-25.png"></p>
+<hr>
+<h2 id="等价性的推导">6.3. 等价性的推导</h2>
+<p>在这一节中，我们定义了在<code>gauge manifold</code>上的斜投影，并证明所有投影到相同点上的扰动在几何上是等价的</p>
+<p>设<span class="math inline">\(\hat{\theta}_C\)</span>是参数<span class="math inline">\(\theta\)</span>对于<code>gauge</code> <span class="math inline">\(\mathcal{C}\)</span>的估计。 使用一阶近似，那么作差<span class="math inline">\(\Delta \theta_C=\hat{\theta}_C-\theta_C\)</span>可以使用<span class="math inline">\(T_{\theta C}(\mathcal{C})\)</span>中的一个元素来标识</p>
+<ul>
+<li>注意: <span class="math inline">\(\hat{\theta}_C\)</span>和<span class="math inline">\(\theta_C\)</span>都表示状态</li>
+<li><span class="math inline">\(\Delta \theta_C\)</span>才表示增量</li>
+</ul>
+<p>令<span class="math inline">\(\Delta \theta \in T_{\theta C}(\mathcal{M})\)</span>是一个任意的向量(也就是下图中的向量1)，则有:</p>
+<ul>
+<li><p>当且仅当<span class="math inline">\(\Delta \theta-\Delta \theta_C \in T_{\theta C}(\mathcal{M}_\theta)\)</span> ，(也就是下图的向量1-向量2，得到向量的<span class="math inline">\(Q_{\theta_C}^C\)</span>)，那么有:</p>
+<p><span class="math inline">\(\theta_C+\Delta \theta\)</span>与<span class="math inline">\(\hat{\theta}_C=\theta_C+\Delta \theta_C\)</span>是几何等价的</p></li>
+</ul>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-12-56-19.png"></p>
+<p>因为<span class="math inline">\(\{D_1(\theta_C),\cdots,D_r(\theta_C)\}\)</span>是空间<span class="math inline">\(T_{\theta C}(\mathcal{M}_\theta)\)</span>的基 （零空间的基），那么上面的条件等价于: 存在r个数字<span class="math inline">\((x_1,\cdots,x_r)\)</span>，使得:</p>
+<p><span class="math display">\[
+    \Delta \theta_C=\Delta \theta + \sum_{i=1}^r x_i D_i(\theta_C)
+\]</span></p>
+<p>或者说</p>
+<p><span class="math display">\[
+    \Delta \theta_C=\Delta \theta + U_{\theta_C} x \tag{36}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(x=(x_1,\cdots,x_r)^T\)</span></li>
+<li><span class="math inline">\(U_{\theta_C}=(D_1(\theta_C),\cdots,D_r(\theta_C))\)</span></li>
+</ul>
+<p>如果<code>gauge</code> <span class="math inline">\(\mathcal{C}\)</span> 由r个等式来定义，即:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-11-26-21.png"></p>
+<p>那么，正切空间<span class="math inline">\(T_{\theta C}(\mathcal{C})\)</span>是</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-11-54.png"></p>
+<p>张成的线性空间的正交互补空间</p>
+<p>根据<span class="math inline">\(\triangledown_{\theta C_i}|\theta_C\)</span>和<span class="math inline">\(\Delta \theta_C\)</span>之间作点乘等于0，对式36两边同时点乘<span class="math inline">\(V_{\theta_C}\)</span>，可以得到:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-15-22.png"></p>
+<p>其中,</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-16-11.png"></p>
+<p>对(式36)和(式38)，消去<span class="math inline">\(x\)</span>，可以得到:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-19-45.png"></p>
+<p>这，就是定义了一个沿着<span class="math inline">\(T_{\theta C}(\mathcal{M}_\theta)\)</span>到<span class="math inline">\(T_{\theta C}(\mathcal{C})\)</span>的(斜)投影</p>
+<p><strong>因此，得到如下定理</strong>:</p>
+<p>一个估计<span class="math inline">\(\hat{\theta}_C\)</span>与<span class="math inline">\(\theta_C+\Delta \theta\)</span>是几何等价的，当且仅当:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-25-06.png"></p>
+<h1 id="数值优化">7. 数值优化</h1>
+<p>问题是给定<code>gauge</code>，如何用数值方法求得最优估计量</p>
+<p>牛顿迭代法具有良好的二次收敛性，但同时，解需要满足<code>gauge condiction</code></p>
+<p>目标函数<span class="math inline">\(J\)</span>通过在<code>gauge</code> <span class="math inline">\(\mathcal{C}\)</span>下的真值<span class="math inline">\(\bar{\theta}_C\)</span>附近展开，有:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-32-41.png"></p>
+<p>其中，上面的括号<span class="math inline">\((m,n)\)</span>表示点乘运算</p>
+<ul>
+<li><p><span class="math inline">\(\triangledown_{\theta}J，\triangledown_{\theta}^2J\)</span>分别表示目标函数<span class="math inline">\(J\)</span>对参数<span class="math inline">\(\theta\)</span>的一阶偏导和二阶偏导</p></li>
+<li><p>表达式中符号上面的横杠，如<span class="math inline">\(\bar{J},\triangledown_\theta \bar{J}, \triangledown_\theta^2 \bar{J}\)</span>表示的是在真值<span class="math inline">\(\bar{\theta}_C\)</span>处进行计算得到的值（也就是线性化点得到值）</p></li>
+<li><p><span class="math inline">\(\Delta \theta\)</span>是使用真值<span class="math inline">\(\bar{\theta}_C\)</span>处的正切空间<span class="math inline">\(T_{\bar{\theta}_C(\mathcal{M})}\)</span>的元素来标识的</p>
+<p>即<span class="math inline">\(\Delta \theta\)</span>是在<span class="math inline">\(T_{\bar{\theta}_C(\mathcal{M})}\)</span>的局部坐标系下的，如 局部扰动向量<span class="math inline">\(\Delta R_{3\times1}\)</span> (回想四元数的更新，局部扰动)</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-42-50.png"></p></li>
+</ul>
+<p>忽略掉目标函数(式68)中的其他高阶项如<span class="math inline">\(O(\epsilon^3)\)</span>，减去在<span class="math inline">\(\bar{\theta}_C\)</span>处的真值<span class="math inline">\(\bar{J}\)</span>，然后令等式为0，可以得到:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-47-52.png"></p>
+<p>因为Hessian矩阵，即<span class="math inline">\(\triangledown_{\theta}^2J\)</span>的秩是<span class="math inline">\(n-r\)</span>，这个等式有无穷多个解。</p>
+<p>上述(式69)，相当于高斯牛顿中的:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    H\Delta x=b \\
+    J^T J \Delta x = -J^T r
+\end{aligned}
+\]</span></p>
+<p>这里有两种选择，</p>
+<ol type="1">
+<li>一是通过使用<span class="math inline">\(r\)</span>条等式与(式69)进行结合（这相当于在目标函数中添加约束项(惩罚项)，作为先验）:</li>
+</ol>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-13-52-00.png"></p>
+<p>来约束<span class="math inline">\(\Delta \theta\)</span>在正切空间<span class="math inline">\(T_{\theta}(\mathcal{C})\)</span>，（这是相当于添加先验的方法），由此产生的线性方程组可以确定唯一的解<span class="math inline">\(\Delta \theta\)</span></p>
+<ol start="2" type="1">
+<li>另外一种方法是，首先直接计算(式69)的任意一个解</li>
+</ol>
+<p>求解的过程中，需要用到伪逆(Moore-Penrose)</p>
+<p>然后，根据定理，我们需要利用<code>gauge</code> <span class="math inline">\(\mathcal{C}\)</span>，即用<span class="math inline">\(Q_{\theta}^C \Delta \theta\)</span>来代替<span class="math inline">\(\Delta \theta\)</span>，最终可以得到:</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-14-05-20.png"></p>
+<p>(这个的意思是，先求出一个任意解，然后再减去这个解在零空间上的分量)</p>
+<p><code>Free-Gauge Approach</code>过程可以使用图来描述</p>
+<p><img src="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/2020-04-07-14-17-44.png"></p>
+<p>值得注意的是:</p>
+<ul>
+<li><code>Free-Gauge Approach</code>是沿着与<span class="math inline">\(\mathcal{M}_\theta\)</span>正交的方向去迭代的，因此，其收敛速度会更快一些。</li>
+</ul>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    矩阵相关
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">VI中的几种自由度处理方法的性能对比</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/';
+        
+        this.page.identifier = 'SLAM代码课程/Gauges-and-Gauge-Transformations';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>

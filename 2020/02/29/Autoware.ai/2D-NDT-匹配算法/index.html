@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>2D-NDT-匹配算法 | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="2D-NDT-匹配算法" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="正态分布变换(The Normal Distributions Transform)  算法提出 Biber和Straer提出了二维数据配准的正态分布变换(NDT)方法。该算法中的关键元素是参考扫描的表示。不是将当前扫描直接匹配到参考扫描的点，而是通过正态分布的线性组合来模拟在特定位置找到表面点的可能性。 算法应用  点云配准 地图匹配  算法特点 计算正态分布是一个一次性的工作（初始化），不需要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2D-NDT-匹配算法">
+<meta property="og:url" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="正态分布变换(The Normal Distributions Transform)  算法提出 Biber和Straer提出了二维数据配准的正态分布变换(NDT)方法。该算法中的关键元素是参考扫描的表示。不是将当前扫描直接匹配到参考扫描的点，而是通过正态分布的线性组合来模拟在特定位置找到表面点的可能性。 算法应用  点云配准 地图匹配  算法特点 计算正态分布是一个一次性的工作（初始化），不需要">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-20-55-48.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-22-04-36.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-22-11-56.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-03-01-00-35-16.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-03-01-15-47-36.png">
+<meta property="article:published_time" content="2020-02-29T12:35:18.000Z">
+<meta property="article:modified_time" content="2020-03-06T05:16:24.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-20-55-48.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file active"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-Autoware.ai/2D-NDT-匹配算法" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">
+            <time datetime="2020-02-29T12:35:18.000Z" itemprop="datePublished">2020-02-29</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Autoware.ai/2D-NDT-匹配算法.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Autoware.ai/2D-NDT-匹配算法.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Autoware.ai/2D-NDT-匹配算法.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            2D-NDT-匹配算法
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#正态分布变换the-normal-distributions-transform"><span class="toc-number">1.</span> <span class="toc-text">正态分布变换(The Normal Distributions Transform)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法提出"><span class="toc-number">1.1.</span> <span class="toc-text">算法提出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法应用"><span class="toc-number">1.2.</span> <span class="toc-text">算法应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#算法特点"><span class="toc-number">1.3.</span> <span class="toc-text">算法特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他配准算法"><span class="toc-number">1.4.</span> <span class="toc-text">其他配准算法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#d-ndt基本原理"><span class="toc-number">2.</span> <span class="toc-text">2D-NDT基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#概率密度计算"><span class="toc-number">2.1.</span> <span class="toc-text">概率密度计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#帧间配准匹配"><span class="toc-number">2.2.</span> <span class="toc-text">帧间配准(匹配)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#牛顿迭代法优化"><span class="toc-number">2.3.</span> <span class="toc-text">牛顿迭代法优化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#应用于位置跟踪"><span class="toc-number">3.</span> <span class="toc-text">应用于位置跟踪</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#slam上的应用"><span class="toc-number">4.</span> <span class="toc-text">SLAM上的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#对多次扫描进行定位"><span class="toc-number">4.1.</span> <span class="toc-text">对多次扫描进行定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加关键帧以及优化地图"><span class="toc-number">4.2.</span> <span class="toc-text">添加关键帧以及优化地图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文章实现效果"><span class="toc-number">4.3.</span> <span class="toc-text">文章实现效果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新-pcl中关于2d-ndt的代码及注释"><span class="toc-number">4.4.</span> <span class="toc-text">2020-03-06更新： PCL中关于2D-NDT的代码及注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">4.5.</span> <span class="toc-text">参考资料</span></a></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="正态分布变换the-normal-distributions-transform">正态分布变换(The Normal Distributions Transform)</h1>
+<p><img src="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-20-55-48.png"></p>
+<h2 id="算法提出">算法提出</h2>
+<p>Biber和Straer提出了二维数据配准的正态分布变换(NDT)方法。该算法中的关键元素是参考扫描的表示。不是将当前扫描直接匹配到参考扫描的点，而是通过正态分布的线性组合来模拟在特定位置找到表面点的可能性。</p>
+<h2 id="算法应用">算法应用</h2>
+<ul>
+<li>点云配准</li>
+<li>地图匹配</li>
+</ul>
+<h2 id="算法特点">算法特点</h2>
+<p>计算正态分布是一个一次性的工作（初始化），不需要消耗大量代价计算最近邻搜索匹配点。概率密度函数在两幅图像采集之间的时间可以离线计算出来</p>
+<h2 id="其他配准算法">其他配准算法</h2>
+<ol type="1">
+<li><p>ICP</p>
+<ul>
+<li>要剔除不合适的点对（点对距离过大、包含边界点的点对）</li>
+<li>基于点对的配准，并没有包含局部形状的信息</li>
+</ul></li>
+<li><p>IDC</p>
+<ul>
+<li>ICP的一种改进，采用极坐标代替笛卡尔坐标进行最近点搜索匹配</li>
+</ul></li>
+<li><p>PIC</p>
+<ul>
+<li>考虑了点云的噪音和初始位置的不确定性</li>
+</ul></li>
+<li><p>Point-based probabilistic registration</p></li>
+<li><p>Gaussian fields</p>
+<ul>
+<li>和NDT正态分布变换类似，利用高斯混合模型考察点和点的距离和点周围表面的相似性</li>
+</ul></li>
+<li><p>Likelihood-field matching——随机场匹配</p></li>
+<li><p>CRF匹配</p></li>
+<li><p>Branch-and-bound registration</p></li>
+<li><p>Registration using local geometric features</p></li>
+</ol>
+<h1 id="d-ndt基本原理">2D-NDT基本原理</h1>
+<p>NDT算法论文原文是从2D角度描述的。</p>
+<h2 id="概率密度计算">概率密度计算</h2>
+<p>NDT利用局部正态分布建立了一次激光扫描所有重建二维点的分布模型，首先，将机器人周围的二维空间细分为固定大小的网格(类似于占据栅格地图)，然后对于每一个单元，进行下面3个操作</p>
+<ul>
+<li>收集在这个窗口内的所有2D点</li>
+<li>计算2D点集的质心<span class="math inline">\(q=\frac{1}{n}\sum_{i} x_i\)</span></li>
+<li>计算协方差矩阵<span class="math inline">\(\Sigma=\frac{1}{n}\sum_i(x_i-q)(x_i-q)^T\)</span></li>
+</ul>
+<p>那么，在这个单元cell内观测到一个样本在该2D点<span class="math inline">\(\boldsymbol{x}=(u,v)^T\)</span> 的概率可以用下面的正态分布来描述:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    p(x) \sim \exp (-\frac{(x-q)^T \Sigma^{-1}(x-q)}{2})
+\end{aligned}
+\]</span></p>
+<p>与占据栅格类似，NDT建立了平面的网格细分，但是占据栅格代表的是该栅格被占据的概率，而NDT的栅格代表的是在一个单元(cell)内的每个位置上，观测到一个样本的概率。这个操作有什么好处？好处在于使用概率密度的形式对二维平面进行了分段连续可微的描述。</p>
+<p>在进一步描述example之前，需要提出两点需要注意的地方</p>
+<ul>
+<li><p>为了最小化离散化的影响，我们决定使用四个重叠的网格，首先放置一个边长为l的单网格，第二个则水平平移<span class="math inline">\(\frac{l}{2}\)</span>长度，第三个则垂直方向平移<span class="math inline">\(\frac{l}{2}\)</span>长度，而最后一个则水平和垂直都平移<span class="math inline">\(\frac{l}{2}\)</span>长度。如下图所示，现在每个2D点都落入到这4个cell里面，因此，如果计算一个点的概率密度，即对所有四个单元的密度进行评估，并对结果进行求和。<strong>但是在下面的讨论中，暂时不考虑这样的情况，只需考虑只有1个cell即可。</strong></p>
+<p><img src="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-22-04-36.png"></p></li>
+<li><p>另外一个点就是，如果在一个完全没有噪声的理想情况下，协方差矩阵会变成奇异的，无法求逆。在实际情况中，协方差矩阵有时候十分接近奇异，为了避免这种情况，进行检查，检查协方差矩阵的最小特征值是否至少是最大特征值的0.001倍，如果不是，则设置该值。</p></li>
+</ul>
+<p>下图1展示了对激光扫描进行NDT之后的结果：</p>
+<p><img src="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-02-29-22-11-56.png"></p>
+<p>右图是NDT结果，这是通过计算每个点的概率密度得到的，高亮的部分表示着该处有较大的概率密度。接下来讨论这个变换怎么发挥作用在匹配中。</p>
+<h2 id="帧间配准匹配">帧间配准(匹配)</h2>
+<p>给定两个机器人坐标系之间的空间映射T， <span class="math display">\[
+\begin{aligned}
+    T=
+    \begin{pmatrix}
+        x&#39; \\
+        y&#39;
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        \cos \phi  &amp; -\sin \phi \\
+        \sin \phi &amp; \cos \phi
+    \end{pmatrix}
+    \begin{pmatrix}
+        x \\
+        y
+    \end{pmatrix}
+    +
+    \begin{pmatrix}
+        t_x \\
+        t_y
+    \end{pmatrix}
+\end{aligned}
+\]</span></p>
+<p>其中，<span class="math inline">\((t_x,t_y)^T\)</span>表示平移，<span class="math inline">\(\phi\)</span>表示旋转——（两帧之间），帧间匹配就是要求出平移和旋转的量。</p>
+<p>本文提出的基本流程是：</p>
+<ol type="1">
+<li>对第一帧进行NDT处理</li>
+<li>参数(R,t)初始化，可设置为0或者使用里程计的数据</li>
+<li>对于第二帧的每一个样本，利用待优化参数将第二帧的点反投影到第一帧的坐标系中</li>
+<li>确定每个映射点对应的正态分布 ？</li>
+<li>参数(R,t)的得分是通过评估每个映射点的分布并对结果求和来确定的</li>
+<li>计算一个新的参数估计试图优化评分。这是通过执行牛顿算法的一个步骤完成的</li>
+<li>重复，直到收敛</li>
+</ol>
+<p>前4步就是前文所说的计算NDT变换，接下来详细介绍剩下的步骤</p>
+<p>参数约定：</p>
+<ul>
+<li>待优化参数<span class="math inline">\(\boldsymbol{T}()=\boldsymbol{P}=(p_i){i=1,2,3}=(t_x,t_y,\phi)^T\)</span></li>
+<li>第二帧的第i个扫描点<span class="math inline">\(x_i\)</span></li>
+<li>第二帧的第i个扫描点反投影回第一帧坐标系后得到的点<span class="math inline">\(x_i&#39;=T(x_i,\boldsymbol{P})\)</span></li>
+<li><span class="math inline">\(\Sigma_i,q_i\)</span>分别是第二帧反投影点<span class="math inline">\(x_i&#39;\)</span>的联合高斯分布的协方差矩阵和均值，在第一帧的NDT变换中查找</li>
+</ul>
+<p><strong>评分函数</strong></p>
+<p><span class="math display">\[
+    score(p)=\sum_i \exp ( \frac{-(x_i&#39;-q_i)^T \Sigma_i^{-1}(x_i&#39;-q_i)}{2})
+\]</span></p>
+<p>这个其实就是联合高斯分布的表达，其中<span class="math inline">\(\Sigma_i^{-1}\)</span>就是信息矩阵，也就是协方差矩阵的逆</p>
+<h2 id="牛顿迭代法优化">牛顿迭代法优化</h2>
+<p>由于优化问题通常被描述为最小化问题，我们将采用这个约定的符号。最优化可以表示为最小化<span class="math inline">\(-socre\)</span>。牛顿迭代法可以表示为求解增量方程</p>
+<p><span class="math display">\[
+\boldsymbol{H\Delta p}=-\boldsymbol{g}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{g}\)</span>是函数<span class="math inline">\(f()\)</span>的梯度转置，也就是雅克比</li>
+<li><span class="math inline">\(\boldsymbol{H}\)</span>是对应的海森矩阵</li>
+</ul>
+<p>这个方程的解是一个增量<span class="math inline">\(\Delta p\)</span>，用来更新估计值：</p>
+<p><span class="math display">\[
+    \boldsymbol{p} \leftarrow \boldsymbol{p} +\Delta \boldsymbol{p} 
+\]</span></p>
+<p>如果矩阵<span class="math inline">\(H\)</span>是正定的，那么<span class="math inline">\(f(\boldsymbol{p})\)</span>将会在增量<span class="math inline">\(\Delta \boldsymbol{p}\)</span>的方向减小，否则使用<span class="math inline">\(\boldsymbol{H}&#39;=\boldsymbol{H}+\lambda I\)</span>来代替<span class="math inline">\(\boldsymbol{H}\)</span>，其中<span class="math inline">\(\lambda\)</span>用来使得矩阵<span class="math inline">\(\boldsymbol{H}\)</span>变成正定。</p>
+<p>这个算法使用函数<span class="math inline">\(-score\)</span>，通过收集方程3中所有和的偏导数来建立梯度和海森矩阵。</p>
+<p><strong>下面的<span class="math inline">\(x_i\)</span>将表示第i帧的点集，不再是第i个点</strong>？</p>
+<p>于是，有 <span class="math display">\[
+    q=x_i&#39;-q_i
+\]</span></p>
+<p>所以，优化的目标函数可以写成</p>
+<p><span class="math display">\[
+    -score= s =- \exp \frac{- \boldsymbol{q^T} \Sigma^{-1} \boldsymbol{q}}{2}
+\]</span></p>
+<p>于是，目标函数对优化变量的梯度为</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \bar{g_i} 
+    &amp;=
+    - \frac{ \partial s}{ \partial p[i]}= - \frac{ \partial s}{ \partial q} \frac{q}{p[i]} \\
+    &amp;= \boldsymbol{q^T} \Sigma^{-1} \frac{ \partial q}{ \partial p[i]} \exp \frac{- \boldsymbol{q^T} \Sigma^{-1}q}{2}
+\end{aligned}
+\]</span></p>
+<p>根据变换等式2，使用线性化的来表示，有</p>
+<p><span class="math display">\[
+\begin{aligned}
+    u&#39; = \cos (p[3]) u -\sin(p[3]) v+ p[1]\\
+    v&#39; = \sin (p[3]) u -\cos(p[3]) v + p[2]
+\end{aligned}
+\]</span></p>
+<p>对应的雅克比可写成</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \boldsymbol{J_T}= \frac{\partial \boldsymbol{q}}{\partial \boldsymbol{T}}=\frac{\partial \boldsymbol{q}}{\partial \boldsymbol{P}}=
+    \begin{pmatrix}
+        1 &amp; 0 &amp; -x \sin \phi -y \cos \phi \\
+        0 &amp; 1 &amp;  x \cos \phi - y \sin \phi 
+    \end{pmatrix}
+\end{aligned}
+\]</span></p>
+<p>海森矩阵<span class="math inline">\(\boldsymbol{H}\)</span>:</p>
+<p><img src="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-03-01-00-35-16.png"></p>
+<p>其中，投影后的去质心点集<span class="math inline">\(\boldsymbol{q}\)</span>对变换<span class="math inline">\(p[i],p[j]\)</span>的二阶导<span class="math inline">\(\frac{\partial ^2 \boldsymbol{q}}{ \partial p[i] \partial p[j]}\)</span>可以如下表示：</p>
+<p><span class="math display">\[
+\frac{ \partial ^2 \boldsymbol{q}}{ \partial p_i \partial p_j}= \left \{
+\begin{aligned}
+    \begin{pmatrix}
+         -x \cos \phi + y \sin \phi \\
+         -x \sin \phi - y \cos \phi 
+    \end{pmatrix} ~~ i=j=3 \\
+    \begin{pmatrix}
+        0 \\
+        0
+    \end{pmatrix} ~~~~~~~~~~~~~~~ otherwise
+\end{aligned}
+ \right.
+\]</span></p>
+<p>注意：上面的<span class="math inline">\(p[i],p[j]\)</span>都是指同一个变换<span class="math inline">\(P\)</span>里面的某个元素<span class="math inline">\(t_x,t_y, \phi\)</span>其中一个。</p>
+<p>从这些方程可以看出，建立梯度和海森矩阵的计算成本较低，每点只有一次对指数函数的调用和少量的乘法。三角函数计算仅与估计的角度<span class="math inline">\(\phi\)</span>有关，因此每次迭代都需要计算一次。</p>
+<h1 id="应用于位置跟踪">应用于位置跟踪</h1>
+<p>下面把参考的激光扫描称为关键帧，在时间<span class="math inline">\(t=t_k\)</span>，算法执行一下流程</p>
+<ul>
+<li>设置一个从<span class="math inline">\(t_k-1\)</span>到<span class="math inline">\(t_k\)</span>的运动估计作为初值<span class="math inline">\(\delta\)</span></li>
+<li>将当前帧的激光扫描点根据这个<span class="math inline">\(\delta\)</span>反投影到上一个时刻的机器人坐标系下</li>
+<li>使用当前帧的扫描、参考关键帧的NDT以及新的运动估计<span class="math inline">\(\delta\)</span>来实现优化迭代</li>
+<li>检查参考关键帧与当前帧是否比较靠近，如果是，则继续迭代，否则，采用上一次成功匹配的激光扫描作为新的关键帧。</li>
+</ul>
+<p>判断一个扫描是否仍然足够近是基于一个简单的经验标准，涉及到关键帧和当前帧之间的平移和角距离以及最终的评分.</p>
+<h1 id="slam上的应用">SLAM上的应用</h1>
+<p>定义地图就是对关键帧的采集以及各个关键帧的位姿。</p>
+<h2 id="对多次扫描进行定位">对多次扫描进行定位</h2>
+<p>对于地图上的每帧的扫描<span class="math inline">\(i\)</span>，都拥有其位姿，位姿指该帧在全局坐标系下的，当前机器人姿态由旋转矩阵R和平移向量t表示</p>
+<h2 id="添加关键帧以及优化地图">添加关键帧以及优化地图</h2>
+<p>地图是由一些关键帧以及它们的全局坐标系位姿组成的，如果当前扫描与地图的重叠太小，那么只取到最后一次成功匹配的扫描来组成地图。然后，每个重叠的扫描分别匹配到新的关键帧，产生两个扫描之间的相对位姿，这意味着需要维护一个图，其中包含成对匹配结果的信息。</p>
+<p>在这个图里面，每个关键帧都使用一个节点来代表，每个节点维护着对应关键帧的世界坐标系的位姿。两个节点之间的边表示对应的扫描已经成对匹配，并维护着两个扫描之间的相对位姿，<font color="red">作为优化的约束条件</font>。</p>
+<p>当一个新的关键帧插入，地图会通过优化损失函数来调整所有关键帧的位姿来进行调整。关键帧之间两两配准的结果被用来定义每一对匹配的二次误差模型如下：两次扫描的全局位姿参数可用来表示两次扫描之间的相对位姿。</p>
+<p>如果使用<span class="math inline">\(\Delta T\)</span>来表示(使用两次扫描的全局位姿所构成的相对位姿)与(使用NDT匹配算法得到的相对位姿)之间的<font color="red">差</font>，那么评分模型可以使用下面来描述</p>
+<p><span class="math display">\[
+    socre&#39;(\Delta T)= score + \frac{1}{2} (\Delta T)^T H (\Delta T)
+\]</span></p>
+<p>这种全局优化的做法，当关键帧的数量变得很大的时候，难以再实时进行，因为待优化的参数随关键帧呈线性增长<span class="math inline">\(3N-3\)</span>，每个关键帧都需要3个参数，后面减3是因为第一个关键帧的位姿固定为(0,0,0)，为了减少在零空间的漂移，采用固定第一帧的做法。</p>
+<p>为了避免这个问题，文章采用使用局部图的思想，只对一个局部地图进行优化，这个局部子图通过遍历所有的关键帧，只有与当前帧相连不超过3条边的，才参与组成这个局部子图。我们现在只针对参数优化上面的错误函数，这些参数属于这个子图中包含的关键帧。</p>
+<p><font color="red">当然，如果如果要形成回环，我们将不得不优化所有关键帧。</font></p>
+<h2 id="文章实现效果">文章实现效果</h2>
+<p><img src="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/2020-03-01-15-47-36.png"></p>
+<h2 id="更新-pcl中关于2d-ndt的代码及注释"><font color="red">2020-03-06更新： PCL中关于2D-NDT的代码及注释</font></h2>
+<p>PCL代码基本与论文一致</p>
+<p><code>ndt_2d.h</code> <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> once</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/pcl_macros.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/registration/registration.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> pcl</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">/** \brief @b NormalDistributionsTransform2D provides an implementation of the</span></span><br><span class="line"><span class="comment">    * Normal Distributions Transform algorithm for scan matching.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * This implementation is intended to match the definition:</span></span><br><span class="line"><span class="comment">    * Peter Biber and Wolfgang Straßer. The normal distributions transform: A</span></span><br><span class="line"><span class="comment">    * new approach to laser scan matching. In Proceedings of the IEEE In-</span></span><br><span class="line"><span class="comment">    * ternational Conference on Intelligent Robots and Systems (IROS), pages</span></span><br><span class="line"><span class="comment">    * 2743–2748, Las Vegas, USA, October 2003.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * \author James Crosby</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="comment">// 2D-NDT点云配准</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> PointSource, <span class="keyword">typename</span> PointTarget&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NormalDistributionsTransform2D</span> :</span> <span class="keyword">public</span> Registration&lt;PointSource, PointTarget&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> PointCloudSource = <span class="keyword">typename</span> Registration&lt;PointSource, PointTarget&gt;::PointCloudSource;</span><br><span class="line">    <span class="keyword">using</span> PointCloudSourcePtr = <span class="keyword">typename</span> PointCloudSource::Ptr;</span><br><span class="line">    <span class="keyword">using</span> PointCloudSourceConstPtr = <span class="keyword">typename</span> PointCloudSource::ConstPtr;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> PointCloudTarget = <span class="keyword">typename</span> Registration&lt;PointSource, PointTarget&gt;::PointCloudTarget;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> PointIndicesPtr = PointIndices::Ptr;</span><br><span class="line">    <span class="keyword">using</span> PointIndicesConstPtr = PointIndices::ConstPtr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> Ptr = <span class="built_in">shared_ptr</span>&lt; NormalDistributionsTransform2D&lt;PointSource, PointTarget&gt; &gt;;</span><br><span class="line">    <span class="keyword">using</span> ConstPtr = <span class="built_in">shared_ptr</span>&lt; <span class="keyword">const</span> NormalDistributionsTransform2D&lt;PointSource, PointTarget&gt; &gt;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Empty constructor. */</span></span><br><span class="line">    <span class="comment">// 空的构造函数</span></span><br><span class="line">    NormalDistributionsTransform2D ()</span><br><span class="line">        : Registration&lt;PointSource,PointTarget&gt; (),</span><br><span class="line">          grid_centre_ (<span class="number">0</span>,<span class="number">0</span>), grid_step_ (<span class="number">1</span>,<span class="number">1</span>), grid_extent_ (<span class="number">20</span>,<span class="number">20</span>), newton_lambda_ (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        reg_name_ = <span class="string">"NormalDistributionsTransform2D"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Empty destructor */</span></span><br><span class="line">    ~NormalDistributionsTransform2D () &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief centre of the ndt grid (target coordinate system)</span></span><br><span class="line"><span class="comment">        * \param centre value to set</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 设置NDT网格中心， 目标坐标系的， (也就是要将点云匹配过去的坐标系)</span></span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span></span><br><span class="line">    setGridCentre (<span class="keyword">const</span> Eigen::Vector2f&amp; centre) &#123; grid_centre_ = centre; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Grid spacing (step) of the NDT grid</span></span><br><span class="line"><span class="comment">        * \param[in] step value to set</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 步长设置</span></span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span></span><br><span class="line">    setGridStep (<span class="keyword">const</span> Eigen::Vector2f&amp; <span class="built_in">step</span>) &#123; grid_step_ = <span class="built_in">step</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief NDT Grid extent (in either direction from the grid centre)</span></span><br><span class="line"><span class="comment">        * \param[in] extent value to set</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 从网格中心扩展多少，也就是NDT cell范围？</span></span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span></span><br><span class="line">    setGridExtent (<span class="keyword">const</span> Eigen::Vector2f&amp; extent) &#123; grid_extent_ = extent; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief NDT Newton optimisation step size parameter</span></span><br><span class="line"><span class="comment">        * \param[in] lambda step size: 1 is simple newton optimisation, smaller values may improve convergence</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 设置优化步长， 1是简单的牛顿迭代， 更小的值可以提高收敛效果</span></span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span></span><br><span class="line">    setOptimizationStepSize (<span class="keyword">const</span> <span class="keyword">double</span>&amp; lambda) &#123; newton_lambda_ = Eigen::Vector3d (lambda, lambda, lambda); &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief NDT Newton optimisation step size parameter</span></span><br><span class="line"><span class="comment">        * \param[in] lambda step size: (1,1,1) is simple newton optimisation,</span></span><br><span class="line"><span class="comment">        * smaller values may improve convergence, or elements may be set to</span></span><br><span class="line"><span class="comment">        * zero to prevent optimisation over some parameters</span></span><br><span class="line"><span class="comment">        *</span></span><br><span class="line"><span class="comment">        * This overload allows control of updates to the individual (x, y,</span></span><br><span class="line"><span class="comment">        * theta) free parameters in the optimisation. If, for example, theta is</span></span><br><span class="line"><span class="comment">        * believed to be close to the correct value a small value of lambda[2]</span></span><br><span class="line"><span class="comment">        * should be used.</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 重载函数， 就是说，当认为优化的时候某个变量如朝向角已经足够精确了，那么可以把 lambda[2]设置为一个小值，加快速度</span></span><br><span class="line">    <span class="keyword">virtual</span> <span class="keyword">void</span></span><br><span class="line">    setOptimizationStepSize (<span class="keyword">const</span> Eigen::Vector3d&amp; lambda) &#123; newton_lambda_ = lambda; &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="comment">/** \brief Rigid transformation computation method with initial guess.</span></span><br><span class="line"><span class="comment">        * \param[out] output the transformed input point cloud dataset using the rigid transformation found</span></span><br><span class="line"><span class="comment">        * \param[in] guess the initial guess of the transformation to compute</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">    <span class="comment">// 使用初始位姿计算点云之间的变换矩阵，输出： 利用变换将输入点云匹配到目标点云</span></span><br><span class="line">    <span class="keyword">void</span></span><br><span class="line">    computeTransformation (PointCloudSource &amp;output, <span class="keyword">const</span> Eigen::Matrix4f &amp;guess) <span class="keyword">override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::reg_name_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::target_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::converged_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::nr_iterations_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::max_iterations_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::transformation_epsilon_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::transformation_rotation_epsilon_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::transformation_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::previous_transformation_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::final_transformation_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::update_visualizer_;</span><br><span class="line">    <span class="keyword">using</span> Registration&lt;PointSource, PointTarget&gt;::indices_;</span><br><span class="line"></span><br><span class="line">    Eigen::Vector2f grid_centre_;</span><br><span class="line">    Eigen::Vector2f grid_step_;</span><br><span class="line">    Eigen::Vector2f grid_extent_;</span><br><span class="line">    Eigen::Vector3d newton_lambda_;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    PCL_MAKE_ALIGNED_OPERATOR_NEW</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125; <span class="comment">// namespace pcl</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/registration/impl/ndt_2d.hpp&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p><code>ndt_2d.hpp</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br><span class="line">509</span><br><span class="line">510</span><br><span class="line">511</span><br><span class="line">512</span><br><span class="line">513</span><br><span class="line">514</span><br><span class="line">515</span><br><span class="line">516</span><br><span class="line">517</span><br><span class="line">518</span><br><span class="line">519</span><br><span class="line">520</span><br><span class="line">521</span><br><span class="line">522</span><br><span class="line">523</span><br><span class="line">524</span><br><span class="line">525</span><br><span class="line">526</span><br><span class="line">527</span><br><span class="line">528</span><br><span class="line">529</span><br><span class="line">530</span><br><span class="line">531</span><br><span class="line">532</span><br><span class="line">533</span><br><span class="line">534</span><br><span class="line">535</span><br><span class="line">536</span><br><span class="line">537</span><br><span class="line">538</span><br><span class="line">539</span><br><span class="line">540</span><br><span class="line">541</span><br><span class="line">542</span><br><span class="line">543</span><br><span class="line">544</span><br><span class="line">545</span><br><span class="line">546</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> PCL_NDT_2D_IMPL_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PCL_NDT_2D_IMPL_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/registration/eigen.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pcl/registration/boost.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cmath&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> pcl</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">namespace</span> ndt2d</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">/** \brief Class to store vector value and first and second derivatives</span></span><br><span class="line"><span class="comment">      * (grad vector and hessian matrix), so they can be returned easily from</span></span><br><span class="line"><span class="comment">      * functions</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line"><span class="comment">// 储存一阶导数和二阶导数</span></span><br><span class="line"><span class="comment">// 可以看做是增量方程</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">unsigned</span> N=<span class="number">3</span>, <span class="keyword">typename</span> T=<span class="keyword">double</span>&gt;</span><br><span class="line">struct ValueAndDerivatives</span><br><span class="line">&#123;</span><br><span class="line">    ValueAndDerivatives () : hessian (), grad (), value () &#123;&#125;</span><br><span class="line"></span><br><span class="line">    Eigen::Matrix&lt;T, N, N&gt; hessian;</span><br><span class="line">    Eigen::Matrix&lt;T, N, <span class="number">1</span>&gt;    grad;</span><br><span class="line">    T value;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> ValueAndDerivatives&lt;N,T&gt;</span><br><span class="line">    Zero ()</span><br><span class="line">    &#123;</span><br><span class="line">        ValueAndDerivatives&lt;N,T&gt; r;</span><br><span class="line">        r.hessian = Eigen::Matrix&lt;T, N, N&gt;::Zero ();</span><br><span class="line">        r.grad    = Eigen::Matrix&lt;T, N, <span class="number">1</span>&gt;::Zero ();</span><br><span class="line">        r.value   = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ValueAndDerivatives&lt;N,T&gt;&amp;</span><br><span class="line">    <span class="keyword">operator</span>+= (ValueAndDerivatives&lt;N,T&gt; <span class="keyword">const</span>&amp; r)</span><br><span class="line">    &#123;</span><br><span class="line">        hessian += r.hessian;</span><br><span class="line">        grad    += r.grad;</span><br><span class="line">        value   += r.value;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** \brief A normal distribution estimation class.</span></span><br><span class="line"><span class="comment">      *</span></span><br><span class="line"><span class="comment">      * First the indices of of the points from a point cloud that should be</span></span><br><span class="line"><span class="comment">      * modelled by the distribution are added with addIdx (...).</span></span><br><span class="line"><span class="comment">      *</span></span><br><span class="line"><span class="comment">      * Then estimateParams (...) uses the stored point indices to estimate the</span></span><br><span class="line"><span class="comment">      * parameters of a normal distribution, and discards the stored indices.</span></span><br><span class="line"><span class="comment">      *</span></span><br><span class="line"><span class="comment">      * Finally the distriubution, and its derivatives, may be evaluated at any</span></span><br><span class="line"><span class="comment">      * point using test (...).</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line"><span class="comment">// 这是单个cell的NDT模型</span></span><br><span class="line"><span class="comment">// 可以理解为某个cell</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> PointT&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NormalDist</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">using</span> PointCloud = pcl::PointCloud&lt;PointT&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    NormalDist ()</span><br><span class="line">        : min_n_ (<span class="number">3</span>), n_ (<span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Store a point index to use later for estimating distribution parameters.</span></span><br><span class="line"><span class="comment">          * \param[in] i Point index to store</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    <span class="keyword">void</span></span><br><span class="line">    addIdx (<span class="built_in">std</span>::<span class="keyword">size_t</span> i)</span><br><span class="line">    &#123;</span><br><span class="line">        pt_indices_.push_back (i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Estimate the normal distribution parameters given the point indices provided. Memory of point indices is cleared.</span></span><br><span class="line"><span class="comment">          * \param[in] cloud                    Point cloud corresponding to indices passed to addIdx.</span></span><br><span class="line"><span class="comment">          * \param[in] min_covar_eigvalue_mult  Set the smallest eigenvalue to this times the largest.</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    <span class="comment">// 给定cell网格中的点云，估计正态分布参数 (主要是均值和方差)</span></span><br><span class="line">    <span class="keyword">void</span></span><br><span class="line">    estimateParams (<span class="keyword">const</span> PointCloud&amp; cloud, <span class="keyword">double</span> min_covar_eigvalue_mult = <span class="number">0.001</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Eigen::Vector2d sx  = Eigen::Vector2d::Zero ();</span><br><span class="line">        Eigen::Matrix2d sxx = Eigen::Matrix2d::Zero ();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// sx： 对所有点的x，y分别求和</span></span><br><span class="line">        <span class="comment">// sxx: 2维向量，分别是 点云的 x^2和， y^2和</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> i = pt_indices_.cbegin (); i != pt_indices_.cend (); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="function">Eigen::Vector2d <span class="title">p</span> <span class="params">(cloud[*i]. x, cloud[*i]. y)</span></span>;</span><br><span class="line">            sx  += p;</span><br><span class="line">            sxx += p * p.transpose ();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        n_ = pt_indices_.<span class="built_in">size</span> ();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检查cell网格中的点云里面点的个数是否大于3</span></span><br><span class="line">        <span class="keyword">if</span> (n_ &gt;= min_n_)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 求质心，存到mean_</span></span><br><span class="line">            mean_ = sx / <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt; (n_);</span><br><span class="line">            <span class="comment">// Using maximum likelihood estimation as in the original paper</span></span><br><span class="line">            <span class="comment">// 计算协方差矩阵</span></span><br><span class="line">            Eigen::Matrix2d covar = (sxx - <span class="number">2</span> * (sx * mean_.transpose ())) / <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt; (n_) + mean_ * mean_.transpose ();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 求特征值</span></span><br><span class="line">            <span class="function">Eigen::SelfAdjointEigenSolver&lt;Eigen::Matrix2d&gt; <span class="title">solver</span> <span class="params">(covar)</span></span>;</span><br><span class="line">            <span class="comment">// 如果最小的特征值比 0.001*最大的特征值小，则不需要修正协方差矩阵</span></span><br><span class="line">            <span class="keyword">if</span> (solver.eigenvalues ()[<span class="number">0</span>] &lt; min_covar_eigvalue_mult * solver.eigenvalues ()[<span class="number">1</span>])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 否则，修正协方差矩阵，</span></span><br><span class="line">                PCL_DEBUG (<span class="string">"[pcl::NormalDist::estimateParams] NDT normal fit: adjusting eigenvalue %f\n"</span>, solver.eigenvalues ()[<span class="number">0</span>]);</span><br><span class="line">                Eigen::Matrix2d l = solver.eigenvalues ().asDiagonal ();</span><br><span class="line">                Eigen::Matrix2d q = solver.eigenvectors ();</span><br><span class="line">                <span class="comment">// set minimum smallest eigenvalue:</span></span><br><span class="line">                <span class="comment">// 将最小的特征值设置为最大特征值的0.0001倍</span></span><br><span class="line">                l (<span class="number">0</span>,<span class="number">0</span>) = l (<span class="number">1</span>,<span class="number">1</span>) * min_covar_eigvalue_mult;</span><br><span class="line">                <span class="comment">// 重新合成协方差矩阵</span></span><br><span class="line">                covar = q * l * q.transpose ();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 储存协方差矩阵的逆，即信息矩阵</span></span><br><span class="line">            covar_inv_ = covar.inverse ();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 清空点云</span></span><br><span class="line">        pt_indices_.<span class="built_in">clear</span> ();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Return the 'score' (denormalised likelihood) and derivatives of score of the point p given this distribution.</span></span><br><span class="line"><span class="comment">          * \param[in] transformed_pt   Location to evaluate at.</span></span><br><span class="line"><span class="comment">          * \param[in] cos_theta        sin(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          * \param[in] sin_theta        cos(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          * estimateParams must have been called after at least three points were provided, or this will return zero.</span></span><br><span class="line"><span class="comment">          *</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    <span class="comment">// 输入 要变换的点pt, 旋转变换的 cos，sin</span></span><br><span class="line">    <span class="comment">// estimateParams必须在至少提供了三个点之后调用，否则将返回零</span></span><br><span class="line">    ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;</span><br><span class="line">    test (<span class="keyword">const</span> PointT&amp; transformed_pt, <span class="keyword">const</span> <span class="keyword">double</span>&amp; cos_theta, <span class="keyword">const</span> <span class="keyword">double</span>&amp; sin_theta) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 如果输入的点云数&lt;3，则返回 导数为0</span></span><br><span class="line">        <span class="keyword">if</span> (n_ &lt; min_n_)</span><br><span class="line">            <span class="keyword">return</span> ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;::Zero ();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 开始计算导数</span></span><br><span class="line">        ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt; r;</span><br><span class="line">        <span class="comment">// 取变换之后的点</span></span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">double</span> x = transformed_pt.x;</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">double</span> y = transformed_pt.y;</span><br><span class="line">        <span class="function"><span class="keyword">const</span> Eigen::Vector2d <span class="title">p_xy</span> <span class="params">(transformed_pt.x, transformed_pt.y)</span></span>;</span><br><span class="line">        <span class="comment">// 该点减去目标点云的质心</span></span><br><span class="line">        <span class="keyword">const</span> Eigen::Vector2d q = p_xy - mean_;</span><br><span class="line">        <span class="comment">// 求出将该点坐标代入 NDT 分布之后得到的值 exp(-0.5*[q.transpose () * covar_inv_*q])</span></span><br><span class="line">        <span class="function"><span class="keyword">const</span> Eigen::RowVector2d <span class="title">qt_cvi</span> <span class="params">(q.transpose () * covar_inv_)</span></span>;  <span class="comment">// 转成行向量1x2</span></span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">double</span> exp_qt_cvi_q = <span class="built_in">std</span>::<span class="built_in">exp</span> (<span class="number">-0.5</span> * <span class="keyword">double</span> (qt_cvi * q));</span><br><span class="line">        <span class="comment">// 这是增量方程等式的右侧，即b</span></span><br><span class="line">        r.value = -exp_qt_cvi_q;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 下面开始求雅克比</span></span><br><span class="line">        <span class="comment">// 与论文一一对应</span></span><br><span class="line">        Eigen::Matrix&lt;<span class="keyword">double</span>, <span class="number">2</span>, <span class="number">3</span>&gt; jacobian;</span><br><span class="line">        jacobian &lt;&lt;</span><br><span class="line">                    <span class="number">1</span>, <span class="number">0</span>, -(x * sin_theta + y*cos_theta),</span><br><span class="line">                <span class="number">0</span>, <span class="number">1</span>,   x * cos_theta - y*sin_theta;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 储存梯度</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</span><br><span class="line">            r.grad[i] = <span class="keyword">double</span> (qt_cvi * jacobian.col (i)) * exp_qt_cvi_q;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// second derivative only for i == j == 2:</span></span><br><span class="line">        <span class="comment">// 下面求海森矩阵， 只有在i=j=2的时候才有二阶导</span></span><br><span class="line">        <span class="function"><span class="keyword">const</span> Eigen::Vector2d <span class="title">d2q_didj</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">                    y * sin_theta - x*cos_theta,</span></span></span><br><span class="line"><span class="function"><span class="params">                    -(x * sin_theta + y*cos_theta)</span></span></span><br><span class="line"><span class="function"><span class="params">                    )</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j++)</span><br><span class="line">                r.hessian (i,j) = -exp_qt_cvi_q * (</span><br><span class="line">                            <span class="keyword">double</span> (-qt_cvi*jacobian.col (i)) * <span class="keyword">double</span> (-qt_cvi*jacobian.col (j)) +</span><br><span class="line">                            (-qt_cvi * ((i==<span class="number">2</span> &amp;&amp; j==<span class="number">2</span>)? d2q_didj : Eigen::Vector2d::Zero ())) +</span><br><span class="line">                            (-jacobian.col (j).transpose () * covar_inv_ * jacobian.col (i))</span><br><span class="line">                            );</span><br><span class="line"></span><br><span class="line">        <span class="comment">//返回与增量方程相关的参数 r</span></span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">const</span> <span class="built_in">std</span>::<span class="keyword">size_t</span> min_n_;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="keyword">size_t</span> n_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="keyword">size_t</span>&gt; pt_indices_;</span><br><span class="line">    Eigen::Vector2d mean_;</span><br><span class="line">    Eigen::Matrix2d covar_inv_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** \brief Build a set of normal distributions modelling a 2D point cloud,</span></span><br><span class="line"><span class="comment">      * and provide the value and derivatives of the model at any point via the</span></span><br><span class="line"><span class="comment">      * test (...) function.</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line"><span class="comment">// 一个点云中的NDT模型的集合(每个cell都有一个NDT)</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> PointT&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NDTSingleGrid</span>:</span> <span class="keyword">public</span> boost::noncopyable</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> PointCloud = pcl::PointCloud&lt;PointT&gt;;</span><br><span class="line">    <span class="keyword">using</span> PointCloudConstPtr = <span class="keyword">typename</span> PointCloud::ConstPtr;</span><br><span class="line">    <span class="keyword">using</span> NormalDist = pcl::ndt2d::NormalDist&lt;PointT&gt;;  <span class="comment">// 一个cell</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 构造</span></span><br><span class="line">    NDTSingleGrid (PointCloudConstPtr cloud,</span><br><span class="line">                   <span class="keyword">const</span> Eigen::Vector2f&amp; about,</span><br><span class="line">                   <span class="keyword">const</span> Eigen::Vector2f&amp; extent,</span><br><span class="line">                   <span class="keyword">const</span> Eigen::Vector2f&amp; <span class="built_in">step</span>)</span><br><span class="line">        : min_ (about - extent), max_ (min_ + <span class="number">2</span>*extent), step_ (<span class="built_in">step</span>),</span><br><span class="line">          cells_ ((max_[<span class="number">0</span>]-min_[<span class="number">0</span>]) / step_[<span class="number">0</span>],</span><br><span class="line">          (max_[<span class="number">1</span>]-min_[<span class="number">1</span>]) / step_[<span class="number">1</span>]),</span><br><span class="line">          normal_distributions_ (cells_[<span class="number">0</span>], cells_[<span class="number">1</span>])</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// about : 给定点云中，准备建立的某个cell的中心点的坐标？</span></span><br><span class="line">        <span class="comment">// extent： cell划分范围</span></span><br><span class="line">        <span class="comment">// step ： 步长？</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// sort through all points, assigning them to distributions:</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="keyword">size_t</span> used_points = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 遍历点云里面的所有点</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; cloud-&gt;<span class="built_in">size</span> (); i++)</span><br><span class="line">            <span class="keyword">if</span> (NormalDist* n = normalDistForPoint (cloud-&gt;at (i))) <span class="comment">// 计算点P落在哪一个cell</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//n : 某个cell</span></span><br><span class="line">                <span class="comment">//向该cell添加这个点在总点云的索引i</span></span><br><span class="line">                n-&gt;addIdx (i);</span><br><span class="line">                used_points++;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        PCL_DEBUG (<span class="string">"[pcl::NDTSingleGrid] NDT single grid %dx%d using %d/%d points\n"</span>, cells_[<span class="number">0</span>], cells_[<span class="number">1</span>], used_points, cloud-&gt;<span class="built_in">size</span> ());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// then bake the distributions such that they approximate the</span></span><br><span class="line">        <span class="comment">// points (and throw away memory of the points)</span></span><br><span class="line">        <span class="comment">// 将点云中每个点都分配到各个cell之后，对各个cell进行参数计算</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; cells_[<span class="number">0</span>]; x++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; cells_[<span class="number">1</span>]; y++)</span><br><span class="line">                normal_distributions_.coeffRef (x,y).estimateParams (*cloud);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Return the 'score' (denormalised likelihood) and derivatives of score of the point p given this distribution.</span></span><br><span class="line"><span class="comment">          * \param[in] transformed_pt   Location to evaluate at.</span></span><br><span class="line"><span class="comment">          * \param[in] cos_theta        sin(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          * \param[in] sin_theta        cos(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;</span><br><span class="line">    test (<span class="keyword">const</span> PointT&amp; transformed_pt, <span class="keyword">const</span> <span class="keyword">double</span>&amp; cos_theta, <span class="keyword">const</span> <span class="keyword">double</span>&amp; sin_theta) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 输入某个变换之后的点，以及cos ,sin</span></span><br><span class="line">        <span class="comment">// 得到变换之后的点所对应的cell对象</span></span><br><span class="line">        <span class="keyword">const</span> NormalDist* n = normalDistForPoint (transformed_pt);</span><br><span class="line">        <span class="comment">// index is in grid, return score from the normal distribution from</span></span><br><span class="line">        <span class="comment">// the correct part of the grid:</span></span><br><span class="line">        <span class="comment">// 如果该点在范围内，即对应的cell对象存在</span></span><br><span class="line">        <span class="keyword">if</span> (n)</span><br><span class="line">            <span class="keyword">return</span> n-&gt;test (transformed_pt, cos_theta, sin_theta);  <span class="comment">//根据参数计算并返回该cell的增量方程</span></span><br><span class="line">        <span class="keyword">return</span> ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;::Zero ();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="comment">/** \brief Return the normal distribution covering the location of point p</span></span><br><span class="line"><span class="comment">          * \param[in] p a point</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    <span class="comment">// 这个函数输入点云中的一个点P，根据窗口范围、步长等参数，计算该点P落在哪一个cell</span></span><br><span class="line">    <span class="comment">// 然后返回那个cell的对象</span></span><br><span class="line">    NormalDist*</span><br><span class="line">    normalDistForPoint (PointT <span class="keyword">const</span>&amp; p) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// this would be neater in 3d...</span></span><br><span class="line">        <span class="comment">// 计算该3D点应该落在哪个cell？</span></span><br><span class="line">        Eigen::Vector2f idxf;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; i++)</span><br><span class="line">            idxf[i] = (p.getVector3fMap ()[i] - min_[i]) / step_[i];    <span class="comment">//idxf[]：储存对应cell的行号,列号</span></span><br><span class="line">        <span class="comment">// 检查该点是否落在总的划分范围内</span></span><br><span class="line">        Eigen::Vector2i idxi = idxf.cast&lt;<span class="keyword">int</span>&gt; ();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">2</span>; i++)</span><br><span class="line">            <span class="keyword">if</span> (idxi[i] &gt;= cells_[i] || idxi[i] &lt; <span class="number">0</span>)</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// const cast to avoid duplicating this function in const and</span></span><br><span class="line">        <span class="comment">// non-const variants...</span></span><br><span class="line">        <span class="comment">// 返回类型为NormalDist的东西，就是某个cell，</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">const_cast</span>&lt;NormalDist*&gt; (&amp;normal_distributions_.coeffRef (idxi[<span class="number">0</span>], idxi[<span class="number">1</span>]));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Eigen::Vector2f min_;</span><br><span class="line">    Eigen::Vector2f max_;</span><br><span class="line">    Eigen::Vector2f step_;</span><br><span class="line">    Eigen::Vector2i cells_; <span class="comment">// 将原始点云分割的网格数, []</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//这个Matrix[i][j]表示将点云划分之后的 第i行第j列的cell</span></span><br><span class="line">    <span class="comment">//使用Eigen::Matrix 来储存 cell对象？</span></span><br><span class="line">    Eigen::Matrix&lt;NormalDist, Eigen::Dynamic, Eigen::Dynamic&gt; normal_distributions_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** \brief Build a Normal Distributions Transform of a 2D point cloud. This</span></span><br><span class="line"><span class="comment">      * consists of the sum of four overlapping models of the original points</span></span><br><span class="line"><span class="comment">      * with normal distributions.</span></span><br><span class="line"><span class="comment">      * The value and derivatives of the model at any point can be evaluated</span></span><br><span class="line"><span class="comment">      * with the test (...) function.</span></span><br><span class="line"><span class="comment">      */</span></span><br><span class="line"><span class="comment">// 建立一个二维点云的正态分布变换(这是4个NDT模型的叠加)</span></span><br><span class="line"><span class="comment">// 这个是由四个重叠的模型组成的，每个模型有各自的原始点与正态分布</span></span><br><span class="line"><span class="comment">// 一些值以及微分项由test函数计算</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> PointT&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NDT2D</span>:</span> <span class="keyword">public</span> boost::noncopyable</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> PointCloud = pcl::PointCloud&lt;PointT&gt;;</span><br><span class="line">    <span class="keyword">using</span> PointCloudConstPtr = <span class="keyword">typename</span> PointCloud::ConstPtr;</span><br><span class="line">    <span class="comment">// 点云的&#123;所有cell的集合&#125;(储存着每个cell的NDT模型)</span></span><br><span class="line">    <span class="comment">// 一个NDTSingleGrid对应着总点云的中心、窗口大小、步长等参数</span></span><br><span class="line">    <span class="comment">// 下面会使用4个不同的中心，得到同一个总点云的4组&#123;cell集合&#125;</span></span><br><span class="line">    <span class="keyword">using</span> SingleGrid = NDTSingleGrid&lt;PointT&gt;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** \brief</span></span><br><span class="line"><span class="comment">          * \param[in] cloud the input point cloud</span></span><br><span class="line"><span class="comment">          * \param[in] about Centre of the grid for normal distributions model</span></span><br><span class="line"><span class="comment">          * \param[in] extent Extent of grid for normal distributions model</span></span><br><span class="line"><span class="comment">          * \param[in] step Size of region that each normal distribution will model</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    <span class="comment">// 输入原始点云，中心，范围，步长</span></span><br><span class="line">    NDT2D (PointCloudConstPtr cloud,</span><br><span class="line">           <span class="keyword">const</span> Eigen::Vector2f&amp; about,</span><br><span class="line">           <span class="keyword">const</span> Eigen::Vector2f&amp; extent,</span><br><span class="line">           <span class="keyword">const</span> Eigen::Vector2f&amp; <span class="built_in">step</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function">Eigen::Vector2f <span class="title">dx</span> <span class="params">(<span class="built_in">step</span>[<span class="number">0</span>]/<span class="number">2</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">        <span class="function">Eigen::Vector2f <span class="title">dy</span> <span class="params">(<span class="number">0</span>, <span class="built_in">step</span>[<span class="number">1</span>]/<span class="number">2</span>)</span></span>;</span><br><span class="line">        <span class="comment">//以窗口为中心，得到中心点进行偏移之后的cell集合， 一共得到4组cell集合</span></span><br><span class="line">        single_grids_[<span class="number">0</span>].reset(<span class="keyword">new</span> SingleGrid (cloud, about,        extent, <span class="built_in">step</span>));</span><br><span class="line">        single_grids_[<span class="number">1</span>].reset(<span class="keyword">new</span> SingleGrid (cloud, about +dx,    extent, <span class="built_in">step</span>));</span><br><span class="line">        single_grids_[<span class="number">2</span>].reset(<span class="keyword">new</span> SingleGrid (cloud, about +dy,    extent, <span class="built_in">step</span>));</span><br><span class="line">        single_grids_[<span class="number">3</span>].reset(<span class="keyword">new</span> SingleGrid (cloud, about +dx+dy, extent, <span class="built_in">step</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** \brief Return the 'score' (denormalised likelihood) and derivatives of score of the point p given this distribution.</span></span><br><span class="line"><span class="comment">          * \param[in] transformed_pt   Location to evaluate at.</span></span><br><span class="line"><span class="comment">          * \param[in] cos_theta        sin(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          * \param[in] sin_theta        cos(theta) of the current rotation angle of rigid transformation: to avoid repeated evaluation</span></span><br><span class="line"><span class="comment">          */</span></span><br><span class="line">    ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;</span><br><span class="line">    test (<span class="keyword">const</span> PointT&amp; transformed_pt, <span class="keyword">const</span> <span class="keyword">double</span>&amp; cos_theta, <span class="keyword">const</span> <span class="keyword">double</span>&amp; sin_theta) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 输入某个来自当前帧的点P利用变换矩阵转换之后的投影点Pt，以及转换参数 cos , sin</span></span><br><span class="line">        <span class="comment">// 计算4组cell集合各自的增量方程，然后求和，得到一个新的增量方程，也就是最终的增量方程</span></span><br><span class="line">        ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt; r = ValueAndDerivatives&lt;<span class="number">3</span>,<span class="keyword">double</span>&gt;::Zero ();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;single_grid : single_grids_)</span><br><span class="line">            r += single_grid-&gt;test (transformed_pt, cos_theta, sin_theta);</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;SingleGrid&gt; single_grids_[<span class="number">4</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125; <span class="comment">// namespace ndt2d</span></span><br><span class="line">&#125; <span class="comment">// namespace pcl</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> Eigen</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">/* This NumTraits specialisation is necessary because NormalDist is used as</span></span><br><span class="line"><span class="comment">   * the element type of an Eigen Matrix.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> PointT&gt; <span class="class"><span class="keyword">struct</span> <span class="title">NumTraits</span>&lt;pcl::ndt2d::NormalDist&lt;PointT&gt; &gt;</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">using</span> Real = <span class="keyword">double</span>;</span><br><span class="line">    <span class="keyword">using</span> Literal = <span class="keyword">double</span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Real <span class="title">dummy_precision</span> <span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="number">1.0</span>; &#125;</span><br><span class="line">    <span class="keyword">enum</span> &#123;</span><br><span class="line">        IsComplex = <span class="number">0</span>,</span><br><span class="line">        IsInteger = <span class="number">0</span>,</span><br><span class="line">        IsSigned = <span class="number">0</span>,</span><br><span class="line">        RequireInitialization = <span class="number">1</span>,</span><br><span class="line">        ReadCost = <span class="number">1</span>,</span><br><span class="line">        AddCost = <span class="number">1</span>,</span><br><span class="line">        MulCost = <span class="number">1</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//////////////////////////////////////////////////////////////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> PointSource, <span class="keyword">typename</span> PointTarget&gt; <span class="keyword">void</span></span><br><span class="line">pcl::NormalDistributionsTransform2D&lt;PointSource, PointTarget&gt;::computeTransformation (PointCloudSource &amp;output, <span class="keyword">const</span> Eigen::Matrix4f &amp;guess)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 这是要输出的点云</span></span><br><span class="line">    PointCloudSource intm_cloud = output;</span><br><span class="line"></span><br><span class="line">    nr_iterations_ = <span class="number">0</span>;</span><br><span class="line">    converged_ = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (guess != Eigen::Matrix4f::Identity ())</span><br><span class="line">    &#123;</span><br><span class="line">        transformation_ = guess;</span><br><span class="line">        transformPointCloud (output, intm_cloud, transformation_);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// build Normal Distribution Transform of target cloud:</span></span><br><span class="line">    <span class="comment">// 为目标点云创建NDT变换</span></span><br><span class="line">    <span class="comment">// target_ndt里面包含了目标点云的所有cell的NDT分布</span></span><br><span class="line">    <span class="comment">// 后面会调用target_ndt.test()函数，通过计算点落在哪一个cell中，根据该cell的NDT分布计算出关于该点P的增量方程</span></span><br><span class="line">    <span class="function">ndt2d::NDT2D&lt;PointTarget&gt; <span class="title">target_ndt</span> <span class="params">(target_, grid_centre_, grid_extent_, grid_step_)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// can't seem to use .block&lt;&gt; () member function on transformation_</span></span><br><span class="line">    <span class="comment">// directly... gcc bug?</span></span><br><span class="line">    <span class="comment">// 设置初始值</span></span><br><span class="line">    Eigen::Matrix4f&amp; transformation = transformation_;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// work with x translation, y translation and z rotation: extending to 3D</span></span><br><span class="line">    <span class="comment">// would be some tricky maths, but not impossible.</span></span><br><span class="line">    <span class="function"><span class="keyword">const</span> Eigen::Matrix3f <span class="title">initial_rot</span> <span class="params">(transformation.block&lt;<span class="number">3</span>,<span class="number">3</span>&gt; (<span class="number">0</span>,<span class="number">0</span>))</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">const</span> Eigen::Vector3f <span class="title">rot_x</span> <span class="params">(initial_rot*Eigen::Vector3f::UnitX ())</span></span>;</span><br><span class="line">    <span class="comment">// y/x</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">double</span> z_rotation = <span class="built_in">std</span>::<span class="built_in">atan2</span> (rot_x[<span class="number">1</span>], rot_x[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从4x4的变换矩阵T，提取2D所需的3个维度，构成3x1向量</span></span><br><span class="line">    <span class="function">Eigen::Vector3d <span class="title">xytheta_transformation</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">                transformation (<span class="number">0</span>,<span class="number">3</span>),</span></span></span><br><span class="line"><span class="function"><span class="params">                transformation (<span class="number">1</span>,<span class="number">3</span>),</span></span></span><br><span class="line"><span class="function"><span class="params">                z_rotation</span></span></span><br><span class="line"><span class="function"><span class="params">                )</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 开始迭代</span></span><br><span class="line">    <span class="keyword">while</span> (!converged_)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 利用角度yaw求 cos , sin</span></span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">double</span> cos_theta = <span class="built_in">std</span>::<span class="built_in">cos</span> (xytheta_transformation[<span class="number">2</span>]);</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">double</span> sin_theta = <span class="built_in">std</span>::<span class="built_in">sin</span> (xytheta_transformation[<span class="number">2</span>]);</span><br><span class="line">        <span class="comment">// 将当前变换保存</span></span><br><span class="line">        previous_transformation_ = transformation;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// ValueAndDerivatives: 储存一阶导数和二阶导数的类</span></span><br><span class="line">        ndt2d::ValueAndDerivatives&lt;<span class="number">3</span>, <span class="keyword">double</span>&gt; score = ndt2d::ValueAndDerivatives&lt;<span class="number">3</span>, <span class="keyword">double</span>&gt;::Zero ();</span><br><span class="line">        <span class="comment">// 将源点云中的每个点intm_cloud[i]，代入到目标点云的NDT 正太分布函数，构造增量方程,增量方程参数储存在score</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; intm_cloud.<span class="built_in">size</span> (); i++)</span><br><span class="line">            score += target_ndt.test (intm_cloud[i], cos_theta, sin_theta);</span><br><span class="line"></span><br><span class="line">        PCL_DEBUG (<span class="string">"[pcl::NormalDistributionsTransform2D::computeTransformation] NDT score %f (x=%f,y=%f,r=%f)\n"</span>,</span><br><span class="line">                   <span class="keyword">float</span> (score.value), xytheta_transformation[<span class="number">0</span>], xytheta_transformation[<span class="number">1</span>], xytheta_transformation[<span class="number">2</span>]</span><br><span class="line">                );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检查增量方程右侧是否为0</span></span><br><span class="line">        <span class="keyword">if</span> (score.value != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 通过特征值分解，进行检查</span></span><br><span class="line">            <span class="comment">// 检查系数矩阵是否正定，否则修正系数矩阵</span></span><br><span class="line">            <span class="comment">// test for positive definiteness, and adjust to ensure it if necessary:</span></span><br><span class="line">            Eigen::EigenSolver&lt;Eigen::Matrix3d&gt; solver;</span><br><span class="line">            solver.compute (score.hessian, <span class="literal">false</span>);</span><br><span class="line">            <span class="keyword">double</span> min_eigenvalue = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;<span class="number">3</span>; i++)</span><br><span class="line">                <span class="keyword">if</span> (solver.eigenvalues ()[i].real () &lt; min_eigenvalue)</span><br><span class="line">                    min_eigenvalue = solver.eigenvalues ()[i].real ();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 如果最小的特征值&lt;0，则进行修正 通过加上 lambda * I 的对角矩阵</span></span><br><span class="line">            <span class="comment">// ensure "safe" positive definiteness: this is a detail missing</span></span><br><span class="line">            <span class="comment">// from the original paper</span></span><br><span class="line">            <span class="keyword">if</span> (min_eigenvalue &lt; <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">double</span> lambda = <span class="number">1.1</span> * min_eigenvalue - <span class="number">1</span>;</span><br><span class="line">                score.hessian += Eigen::Vector3d (-lambda, -lambda, -lambda).asDiagonal ();</span><br><span class="line">                solver.compute (score.hessian, <span class="literal">false</span>);</span><br><span class="line">                PCL_DEBUG (<span class="string">"[pcl::NormalDistributionsTransform2D::computeTransformation] adjust hessian: %f: new eigenvalues:%f %f %f\n"</span>,</span><br><span class="line">                           <span class="keyword">float</span> (lambda),</span><br><span class="line">                           solver.eigenvalues ()[<span class="number">0</span>].real (),</span><br><span class="line">                        solver.eigenvalues ()[<span class="number">1</span>].real (),</span><br><span class="line">                        solver.eigenvalues ()[<span class="number">2</span>].real ()</span><br><span class="line">                        );</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 异常检查</span></span><br><span class="line">            assert (solver.eigenvalues ()[<span class="number">0</span>].real () &gt;= <span class="number">0</span> &amp;&amp;</span><br><span class="line">                    solver.eigenvalues ()[<span class="number">1</span>].real () &gt;= <span class="number">0</span> &amp;&amp;</span><br><span class="line">                    solver.eigenvalues ()[<span class="number">2</span>].real () &gt;= <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 直接得到增量 delta_T = -H^T*J</span></span><br><span class="line">            <span class="function">Eigen::Vector3d <span class="title">delta_transformation</span> <span class="params">(-score.hessian.inverse () * score.grad)</span></span>;</span><br><span class="line">            <span class="comment">// 利用增量计算得到新的变换矩阵 T_new = T_old + lambda * delta_T</span></span><br><span class="line">            <span class="comment">// cwiseProduct()函数允许Matrix直接进行点对点乘法</span></span><br><span class="line">            Eigen::Vector3d new_transformation = xytheta_transformation + newton_lambda_.cwiseProduct (delta_transformation);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 输出新的变换</span></span><br><span class="line">            xytheta_transformation = new_transformation;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// update transformation matrix from x, y, theta:</span></span><br><span class="line">            <span class="comment">// 更新变换矩阵</span></span><br><span class="line">            transformation.block&lt;<span class="number">3</span>,<span class="number">3</span>&gt; (<span class="number">0</span>,<span class="number">0</span>).matrix () = Eigen::Matrix3f (Eigen::AngleAxisf (<span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt; (xytheta_transformation[<span class="number">2</span>]), Eigen::Vector3f::UnitZ ()));</span><br><span class="line">            transformation.block&lt;<span class="number">3</span>,<span class="number">1</span>&gt; (<span class="number">0</span>,<span class="number">3</span>).matrix () = Eigen::Vector3f (<span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt; (xytheta_transformation[<span class="number">0</span>]), <span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt; (xytheta_transformation[<span class="number">1</span>]), <span class="number">0.0f</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//std::cout &lt;&lt; "new transformation:\n" &lt;&lt; transformation &lt;&lt; std::endl;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 如果增量方程右侧=0， 无法求解</span></span><br><span class="line">            PCL_ERROR (<span class="string">"[pcl::NormalDistributionsTransform2D::computeTransformation] no overlap: try increasing the size or reducing the step of the grid\n"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 利用这次迭代出来的变换，将当前点云 变换到 目标点云坐标系上，得到intm_cloud</span></span><br><span class="line">        transformPointCloud (output, intm_cloud, transformation);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 迭代次数+1</span></span><br><span class="line">        nr_iterations_++;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新可视化？</span></span><br><span class="line">        <span class="keyword">if</span> (update_visualizer_)</span><br><span class="line">            update_visualizer_ (output, *indices_, *target_, *indices_);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//std::cout &lt;&lt; "eps=" &lt;&lt; std::abs ((transformation - previous_transformation_).sum ()) &lt;&lt; std::endl;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检查与上一次变换的差，是否足够小，如果很小了，表示收敛，优化完成</span></span><br><span class="line">        Eigen::Matrix4f transformation_delta = transformation.inverse() * previous_transformation_;</span><br><span class="line">        <span class="keyword">double</span> cos_angle = <span class="number">0.5</span> * (transformation_delta.coeff (<span class="number">0</span>, <span class="number">0</span>) + transformation_delta.coeff (<span class="number">1</span>, <span class="number">1</span>) + transformation_delta.coeff (<span class="number">2</span>, <span class="number">2</span>) - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">double</span> translation_sqr = transformation_delta.coeff (<span class="number">0</span>, <span class="number">3</span>) * transformation_delta.coeff (<span class="number">0</span>, <span class="number">3</span>) +</span><br><span class="line">                transformation_delta.coeff (<span class="number">1</span>, <span class="number">3</span>) * transformation_delta.coeff (<span class="number">1</span>, <span class="number">3</span>) +</span><br><span class="line">                transformation_delta.coeff (<span class="number">2</span>, <span class="number">3</span>) * transformation_delta.coeff (<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (nr_iterations_ &gt;= max_iterations_ ||</span><br><span class="line">                ((transformation_epsilon_ &gt; <span class="number">0</span> &amp;&amp; translation_sqr &lt;= transformation_epsilon_) &amp;&amp; (transformation_rotation_epsilon_ &gt; <span class="number">0</span> &amp;&amp; cos_angle &gt;= transformation_rotation_epsilon_)) ||</span><br><span class="line">                ((transformation_epsilon_ &lt;= <span class="number">0</span>)                                             &amp;&amp; (transformation_rotation_epsilon_ &gt; <span class="number">0</span> &amp;&amp; cos_angle &gt;= transformation_rotation_epsilon_)) ||</span><br><span class="line">                ((transformation_epsilon_ &gt; <span class="number">0</span> &amp;&amp; translation_sqr &lt;= transformation_epsilon_) &amp;&amp; (transformation_rotation_epsilon_ &lt;= <span class="number">0</span>)))</span><br><span class="line">        &#123;</span><br><span class="line">            converged_ = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 输出</span></span><br><span class="line">    final_transformation_ = transformation;</span><br><span class="line">    output = intm_cloud;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>    <span class="comment">// PCL_NDT_2D_IMPL_H_</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="参考资料">参考资料</h2>
+<blockquote>
+<ul>
+<li><a href="https://www.cnblogs.com/kuangxionghui/p/9686698.html" target="_blank" rel="noopener">ndt算法学习</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/77623762?from_voters_page=true" target="_blank" rel="noopener">自动驾驶系列：激光雷达建图和定位(NDT)</a></li>
+<li><a href="http://www.pclcn.org/study/shownews.php?lang=cn&amp;id=80" target="_blank" rel="noopener">如何使用正态分布变换（Normal Distributions Transform）进行配准</a></li>
+<li><a href="http://ghx0x0.github.io/2014/12/30/NDT-match/" target="_blank" rel="noopener">NDT 算法（与ICP对比）和一些常见配准算法</a></li>
+<li><a href="https://www.cnblogs.com/chenlinchong/p/12023978.html" target="_blank" rel="noopener">NDT方法</a></li>
+<li><a href="https://blog.csdn.net/weixin_33829657/article/details/86127868" target="_blank" rel="noopener">NDT（Normal Distributions Transform）算法原理与公式推导</a></li>
+<li><a href="https://www.researchgate.net/publication/4045903_The_Normal_Distributions_Transform_A_New_Approach_to_Laser_Scan_Matching" target="_blank" rel="noopener">原文：The Normal Distributions Transform: A New Approach to Laser Scan Matching</a></li>
+</ul>
+</blockquote>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    第三讲-ORB_SLAM2-局部优化
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">ROS2-6-创建Package</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/';
+        
+        this.page.identifier = 'Autoware.ai/2D-NDT-匹配算法';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>

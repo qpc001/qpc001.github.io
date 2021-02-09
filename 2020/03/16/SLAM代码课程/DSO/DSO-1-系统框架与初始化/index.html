@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>DSO-1-系统框架与初始化 | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="DSO-1-系统框架与初始化" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="1. DSO-1-系统框架与初始化   2. 直接&amp;稀疏    非直接法: ORB_SLAM2 直接法: DSO  3. 相机几何模型与光度模型&amp;雅克比推导   DSO中的几种畸变模型:  FOV: (\(f_x,f_y,c_x,c_y,\omega\) 一共5个参数) RadTan: 考虑径向和切向两种畸变(视觉SLAM14讲第二版P102) KB: \(f_x,f_y,c_x,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DSO-1-系统框架与初始化">
+<meta property="og:url" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="1. DSO-1-系统框架与初始化   2. 直接&amp;稀疏    非直接法: ORB_SLAM2 直接法: DSO  3. 相机几何模型与光度模型&amp;雅克比推导   DSO中的几种畸变模型:  FOV: (\(f_x,f_y,c_x,c_y,\omega\) 一共5个参数) RadTan: 考虑径向和切向两种畸变(视觉SLAM14讲第二版P102) KB: \(f_x,f_y,c_x,">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-43-48.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-44-27.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-45-40.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-46-00.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-50-24.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-52-18.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-27-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-06-10.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-24-26.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-30-19.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-32-31.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-39-30.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-17-37-22.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-17-54-28.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-10-02.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-12-10.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-12-29.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-14-47-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-28-16.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-33-33.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-37-15.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-37-31.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-38-20.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-16-24-01.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-07.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-18.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-28.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-43.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-34-31.png">
+<meta property="article:published_time" content="2020-03-16T06:42:47.000Z">
+<meta property="article:modified_time" content="2020-03-19T12:57:10.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-43-48.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file active"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-SLAM代码课程/DSO/DSO-1-系统框架与初始化" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/">SLAM代码课程</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/">DSO</a>
+    </div>
+
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">
+            <time datetime="2020-03-16T06:42:47.000Z" itemprop="datePublished">2020-03-16</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/SLAM代码课程/DSO/DSO-1-系统框架与初始化.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/SLAM代码课程/DSO/DSO-1-系统框架与初始化.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/SLAM代码课程/DSO/DSO-1-系统框架与初始化.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            DSO-1-系统框架与初始化
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#dso-1-系统框架与初始化"><span class="toc-number">1.</span> <span class="toc-text">1. DSO-1-系统框架与初始化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#直接稀疏"><span class="toc-number">2.</span> <span class="toc-text">2. 直接&amp;稀疏</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#相机几何模型与光度模型雅克比推导"><span class="toc-number">3.</span> <span class="toc-text">3. 相机几何模型与光度模型&amp;雅克比推导</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#计算去畸变后的新内参"><span class="toc-number">3.1.</span> <span class="toc-text">3.1. 计算去畸变后的新内参</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#光度模型"><span class="toc-number">3.2.</span> <span class="toc-text">3.2. 光度模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#辐射与方向有关b_ix"><span class="toc-number">3.2.1.</span> <span class="toc-text">3.2.1. 辐射(与方向有关)，\(B_i(x)\)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#辐照与方向无关irx"><span class="toc-number">3.2.2.</span> <span class="toc-text">3.2.2. 辐照(与方向无关)，IR(x)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#渐晕vx"><span class="toc-number">3.2.3.</span> <span class="toc-text">3.2.3. 渐晕，V(x)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三者关系"><span class="toc-number">3.2.4.</span> <span class="toc-text">3.2.4. 三者关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快门"><span class="toc-number">3.2.5.</span> <span class="toc-text">3.2.5. 快门</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#响应函数"><span class="toc-number">3.2.6.</span> <span class="toc-text">3.2.6. 响应函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#光度模型-1"><span class="toc-number">3.2.7.</span> <span class="toc-text">3.2.7. 光度模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#光度矫正"><span class="toc-number">3.2.8.</span> <span class="toc-text">3.2.8. 光度矫正</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方法一"><span class="toc-number">3.2.8.1.</span> <span class="toc-text">3.2.8.1. 方法一:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法二"><span class="toc-number">3.2.8.2.</span> <span class="toc-text">3.2.8.2. 方法二:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#光度误差模型"><span class="toc-number">3.3.</span> <span class="toc-text">3.3. 光度误差模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于齐次点虚拟点p_jvirtual的意义"><span class="toc-number">3.4.</span> <span class="toc-text">3.4. 关于(齐次点)虚拟点\(P_j^{virtual}\)的意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#雅克比"><span class="toc-number">3.5.</span> <span class="toc-text">3.5. 雅克比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#损失函数残差"><span class="toc-number">3.5.1.</span> <span class="toc-text">3.5.1. 损失函数(残差)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对光度参数a_jib_ji求导"><span class="toc-number">3.5.2.</span> <span class="toc-text">3.5.2. 对光度参数\(a_{ji},b_{ji}\)求导</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对相对位姿求导即fracpartial-epartial-delta-xi"><span class="toc-number">3.5.3.</span> <span class="toc-text">3.5.3. 对相对位姿求导，即\(\frac{\partial e}{\partial \delta \xi}\)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对逆深度求导"><span class="toc-number">3.5.4.</span> <span class="toc-text">3.5.4. 对逆深度求导</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#初始化"><span class="toc-number">4.</span> <span class="toc-text">4. 初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#初始化流程总结"><span class="toc-number">4.1.</span> <span class="toc-text">4.1. 初始化流程总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#dso框架"><span class="toc-number">5.</span> <span class="toc-text">5. DSO框架</span></a></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="dso-1-系统框架与初始化">1. DSO-1-系统框架与初始化</h1>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-43-48.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-44-27.png"></p>
+<h1 id="直接稀疏">2. 直接&amp;稀疏</h1>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-45-40.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-46-00.png"></p>
+<ul>
+<li>非直接法: ORB_SLAM2</li>
+<li>直接法: DSO</li>
+</ul>
+<h1 id="相机几何模型与光度模型雅克比推导">3. 相机几何模型与光度模型&amp;雅克比推导</h1>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-50-24.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-14-52-18.png"></p>
+<p><strong>DSO中的几种畸变模型</strong>:</p>
+<ul>
+<li>FOV: (<span class="math inline">\(f_x,f_y,c_x,c_y,\omega\)</span> 一共5个参数)</li>
+<li>RadTan: 考虑径向和切向两种畸变(视觉SLAM14讲第二版P102)</li>
+<li>KB: <span class="math inline">\(f_x,f_y,c_x,c_y,k_1,k_2,k_3,k_4\)</span> 一共8个参数</li>
+</ul>
+<h2 id="计算去畸变后的新内参">3.1. 计算去畸变后的新内参</h2>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-27-37.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-06-10.png"></p>
+<p>(1)已知相机内参和畸变模型, 给定一个超大范围的归一化平面[x_min-&gt;x_max],[y_min-&gt;y_max], 遍历这个归一化平面上的点</p>
+<ol type="1">
+<li>遍历归一化平面上的点，将每个点应用畸变模型+相机模型，得到畸变的像素点(也就是相机输出图像上的点)</li>
+<li>不断裁剪这个超大范围的归一化平面，直到这个归一化平面[x_min-&gt;x_max],[y_min-&gt;y_max]的边界范围内<font color="red">所有(任意)</font>点所对应的畸变像素点都在畸变图像(相机输出图像)的范围内</li>
+</ol>
+<p>(2)取归一化平面上的边界，4个点(<span class="math inline">\(X_{min},X_{max},Y_{min},Y_{max}\)</span>组合得到)，即可计算出新的(无畸变的)相机内参</p>
+<p>(虽然新的参数还不知道，但是这里这是先用符号表示)</p>
+<p><span class="math display">\[
+\left \{
+\begin{aligned}
+    u_{min}=f_x&#39; X_{min}+c_x&#39; \\
+    u_{max}=f_x&#39; X_{max}+c_x&#39;
+\end{aligned}
+\Longrightarrow
+\underbrace{u_{max}-u_{min}}_{known}=f_x&#39; \underbrace{(X_{max}-X_{min})}_{known}
+\right .
+\]</span></p>
+<p>因此，可得</p>
+<p><span class="math display">\[
+    f_x&#39;=\frac{u_{max}-u_{min}}{X_{max}-X_{min}}
+\]</span></p>
+<p>令<span class="math inline">\(u_{min}=0\)</span>，代入<span class="math inline">\(u_{min}=f_x&#39; X_{min}+c_x&#39;\)</span>，可得</p>
+<p><span class="math display">\[
+    c_x&#39;= - f_x&#39; X_{min}
+\]</span></p>
+<p>(3)对于y方向的新内参，同理</p>
+<blockquote>
+<p>根据这些新的(无畸变的)相机内参,如何从畸变图像得到无畸变图像?</p>
+<ol type="1">
+<li><p>畸变图像-----&gt;旧相机内参------&gt;归一化平面</p></li>
+<li><p>归一化平面----&gt;新相机内参------&gt;无畸变图像</p></li>
+</ol>
+</blockquote>
+<h2 id="光度模型">3.2. 光度模型</h2>
+<h3 id="辐射与方向有关b_ix">3.2.1. 辐射(与方向有关)，<span class="math inline">\(B_i(x)\)</span></h3>
+<p>辐射率(Radiance)是指一个表面在单位立体角和单位投影面积上所发射、反射、透射或接收的辐射通量</p>
+<h3 id="辐照与方向无关irx">3.2.2. 辐照(与方向无关)，IR(x)</h3>
+<p>在辐射测量学中，辐照度是指一个表面单位面积所接受的辐射通量(功率)，和方向无关。比如，用来描述传感器像元的入射光强（来自于不同方向的环境光的累加）。</p>
+<h3 id="渐晕vx">3.2.3. 渐晕，V(x)</h3>
+<p>光学晕影是由一个或多个透镜的实际尺寸造成的，后方的元件遮蔽了前方的，导致前端透镜离轴的有效入射光减少，结果是光的强度由图像中心向周围逐渐减弱。</p>
+<blockquote>
+<p>也就是说，假如拍摄一个亮度非常均匀的物体，图像中心和边缘的亮度值并不一致。</p>
+</blockquote>
+<h3 id="三者关系">3.2.4. 三者关系</h3>
+<p><span class="math display">\[
+    IR(x)=V(x)B_i(x)
+\]</span></p>
+<h3 id="快门">3.2.5. 快门</h3>
+<p>快门影响的是<strong>曝光时间</strong>。自动曝光模式下，不同场景曝光时间并不一样，会导致同一物体在不同场景下的灰度值产生差异。另外还想提到的是<strong>全局快门（global shutter）</strong>和<strong>卷帘快门（rolling shutter）</strong>。</p>
+<ul>
+<li>全局快门保证所有感光元件的曝光起始时间和间隔是一样的</li>
+<li>卷帘快门并不能保证。</li>
+<li>因此文献中一般推荐使用全局快门。</li>
+</ul>
+<h3 id="响应函数">3.2.6. 响应函数</h3>
+<p>传感器（CCD/CMOS）将每个像元接收到的光子通过一系列处理转化为亮度值。这里面涉及到光电效应、ADC、DSP等过程。输入的曝光量和输出的亮度值之间的关系称为<strong>响应函数（response function）</strong>。</p>
+<p>响应函数一般来说是<strong>非线性的</strong>，甚至包含人为调整的成分，比如伽马校正、白平衡、色调、饱和度等。</p>
+<blockquote>
+<p>为图像进行伽马编码的目的是用来对人类视觉的特性进行补偿，从而根据人类对光线或者黑白的感知，最大化地利用表示黑白的数据位或带宽。人眼对暗部比较敏感，因此一般选择提高暗部的分辨率。这些因素会非线性地修正曝光量，因此作者希望通过光度标定来补偿它们的影响。</p>
+</blockquote>
+<h3 id="光度模型-1">3.2.7. 光度模型</h3>
+<p>结合了曝光时间和响应函数[映射到0-255]，(在光照时间ti内对辐照积分，再传入响应函数)</p>
+<p><span class="math display">\[
+    I_i(x)=G(t_i IR(x))=G(t_i V(x)B_i(x))
+\]</span></p>
+<ul>
+<li>这里的I_i(x)可否理解为就是图像上的强度?</li>
+</ul>
+<h3 id="光度矫正">3.2.8. 光度矫正</h3>
+<h4 id="方法一">3.2.8.1. 方法一:</h4>
+<ul>
+<li>标定响应函数G()</li>
+<li>标定晕影V(x)</li>
+</ul>
+<p>通过标定V和G，可以反求出辐射B，(使用B去做直接法当然要比I准确地多。当然，场景的亮度在不同视角下有差异，这是无法避免的)</p>
+<p><span class="math display">\[
+    I_i&#39;(x)= t_i B_i(x) = \frac{G^{-1}(I_i(x))}{V(x)}
+\]</span></p>
+<ul>
+<li>上面得到的<span class="math inline">\(I_i&#39;(x)\)</span>就是经过矫正之后的光度，仅包含曝光时间和辐射，其中曝光时间在每一帧可能都不一样，因此不是常数。</li>
+</ul>
+<h4 id="方法二">3.2.8.2. 方法二:</h4>
+<p>对于做过光度标定的相机，我们可以用上面的<strong>方法一</strong>处理，对于一般的相机呢？ 通常采用下面的光度仿射变换进行矫正</p>
+<p><span class="math display">\[
+    I_i&#39;(x)=e^{-\alpha_i}(I_i(x)-b_i)
+\]</span></p>
+<p>总结如下：</p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-24-26.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-30-19.png"></p>
+<blockquote>
+<p>光度模型对于直接法来说是十分重要的，因为直接法是基于光度不变性的假设</p>
+</blockquote>
+<h2 id="光度误差模型">3.3. 光度误差模型</h2>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-32-31.png"></p>
+<ul>
+<li>上面能量函数中: <span class="math inline">\(I[p_j] ...\)</span>指的是经过矫正之后的光度</li>
+<li>图像梯度加权：对于边缘处非连续的点，一旦发生移动，那么其光度变化会很大，因此如果引入了外点，会造成明显的影响，因此对于梯度较大的点，那么其权重一般较小。</li>
+</ul>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-15-39-30.png"></p>
+<p>假设世界坐标系中有某点P，其对于两帧图像上的点为<span class="math inline">\(x_i,x_j\)</span>，有</p>
+<p>第i帧归一化平面上的点<span class="math inline">\(P_i&#39;\)</span></p>
+<p><span class="math display">\[
+    P_i&#39;=\pi_c^{-1}(p_i)=K^{-1}
+    \begin{pmatrix}
+        x_i \\ 1
+    \end{pmatrix}
+\]</span></p>
+<p>其中，第i帧相机坐标系上的点<span class="math inline">\(P_i=\frac{P_i&#39;}{d_{pi}}\)</span> , <span class="math inline">\(d_{pi}=\frac{1}{Z_i}\)</span>为逆深度</p>
+<p>第j帧相机坐标系上的点<span class="math inline">\(P_j\)</span></p>
+<p><span class="math display">\[
+    P_j=R P_i + t= R\frac{P_i&#39;}{d_{pi}}+t
+\]</span></p>
+<p>对上式两边同时乘以第i帧点<span class="math inline">\(P_i\)</span>的逆深度，得到一个(齐次点)虚拟点<span class="math inline">\(P_j^{virtual}\)</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+    P_j d_{pi} &amp;= R P_i&#39; + t d_{pi}  \\
+    P_j^{virtual} &amp;= R P_i&#39; + t d_{pi}
+\end{aligned}
+\]</span></p>
+<p>那么，第i帧相机坐标系点<span class="math inline">\(P_i\)</span>转换到第j帧相机坐标系的点<span class="math inline">\(P_j\)</span>可以如下表示:</p>
+<p><span class="math display">\[
+    P_j=\frac{P_j^{virtual}}{d_{pi}}
+\]</span></p>
+<p><span class="math display">\[
+    \Longrightarrow P_j[2]=\frac{P_j^{virtual}[2]}{d_{pi}}
+\]</span></p>
+<p>最终，第j帧相机坐标系点<span class="math inline">\(P_j\)</span>投影到图像上的点<span class="math inline">\(x_j\)</span>可表示为:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\begin{pmatrix}
+    x_j \\ 1
+\end{pmatrix} 
+    =\pi_c(P_j&#39;) &amp;= \pi_c(\frac{P_j}{P_j[2]}) \\ 
+    &amp;= \pi_c(\frac{P_j^{virtual}}{d_{pi} \cdot P_j[2]}) \\
+    &amp;= \pi_c(\frac{P_j d_{pi}}{P_j^{virtual}[2]})
+\end{aligned} 
+\]</span></p>
+<p>上式子的<span class="math inline">\(\frac{d_{pi}}{P_j^{virtual}[2]}\)</span>对应DSO代码中<code>ResidualProjections.h</code>文件的<code>new_idepth = idepth*drescale;</code>这一句。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">EIGEN_STRONG_INLINE <span class="keyword">bool</span> <span class="title">projectPoint</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">const</span> <span class="keyword">float</span> &amp;u_pt,<span class="keyword">const</span> <span class="keyword">float</span> &amp;v_pt,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">const</span> <span class="keyword">float</span> &amp;idepth,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">const</span> <span class="keyword">int</span> &amp;dx, <span class="keyword">const</span> <span class="keyword">int</span> &amp;dy,</span></span></span><br><span class="line"><span class="function"><span class="params">		CalibHessian* <span class="keyword">const</span> &amp;HCalib,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">const</span> Mat33f &amp;R, <span class="keyword">const</span> Vec3f &amp;t,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">float</span> &amp;drescale, <span class="keyword">float</span> &amp;u, <span class="keyword">float</span> &amp;v,</span></span></span><br><span class="line"><span class="function"><span class="params">		<span class="keyword">float</span> &amp;Ku, <span class="keyword">float</span> &amp;Kv, Vec3f &amp;KliP, <span class="keyword">float</span> &amp;new_idepth)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// host上归一化平面点</span></span><br><span class="line">	KliP = Vec3f(</span><br><span class="line">			(u_pt+dx-HCalib-&gt;cxl())*HCalib-&gt;fxli(),</span><br><span class="line">			(v_pt+dy-HCalib-&gt;cyl())*HCalib-&gt;fyli(),</span><br><span class="line">			<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">	Vec3f ptp = R * KliP + t*idepth;    <span class="comment">//这就是虚拟点P_j^&#123;virtual&#125;</span></span><br><span class="line">	drescale = <span class="number">1.0f</span>/ptp[<span class="number">2</span>]; 		    </span><br><span class="line">	new_idepth = idepth*drescale;	<span class="comment">// 对应这句</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>(!(drescale&gt;<span class="number">0</span>)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将虚拟点P_j^&#123;virtual&#125;转到归一化平面上</span></span><br><span class="line">	u = ptp[<span class="number">0</span>] * drescale;</span><br><span class="line">	v = ptp[<span class="number">1</span>] * drescale;</span><br><span class="line">	<span class="comment">// 像素平面</span></span><br><span class="line">	Ku = u*HCalib-&gt;fxl() + HCalib-&gt;cxl();</span><br><span class="line">	Kv = v*HCalib-&gt;fyl() + HCalib-&gt;cyl();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> Ku&gt;<span class="number">1.1f</span> &amp;&amp; Kv&gt;<span class="number">1.1f</span> &amp;&amp; Ku&lt;wM3G &amp;&amp; Kv&lt;hM3G;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="关于齐次点虚拟点p_jvirtual的意义">3.4. 关于(齐次点)虚拟点<span class="math inline">\(P_j^{virtual}\)</span>的意义</h2>
+<p>到这里，是时候讨论<span class="math inline">\(P_j^{virtual}\)</span>的内在意义了:</p>
+<ol type="1">
+<li>已知将点Pi从第i帧相机坐标系转换到第j帧相机坐标系的坐标q如下:</li>
+</ol>
+<p><span class="math display">\[
+    q=P_j=R P_i + t= R\frac{P_i&#39;}{d_{pi}}+t
+\]</span></p>
+<ol start="2" type="1">
+<li>对q转换到归一化平面上，即得到<span class="math inline">\(P_j&#39;\)</span></li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    P_j&#39;=
+    \begin{bmatrix}
+        \frac{P_j[0]}{P_j[2]} \\
+        \frac{P_j[1]}{P_j[2]} \\
+        1
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \frac{q[0]}{q[2]} \\
+        \frac{q[1]}{q[2]} \\
+        1
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<ol start="3" type="1">
+<li>同时，有虚拟点<span class="math inline">\(P_j^{virtual}\)</span> , (<span class="math inline">\(P_i&#39;\)</span>为点<span class="math inline">\(P_i\)</span>的归一化平面点)</li>
+</ol>
+<p><span class="math display">\[
+    P_j^{virtual}= d_{pi} P_j = R P_i&#39; + t d_{pi}
+\]</span></p>
+<p>对虚拟点<span class="math inline">\(P_j^{virtual}\)</span>也转换到归一化平面上</p>
+<p><span class="math display">\[
+\begin{aligned}
+    P_j^{virtual-normal}=
+    \begin{bmatrix}
+        \frac{d_{pi} P_j[0]}{d_{pi} P_j[2]} \\
+        \frac{d_{pi} P_j[1]}{d_{pi} P_j[2]} \\
+        1
+    \end{bmatrix}=
+    \begin{bmatrix}
+        \frac{P_j[0]}{P_j[2]} \\
+        \frac{P_j[1]}{P_j[2]} \\
+        1
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>(4)可以看到，归一化之后的虚拟点<span class="math inline">\(P_j^{virtual-normal}\)</span>与归一化之后的真实点<span class="math inline">\(P_j&#39;\)</span>是<strong>等价的</strong>。</p>
+<blockquote>
+<p>DSO作者采用(齐次点)<span class="math inline">\(P_j^{virtual}\)</span>的目的是希望可以简化下面的雅克比求导过程。</p>
+</blockquote>
+<h2 id="雅克比">3.5. 雅克比</h2>
+<h3 id="损失函数残差">3.5.1. 损失函数(残差)</h3>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-17-37-22.png"></p>
+<p>上面的残差怎么来的，其实原式如下：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    E_{pj}=\sum_{p_i \in \mathcal{N}_p} w_p || \frac{1}{t_j \exp^{\alpha_j}}(I_j[p_j]-b_j)-\frac{1}{t_i \exp^{\alpha_i}}(I_j[p_i]-b_i)||_r
+\end{aligned}
+\]</span></p>
+<p>其中，<span class="math inline">\(t_k\)</span>是光度矫正，<span class="math inline">\(\exp^{\alpha}\)</span>是光度仿射变换</p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-17-54-28.png"></p>
+<h3 id="对光度参数a_jib_ji求导">3.5.2. 对光度参数<span class="math inline">\(a_{ji},b_{ji}\)</span>求导</h3>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-10-02.png"></p>
+<h3 id="对相对位姿求导即fracpartial-epartial-delta-xi">3.5.3. 对相对位姿求导，即<span class="math inline">\(\frac{\partial e}{\partial \delta \xi}\)</span></h3>
+<p>这个图的雅克比计算是基于DSO作者所使用的(齐次点)<span class="math inline">\(P_j^{virtual}\)</span>进行的，可以简化的雅克比求导过程。</p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-12-10.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-16-16-12-29.png"></p>
+<hr>
+<p>下面给出先使用正常思路进行推导雅克比，在最后证明<strong>两种方法的推导结果是一致的</strong>:</p>
+<p>对于求相对位姿的雅克比，可以对残差作一些简化：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    r_k &amp;= \frac{1}{t_j \exp^{\alpha_j}}(I_j[p_j]-b_j)-\frac{1}{t_i \exp^{\alpha_i}}(I_i[p_i]-b_i) \\
+    &amp; \Longrightarrow r_k = I_j[p_j]-I_i[p_i] \\
+    &amp; \Longrightarrow r_k = I_1[u]-I_2[p_i]
+\end{aligned}
+\]</span></p>
+<p>其中, q为第i帧相机坐标系点<span class="math inline">\(P_i\)</span>转换到第j帧相机坐标系的点，u为对应的图像平面点</p>
+<p><span class="math display">\[
+\begin{aligned}
+    q=P_j=TP_i \\
+    u=x_j=\frac{1}{q[2]} K q
+\end{aligned}
+\]</span></p>
+<p>现在，回到一个问题： 问什么需要求雅克比？</p>
+<p>目标：最小化损失函数<span class="math inline">\(r_k\)</span>，需要优化的参数有:</p>
+<ul>
+<li>光度参数<span class="math inline">\(a_{ji},b_{ji}\)</span></li>
+<li>从第i帧到第j帧的变换(<span class="math inline">\(T_{j\leftarrow i}\)</span>)</li>
+<li>第i帧的3D点的位置(或者说第i帧3D点的逆深度<span class="math inline">\(d_{pi}\)</span>)</li>
+</ul>
+<p>推导开始:</p>
+<p>(1)考虑高斯牛顿法,对损失函数原函数进行泰勒一阶展开</p>
+<p><span class="math display">\[
+    f(x+\Delta x)=f(x)+J^T(x)\Delta x
+\]</span></p>
+<p>即, 把<span class="math inline">\(\Delta x\)</span>看做是姿态的扰动量<span class="math inline">\(\delta \xi\)</span>, 得到:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    e(\xi \oplus \delta \xi) &amp;= I_1(\frac{1}{Z_j}K \exp(\delta \xi ^\wedge)\exp(\xi^\wedge)P_i)-I_2(\frac{1}{Z_i}KP_i) \\
+    &amp;= I_1(\frac{1}{Z_j}K (1+\delta \xi ^\wedge)\exp(\xi^\wedge)P_i)-I_2(\frac{1}{Z_i}KP_i) \\
+    &amp;= I_1(\frac{1}{Z_j}K \exp(\xi^\wedge)P_i+
+    \underbrace{\frac{1}{Z_j}K(\delta \xi ^\wedge)\exp(\xi^\wedge)P_i}_{u})-I_2(\frac{1}{Z_i}KP_i)
+\end{aligned}
+\]</span></p>
+<p>对上式在<span class="math inline">\(\delta \xi \approx 0\)</span>处进行泰勒一阶展开，可以得到</p>
+<p><span class="math display">\[
+\begin{aligned}
+    e(\xi \oplus \delta \xi)
+    &amp;= I_1(\frac{1}{Z_j}K \exp(\xi^\wedge)P_i+
+    \underbrace{\frac{1}{Z_j}K(\delta \xi ^\wedge)\exp(\xi^\wedge)P_i}_{u})-I_2(\frac{1}{Z_i}KP_i) \\
+    &amp;\approx I_1(\frac{1}{Z_j}K \exp(\xi^\wedge)P_i)+\frac{\partial I_1(\frac{1}{Z_j}K \exp(\xi^\wedge)P_i+
+    \frac{1}{Z_j}K(\delta \xi ^\wedge)\exp(\xi^\wedge)P_i)}{\partial \delta \xi} \delta \xi -I_2(\frac{1}{Z_i}KP_i) \\
+    &amp;= I_1[u]+J^T\delta \xi-I_2[p_i]
+\end{aligned}
+\]</span></p>
+<p>其中，J为雅克比，实际上就是<span class="math inline">\(I_1(u)\)</span>对位姿量的偏导</p>
+<p>(2)<span class="math inline">\(I_1(u)\)</span>对位姿量的偏导</p>
+<p><span class="math display">\[
+\begin{aligned}
+    J^T=\frac{\partial e}{\partial T}=\frac{\partial I_1(u)}{\partial \delta \xi}
+    &amp;=\frac{\partial I_1}{\partial u} \frac{\partial u}{\partial q} \frac{\partial q}{\partial \delta \xi}
+\end{aligned}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\frac{\partial I_1}{\partial u}\)</span>为在点u处的图像像素梯度</li>
+</ul>
+<p><span class="math display">\[
+    \frac{\partial I_1}{\partial u}=\frac{\partial I_1}{\partial x_j}=
+    \begin{pmatrix}
+        \frac{\partial I_j}{\partial u_j } &amp; 
+        \frac{\partial I_j}{\partial v_j}
+    \end{pmatrix}
+    =(d_x,d_y)
+\]</span></p>
+<ul>
+<li><p><span class="math inline">\(\frac{\partial u}{\partial q}\)</span>为相机投影方程关于相机坐标系下的三维点<span class="math inline">\(q\)</span>的导数</p>
+<p>(点<span class="math inline">\(q=[X,Y,Z]^T=(q[0],q[1],q[2])^T\)</span>为第i帧相机坐标系点<span class="math inline">\(P_i\)</span>转换到第j帧相机坐标系的点)</p></li>
+</ul>
+<p><span class="math display">\[
+    \frac{\partial u}{\partial q}=
+    \begin{bmatrix}
+        \frac{\partial u}{\partial X} &amp; 
+        \frac{\partial u}{\partial Y} &amp;
+        \frac{\partial u}{\partial Z} \\
+        \frac{\partial v}{\partial X} &amp;
+        \frac{\partial v}{\partial Y} &amp;
+        \frac{\partial v}{\partial Z}
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \frac{f_x}{Z} &amp; 0 &amp; -\frac{f_x X}{Z^2} \\
+        0 &amp; \frac{f_y}{Z} &amp; -\frac{f_y Y}{Z^2}
+    \end{bmatrix}
+\]</span></p>
+<ul>
+<li><span class="math inline">\(\frac{\partial q}{\partial \delta \xi}\)</span>为变换之后的点对位姿变换的导数，即SE3上的李代数求导:</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial q}{\partial \delta \xi}
+    &amp;=
+    \begin{bmatrix}
+        I &amp; -q^\wedge
+    \end{bmatrix}_{3\times6} \\
+    &amp;=
+    \begin{bmatrix}
+        \begin{bmatrix}
+            1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp;1 
+        \end{bmatrix}
+        \begin{bmatrix}
+            0 &amp; q[2] &amp; -q[1] \\
+            -q[2] &amp; 0 &amp; q[0] \\
+            q[1] &amp; -q[0] &amp; 0
+        \end{bmatrix}
+    \end{bmatrix} \\
+    &amp;=
+    \begin{bmatrix}
+        \begin{bmatrix}
+            1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp;1 
+        \end{bmatrix}
+        \begin{bmatrix}
+            0 &amp; Z &amp; -Y \\
+            -Z &amp; 0 &amp; X \\
+            Y &amp; -X &amp; 0
+        \end{bmatrix}
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>一般情况下，可以把<span class="math inline">\(\frac{\partial u}{\partial q}\frac{\partial q}{\partial \delta \xi}\)</span>合起来，得到</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial u}{\partial \delta \xi} =
+    \begin{bmatrix}
+        \frac{f_x}{Z} &amp; 0 &amp; -\frac{f_x X}{Z^2} &amp; -\frac{f_x X Y}{Z^2} &amp; f_x+\frac{f_x X^2}{Z^2} &amp; -\frac{f_x Y}{Z} \\
+        0 &amp; \frac{f_y}{Z} &amp; -\frac{f_y Y}{Z^2} &amp;
+        -f_y - \frac{f_y Y^2}{Z^2} &amp; \frac{f_y X Y}{Z^2} &amp; \frac{f_y X}{Z}
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>如果使用虚拟点进行计算(DSO)，那么，第i帧相机坐标系点<span class="math inline">\(P_i\)</span>转换到第j帧相机坐标系的点<span class="math inline">\(P_j\)</span>可以如下表示:</p>
+<p><span class="math display">\[
+    q=P_j=\frac{P_j^{virtual}}{d_{pi}}
+\]</span></p>
+<p><span class="math display">\[
+\Longrightarrow
+\left \{
+    \begin{aligned}
+        X=P_j[0]=\frac{P_j^{virtual}[0]}{d_{pi}} \\
+        Y=P_j[1]=\frac{P_j^{virtual}[1]}{d_{pi}} \\
+        Z=P_j[2]=\frac{P_j^{virtual}[2]}{d_{pi}}
+    \end{aligned}
+\right.
+\]</span></p>
+<p>使用上式对<span class="math inline">\(\frac{\partial u}{\partial q}\frac{\partial q}{\partial \delta \xi}\)</span>进行替换，得到：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial u}{\partial \delta \xi} =
+    \begin{bmatrix}
+        \frac{f_x d_{pi}}{P_j^{virtual}[2]}
+        &amp; 0 
+        &amp; -\frac{f_x P_j^{virtual}[0] d_{pi} }{P_j^{virtual}[2]^2} 
+        &amp; -\frac{f_x P_j^{virtual}[0] P_j^{virtual}[1]}{P_j^{virtual}[2]^2} 
+        &amp; f_x+\frac{f_x P_j^{virtual}[0]^2}{P_j^{virtual}[2]^2} 
+        &amp; -\frac{f_x P_j^{virtual}[1]}{P_j^{virtual}[2]} 
+        \\
+        0 
+        &amp; \frac{f_y d_{pi}}{P_j^{virtual}[2]} 
+        &amp; -\frac{f_y P_j^{virtual}[1] d_{pi}}{P_j^{virtual}[2]^2} 
+        &amp;-f_y - \frac{f_y P_j^{virtual}[1]^2}{P_j^{virtual}[2]^2} 
+        &amp; \frac{f_y P_j^{virtual}[0] P_j^{virtual}[1]}{P_j^{virtual}[2]^2} 
+        &amp; \frac{f_y P_j^{virtual}[0]}{P_j^{virtual}[2]}
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>于是，最终得到<strong>误差e对位姿(李代数)的雅克比</strong></p>
+<p><span class="math display">\[
+    J^T=\frac{\partial I_1}{\partial u} \frac{\partial u}{\partial \delta \xi}
+\]</span></p>
+<h3 id="对逆深度求导">3.5.4. 对逆深度求导</h3>
+<p>与前文保持一致：</p>
+<p><span class="math display">\[
+    P_j=R P_i + t= R\frac{P_i&#39;}{d_{pi}}+t
+\]</span></p>
+<p><span class="math display">\[
+    P_j^{virtual}= d_{pi} P_j = R P_i&#39; + t d_{pi}
+\]</span></p>
+<p><span class="math display">\[
+    \Longrightarrow P_j=\frac{P_j^{virtual}}{d_{pi}}
+\]</span></p>
+<p>根据上面的$ q=P_j=$，残差对逆深度的导数如下:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial e}{\partial \delta d_{pi}}
+        =
+    \frac{\partial I_1}{\partial u}
+    \frac{\partial u}{\partial q}
+    \frac{\partial q}{\partial d_{pi}}
+\end{aligned}
+\]</span></p>
+<p>其中，<span class="math inline">\(P_j^{virtual} = R P_i&#39; + t d_{pi}\)</span>也是关于<span class="math inline">\(d_{pi}\)</span>的函数，根据分数求导公式，可得<span class="math inline">\(\frac{\partial q}{\partial d_{pi}}\)</span></p>
+<p><span class="math display">\[
+    \frac{\partial q}{\partial d_{pi}}=\frac{t d_{pi}-P_j^{virtual}}{d_{pi}^2}
+\]</span></p>
+<p>其中，t为从第i帧相机坐标系到第j帧相机坐标系变换的平移量</p>
+<p>在这里，残差对逆深度的导数为:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial e}{\partial \delta d_{pi}}
+    &amp;=
+    \frac{\partial I_1}{\partial u}
+    \frac{\partial u}{\partial q}
+    \frac{\partial q}{\partial d_{pi}} \\
+    &amp;=
+    \frac{\partial I_1}{\partial u}
+    \begin{bmatrix}
+        \frac{f_x}{Z} &amp; 0 &amp; -\frac{f_x X}{Z^2} \\
+        0 &amp; \frac{f_y}{Z} &amp; -\frac{f_y Y}{Z^2}
+    \end{bmatrix}
+    (\frac{t d_{pi}-P_j^{virtual}}{d_{pi}^2}) \\
+    &amp;=
+    \frac{\partial I_1}{\partial u}
+    \begin{bmatrix}
+        \frac{f_x d_{pi}}{P_j^{virtual}[2]} &amp; 0 &amp; -\frac{f_x P_j^{virtual}[0] d_{pi}}{P_j^{virtual}[2]^2} \\
+        0 &amp; \frac{f_y d_{pi}}{P_j^{virtual}[2]} &amp; -\frac{f_y P_j^{virtual}[1] d_{pi}}{P_j^{virtual}[2]^2}
+    \end{bmatrix}
+    (\frac{t d_{pi}-P_j^{virtual}}{d_{pi}^2}) \\
+    &amp;=
+    \frac{\partial I_1}{\partial u}
+    \begin{bmatrix}
+        f_x &amp; 0 \\ 0 &amp; f_y
+    \end{bmatrix}
+    \begin{bmatrix}
+        \frac{1}{P_j^{virtual}[2]} &amp; 0 &amp; -\frac{ P_j^{virtual}[0] }{P_j^{virtual}[2]^2} \\
+        0 &amp; \frac{1}{P_j^{virtual}[2]} &amp; -\frac{ P_j^{virtual}[1] }{P_j^{virtual}[2]^2}
+    \end{bmatrix}
+    (\frac{t d_{pi}-P_j^{virtual}}{d_{pi}}) \\
+    &amp;=
+    \begin{bmatrix}
+        d_x &amp; d_y
+    \end{bmatrix}
+    \begin{bmatrix}
+        f_x &amp; 0 \\ 0 &amp; f_y
+    \end{bmatrix}
+    \frac{1}{P_j^{virtual}[2]}
+    \begin{bmatrix}
+        1 &amp; 0 &amp; -\frac{ P_j^{virtual}[0] }{P_j^{virtual}[2]} \\
+        0 &amp; 1 &amp; -\frac{ P_j^{virtual}[1] }{P_j^{virtual}[2]}
+    \end{bmatrix}
+    (t - q)
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>到这里，是时候讨论<span class="math inline">\(P_j^{virtual}\)</span>的内在意义了:</p>
+<p>根据虚拟点<span class="math inline">\(P_j^{virtual}\)</span>的定义</p>
+<p><span class="math display">\[
+P_j^{virtual}= d_{pi} P_j = R P_i&#39; + t d_{pi}
+\]</span></p>
+<p>对虚拟点<span class="math inline">\(P_j^{virtual}\)</span>也转换到归一化平面上</p>
+<p><span class="math display">\[
+\begin{aligned}
+P_j^{virtual-normal}=
+\begin{bmatrix}
+\frac{P_j^{virtual}[0]}{P_j^{virtual}[2]} \\
+\frac{P_j^{virtual}[1]}{P_j^{virtual}[2]} \\
+1
+\end{bmatrix}
+\begin{bmatrix}
+\frac{d_{pi} P_j[0]}{d_{pi} P_j[2]} \\
+\frac{d_{pi} P_j[1]}{d_{pi} P_j[2]} \\
+1
+\end{bmatrix}=
+\begin{bmatrix}
+\frac{P_j[0]}{P_j[2]} \\
+\frac{P_j[1]}{P_j[2]} \\
+1
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{q[0]}{q[2]} \\
+\frac{q[1]}{q[2]} \\
+1
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+</blockquote>
+<p>因此，最终可以将上面的残差对逆深度的导数进一步化简:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \frac{\partial e}{\partial \delta d_{pi}}
+    &amp;=
+    \begin{bmatrix}
+        d_x &amp; d_y
+    \end{bmatrix}
+    \begin{bmatrix}
+        f_x &amp; 0 \\ 0 &amp; f_y
+    \end{bmatrix}
+    \frac{1}{P_j^{virtual}[2]}
+    \begin{bmatrix}
+        1 &amp; 0 &amp; -\frac{ P_j^{virtual}[0] }{P_j^{virtual}[2]} \\
+        0 &amp; 1 &amp; -\frac{ P_j^{virtual}[1] }{P_j^{virtual}[2]}
+    \end{bmatrix}
+    (t - q) \\
+    &amp;=
+    \begin{bmatrix}
+        d_x f_x &amp; d_y f_y
+    \end{bmatrix}
+    \frac{1}{P_j^{virtual}[2]}
+    \begin{bmatrix}
+        1 &amp; 0 &amp; -\frac{ q[0] }{q[2]} \\
+        0 &amp; 1 &amp; -\frac{ q[1] }{q[2]}
+    \end{bmatrix}
+    \begin{bmatrix}
+        t[0]-q[0] \\
+        t[1]-q[1] \\
+        t[2]-q[2]
+    \end{bmatrix} \\
+    &amp;=
+    \begin{bmatrix}
+        d_x f_x &amp; d_y f_y
+    \end{bmatrix}
+    \frac{1}{P_j^{virtual}[2]}
+    \begin{bmatrix}
+        1 &amp; 0 &amp; -\frac{ q[0] }{q[2]} \\
+        0 &amp; 1 &amp; -\frac{ q[1] }{q[2]}
+    \end{bmatrix}
+    \begin{bmatrix}
+        t[0] \\ t[1] \\t[2]
+    \end{bmatrix} \\
+    &amp;=
+    \begin{bmatrix}
+        d_x f_x &amp; d_y f_y
+    \end{bmatrix}
+    \frac{1}{P_j^{virtual}[2]}
+    \begin{bmatrix}
+        1 &amp; 0 &amp; -\frac{ P_j^{virtual}[0] }{P_j^{virtual}[2]} \\
+        0 &amp; 1 &amp; -\frac{ P_j^{virtual}[1] }{P_j^{virtual}[2]}
+    \end{bmatrix}
+    \begin{bmatrix}
+        t[0] \\ t[1] \\t[2]
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>总结PPT:</p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-14-47-37.png"></p>
+<blockquote>
+<p>DSO作者采用(齐次点)<span class="math inline">\(P_j^{virtual}\)</span>的目的是希望可以简化的雅克比求导过程。</p>
+</blockquote>
+<h1 id="初始化">4. 初始化</h1>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-28-16.png"></p>
+<ul>
+<li>将图像分成许多个32x32的block</li>
+<li>在block内创建直方图hist0</li>
+<li>直方图，统计block内像素点的梯度</li>
+<li>取block内直方图的梯度中位数作为<font color="red">阈值</font></li>
+<li>使用 size=3x3 的窗口, 对每个block的阈值进行滤波</li>
+</ul>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-33-33.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-37-15.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-37-31.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-09-38-20.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-17-16-24-01.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-07.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-18.png"></p>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-28.png"></p>
+<p>DSO代码中初始化时候的雅克比:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    J &amp;= 
+    \begin{bmatrix}
+        \frac{\partial e}{\partial \delta x} &amp;
+        \frac{\partial e}{\partial \delta y} &amp;
+        \frac{\partial e}{\partial \delta z} &amp;
+        \frac{\partial e}{\partial \delta \phi_x} &amp;
+        \frac{\partial e}{\partial \delta \phi_y} &amp;
+        \frac{\partial e}{\partial \delta \phi_z} &amp;
+        \frac{\partial e}{\partial a} &amp;
+        \frac{\partial e}{\partial b} &amp;
+        \frac{\partial e}{\partial d_{pi_1}} &amp;
+        0 &amp; \cdots &amp;
+        0 \\
+        \frac{\partial e}{\partial \delta x} &amp;
+        \frac{\partial e}{\partial \delta y} &amp;
+        \frac{\partial e}{\partial \delta z} &amp;
+        \frac{\partial e}{\partial \delta \phi_x} &amp;
+        \frac{\partial e}{\partial \delta \phi_y} &amp;
+        \frac{\partial e}{\partial \delta \phi_z} &amp;
+        \frac{\partial e}{\partial a} &amp;
+        \frac{\partial e}{\partial b} &amp;
+        0 &amp;
+        \frac{\partial e}{\partial d_{pi_2}} &amp; \cdots &amp;
+        0 \\
+        \frac{\partial e}{\partial \delta x} &amp;
+        \frac{\partial e}{\partial \delta y} &amp;
+        \frac{\partial e}{\partial \delta z} &amp;
+        \frac{\partial e}{\partial \delta \phi_x} &amp;
+        \frac{\partial e}{\partial \delta \phi_y} &amp;
+        \frac{\partial e}{\partial \delta \phi_z} &amp;
+        \frac{\partial e}{\partial a} &amp;
+        \frac{\partial e}{\partial b} &amp;
+        0 &amp;
+        0 &amp; \ddots &amp;
+        0
+        \\
+        \frac{\partial e}{\partial \delta x} &amp;
+        \frac{\partial e}{\partial \delta y} &amp;
+        \frac{\partial e}{\partial \delta z} &amp;
+        \frac{\partial e}{\partial \delta \phi_x} &amp;
+        \frac{\partial e}{\partial \delta \phi_y} &amp;
+        \frac{\partial e}{\partial \delta \phi_z} &amp;
+        \frac{\partial e}{\partial a} &amp;
+        \frac{\partial e}{\partial b} &amp;
+        0 &amp;
+        0 &amp; \cdots &amp;
+        \frac{\partial e}{\partial d_{pi_n}}
+    \end{bmatrix} \\
+    &amp;= 
+    \begin{bmatrix}
+        \begin{bmatrix}
+         &amp; &amp; &amp; &amp; &amp; &amp; &amp; J_{c} &amp; &amp; &amp; &amp; &amp; &amp; &amp; &amp;  &amp; &amp; 
+        \end{bmatrix} 
+        &amp; 
+        \frac{\partial e}{\partial d_{pi_1}} &amp;
+        0 &amp; \cdots &amp;
+        0 \\
+        \begin{bmatrix}
+         &amp; &amp; &amp; &amp; &amp; &amp; &amp; J_{c} &amp; &amp; &amp; &amp; &amp; &amp; &amp; &amp;  &amp; &amp; 
+        \end{bmatrix} 
+        &amp; 
+        0 &amp;
+        \frac{\partial e}{\partial d_{pi_2}} &amp; \cdots &amp;
+        0 \\
+        \begin{bmatrix}
+         &amp; &amp; &amp; &amp; &amp; &amp; &amp; J_{c} &amp; &amp; &amp; &amp; &amp; &amp; &amp; &amp;  &amp; &amp; 
+        \end{bmatrix} 
+        &amp; 
+        0 &amp;
+        0 &amp; \ddots &amp;
+        0
+        \\
+        \begin{bmatrix}
+         &amp; &amp; &amp; &amp; &amp; &amp; &amp; J_{c} &amp; &amp; &amp; &amp; &amp; &amp; &amp; &amp;  &amp; &amp; 
+        \end{bmatrix} 
+        &amp; 
+        0 &amp;
+        0 &amp; \cdots &amp;
+        \frac{\partial e}{\partial d_{pi_n}}
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p>其中，前6个是残差对位姿(SE3)的偏导，继续后两个是残差对光度参数(a,b)的偏导，然后就是残差对该层图像各个点的逆深度的偏导。</p>
+<p>那么对应的hessian近似可以写成这个样子:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    J^T J &amp;=
+    \begin{bmatrix}
+        \begin{bmatrix}
+         &amp; &amp; &amp; &amp;   \\
+         &amp; &amp; &amp; &amp;  \\
+         &amp; &amp; n*J_c^TJ_c &amp;  \\
+         &amp; &amp; &amp; &amp;   \\
+         &amp; &amp; &amp; &amp;   \\ 
+        \end{bmatrix}
+    , &amp;
+    \begin{bmatrix}
+          \\  \\ J_c^T \\  \\ \\
+    \end{bmatrix} \frac{\partial e}{\partial d_{pi_1}}
+    ,&amp;
+    \begin{bmatrix}
+         \\  \\ J_c^T \\  \\ \\
+    \end{bmatrix} \frac{\partial e}{\partial d_{pi_2}}
+    ,&amp;
+    \cdots &amp;
+    \begin{bmatrix}
+          \\  \\ J_c^T \\  \\ \\
+    \end{bmatrix} \frac{\partial e}{\partial d_{pi_n}}
+    \\
+    \frac{\partial e}{\partial d_{pi_1}}
+    \begin{bmatrix}
+       &amp;  &amp; &amp; J_c &amp;  &amp; &amp;
+    \end{bmatrix}
+    &amp; \frac{\partial e}{\partial d_{pi_1}} \cdot \frac{\partial e}{\partial d_{pi_1}} &amp; 0 &amp; \cdots &amp; 0
+    \\
+    \frac{\partial e}{\partial d_{pi_2}}
+    \begin{bmatrix}
+       &amp;  &amp; &amp; J_c &amp;  &amp; &amp;
+    \end{bmatrix}
+    &amp; 0 &amp; \frac{\partial e}{\partial d_{pi_2}} \cdot \frac{\partial e}{\partial d_{pi_2}} &amp; \cdots &amp; 0
+    \\
+    \vdots &amp; 0 &amp; 0 &amp; \ddots  &amp; 0 
+    \\
+    \frac{\partial e}{\partial d_{pi_n}}
+    \begin{bmatrix}
+      &amp;  &amp; &amp; J_c &amp;  &amp; &amp;
+    \end{bmatrix}
+    &amp; 0 &amp; 0 &amp; \cdots &amp; \frac{\partial e}{\partial d_{pi_n}} \cdot \frac{\partial e}{\partial d_{pi_n}}
+    \end{bmatrix} \\
+    &amp;= 
+    \begin{bmatrix}
+        \begin{bmatrix}
+         \\
+         &amp; &amp; U(or B) &amp;  \\
+         \\
+        \end{bmatrix} , &amp;
+        \begin{bmatrix}
+         \\
+         &amp; &amp; &amp; &amp; W(or E) &amp; &amp; &amp; &amp; \\
+         \\
+        \end{bmatrix} \\ \\ 
+        \begin{bmatrix}
+             \\
+             \\
+             \\
+             &amp; W^T (or E^T) &amp;  \\
+             \\
+             \\
+             \\
+        \end{bmatrix} ,&amp; 
+        \begin{bmatrix}
+             &amp;  \\
+             &amp;  \\
+             &amp;  \\
+             &amp;&amp;&amp;&amp; V (or C) &amp;&amp;&amp;&amp;  \\
+             &amp;  \\
+             &amp;  \\
+             &amp;  \\
+        \end{bmatrix}
+    \end{bmatrix} 
+\end{aligned}
+\]</span></p>
+<p><strong>Tips</strong></p>
+<p>在应用舒尔补的时候，需要计算<span class="math inline">\(WV^{-1}W^T\)</span>，那么有：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    WV^{-1}W^T 
+    &amp;=V^{-1}WW^T \\
+    &amp;=(V^{-1}[1][1]W.col[1]W^T.row[1]+V^{-1}[2][2]W.col[2]W^T.row[2]+ \\ 
+    &amp;\cdots+V^{-1}[n][n]W.col[n]W^T.row[n])
+\end{aligned}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(W.col[]\)</span>表示<span class="math inline">\(J^TJ\)</span>矩阵右上角块的按列取</li>
+<li><span class="math inline">\(W^T.row[]\)</span>表示<span class="math inline">\(J^TJ\)</span>矩阵左下角块的按行取</li>
+<li><strong>优点</strong>：这样就可以把大矩阵的运算变成小矩阵的加法运算，通过遍历观测到的每一个点，计算一个8x8的小矩阵，对这些矩阵进行求和，就可以得到原本需要计算(8xn)x(nx8)大矩阵来得到的<span class="math inline">\(WV^{-1}W^T\)</span>。 (<font color="red">DSO就是通过这样的思路+SSE进行加速运算</font>)</li>
+</ul>
+<h2 id="初始化流程总结">4.1. 初始化流程总结</h2>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-33-43.png"></p>
+<h1 id="dso框架">5. DSO框架</h1>
+<p><img src="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/2020-03-18-21-34-31.png"></p>
+<hr>
+<blockquote>
+<ul>
+<li><a href="https://www.cnblogs.com/luyb/p/6077478.html" target="_blank" rel="noopener">DSO之光度标定</a></li>
+</ul>
+</blockquote>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    强化学习-基础
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Cartographer-[0]-运行Demo数据集和MIT数据集</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/';
+        
+        this.page.identifier = 'SLAM代码课程/DSO/DSO-1-系统框架与初始化';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>

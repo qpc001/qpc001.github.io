@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>第四讲(拓展)_高斯过程(边缘化与条件作用) | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="第四讲(拓展)_高斯过程(边缘化与条件作用)" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="1. 高斯过程(边缘化与条件作用) 1.1. 高斯过程的直观解释 1.1.1. 多元高斯分布 高斯分布（也叫做正态分布）是高斯过程的基础构件。而我们最感兴趣的是多元高斯分布，其每个随机变量都呈正态分布，联合分布也是高斯的。一般来说，多元高斯分布由均值向量\(\mu\)和协方差矩阵\(\sum\)定义。   均值向量\(\mu\)描述了该分布的期望值，它的每个组件描述了对应维度的均值 协方差矩阵\(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第四讲(拓展)_高斯过程(边缘化与条件作用)">
+<meta property="og:url" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="1. 高斯过程(边缘化与条件作用) 1.1. 高斯过程的直观解释 1.1.1. 多元高斯分布 高斯分布（也叫做正态分布）是高斯过程的基础构件。而我们最感兴趣的是多元高斯分布，其每个随机变量都呈正态分布，联合分布也是高斯的。一般来说，多元高斯分布由均值向量\(\mu\)和协方差矩阵\(\sum\)定义。   均值向量\(\mu\)描述了该分布的期望值，它的每个组件描述了对应维度的均值 协方差矩阵\(">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-08-44.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-11-15.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-12-27.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-16-36.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-18-47.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-24-21.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-27-31.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-48-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-38-08.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-10-15-22.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-12-29-56.png">
+<meta property="article:published_time" content="2020-02-14T07:11:11.000Z">
+<meta property="article:modified_time" content="2020-03-01T10:19:54.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-08-44.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory open">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder-open"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file active"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-VIO/第四讲/第四讲(拓展)_高斯过程(边缘化与条件作用)" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/VIO/">VIO</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/">第四讲</a>
+    </div>
+
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">
+            <time datetime="2020-02-14T07:11:11.000Z" itemprop="datePublished">2020-02-14</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/VIO/第四讲/第四讲(拓展)_高斯过程(边缘化与条件作用).md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/VIO/第四讲/第四讲(拓展)_高斯过程(边缘化与条件作用).md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/VIO/第四讲/第四讲(拓展)_高斯过程(边缘化与条件作用).md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            第四讲(拓展)_高斯过程(边缘化与条件作用)
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#高斯过程边缘化与条件作用"><span class="toc-number">1.</span> <span class="toc-text">1. 高斯过程(边缘化与条件作用)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#高斯过程的直观解释"><span class="toc-number">1.1.</span> <span class="toc-text">1.1. 高斯过程的直观解释</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#多元高斯分布"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1.1. 多元高斯分布</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#二元高斯分布"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">1.1.1.1. 二元高斯分布</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#边缘化与条件作用"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.1.2. 边缘化与条件作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#相关理论推导"><span class="toc-number">1.2.</span> <span class="toc-text">1.2. 相关理论推导</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#高斯分布的表示"><span class="toc-number">1.2.1.</span> <span class="toc-text">1.2.1. 高斯分布的表示</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#联合高斯分布的分解"><span class="toc-number">1.2.2.</span> <span class="toc-text">1.2.2. 联合高斯分布的分解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#边缘化操作的作用"><span class="toc-number">1.3.</span> <span class="toc-text">1.3. 边缘化操作的作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最小二乘"><span class="toc-number">1.3.1.</span> <span class="toc-text">最小二乘</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#高斯牛顿"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">高斯牛顿</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#slam问题求解"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">SLAM问题求解</span></a></li></ol></li></ol></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="高斯过程边缘化与条件作用">1. 高斯过程(边缘化与条件作用)</h1>
+<h2 id="高斯过程的直观解释">1.1. 高斯过程的直观解释</h2>
+<h3 id="多元高斯分布">1.1.1. 多元高斯分布</h3>
+<p>高斯分布（也叫做正态分布）是高斯过程的基础构件。而我们最感兴趣的是多元高斯分布，其每个随机变量都呈正态分布，联合分布也是高斯的。一般来说，多元高斯分布由均值向量<span class="math inline">\(\mu\)</span>和协方差矩阵<span class="math inline">\(\sum\)</span>定义。</p>
+<p><img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-08-44.png"></p>
+<ul>
+<li>均值向量<span class="math inline">\(\mu\)</span>描述了该分布的期望值，它的每个组件描述了对应维度的均值</li>
+<li>协方差矩阵<span class="math inline">\(\sum\)</span>对每个维度的方差进行建模，并确定不同随机变量之间的关联(协方差矩阵总是对称且半正定的)</li>
+<li>Σ 的对角线由第<span class="math inline">\(i\)</span>个随机变量的标准差<span class="math inline">\(\sigma_i\)</span> 组成，而非对角线的元素则描述了每个元素<span class="math inline">\(\sigma_{ij}\)</span>之间的相关性</li>
+<li><span class="math inline">\(X\)</span>符合正态分布。协方差矩阵协方差矩阵<span class="math inline">\(\sum\)</span>描述了该分布的形状 <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-11-15.png"></li>
+</ul>
+<h4 id="二元高斯分布">1.1.1.1. 二元高斯分布</h4>
+<blockquote>
+<p>从图形上来看，该分布以均值为中心，由协方差矩阵决定其形状。下图展示了这些参数对于一个二维高斯分布的影响。每个随机变量的标准差在协方差矩阵的对角线上，而其它的值则显示了它们之间的协方差。</p>
+</blockquote>
+<p><img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-12-27.png"></p>
+<p>高斯分布被广泛应用于为真实世界建模，有时在原分布未知的情况下作为替代品，有时用于中心极限定理。接下来我们会进一步讲解如何操纵高斯分布，以及如何从中获得有用的信息。</p>
+<h3 id="边缘化与条件作用">1.1.2. 边缘化与条件作用</h3>
+<blockquote>
+<p>高斯分布有一个很赞的代数性质：它在条件作用和边缘化情况下是封闭的。意思是，经过这些运算后，在结果中得到的分布依旧是高斯分布，这就使得很多统计学和机器学习中的问题变得易解。</p>
+</blockquote>
+<ol type="1">
+<li><p>边缘化: 对高斯分布进行边缘化和条件作用进行分解, 即<span class="math inline">\(P(X,Y)=P(X)P(Y|X)=P(Y)P(X|Y)\)</span>: <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-16-36.png"> 其中 X 和 Y 代表原始随机变量的子集。</p>
+<p>给定随机变量 X 和 Y 组成的向量的正态概率分布<span class="math inline">\(P(X,Y)\)</span>, 我们可以用以下方法确定<strong>每个变量</strong>各自的边缘概率分布: <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-18-47.png"></p>
+<p>这个公式所表达的意思很直接了当：X 和 Y 这两个子集各自只依赖于它们 μ 和 Σ 中对应的值。因此，要从高斯分布中边缘化一个随机变量，我们只需把μ 和Σ里那些对应的变量丢掉就行。</p>
+<p><font color="red">通过边缘化，我们可以获取多元概率分布的一部分信息</font>(这里对y进行边缘化,去掉变量y,得到关于x的边缘分布): <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-24-21.png"> <span class="math display">\[
+ \begin{aligned}
+ p_X(x)=\int_y p_{X,Y}(x,y)dy&amp;=
+ \int_y p_{Y|X}(y|x)p_X(x)dy \\
+ &amp;=
+ p_X(x)\int_y p_{Y|X}(y|x)dy \\
+ &amp;=p_X(x)
+ \end{aligned}
+ \]</span> 上式子的意思是:</p>
+<ul>
+<li>如果我们只想考虑X=x的情况, 即只对X=x的概率感兴趣, 那么我们要考虑变量Y所有可能的值, 需要对变量Y进行积分.(下面有图)</li>
+</ul></li>
+<li><p>条件作用 高斯过程的另一个重要运算是条件作用，它可以用于得到一个变量在另一个变量条件下的概率分布。和边缘化类似，这个运算也是封闭的，会得到一个不同的高斯分布。条件运算是高斯过程的基石，它使贝叶斯推断成为可能。条件作用如下定义: <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-27-31.png"></p>
+<p><font color="red">新的均值只依赖于作为条件的变量，而协方差矩阵则和这个变量无关</font>, 即:</p>
+<ul>
+<li><span class="math inline">\(X \sim \mathcal{N}(\mu_X,\sum_{XX})\)</span></li>
+<li>而 <span class="math inline">\(P(Y|X) \sim \mathcal{N}(\mu_Y+\sum_{YX}\sum_{XX}^{-1}(X-\mu_{X}),\sum_{YY}-\sum_{YX}\sum_{XX}\sum_{XY})\)</span></li>
+</ul></li>
+<li><p>边缘化与条件作用的直观感受</p></li>
+</ol>
+<ul>
+<li>边缘化可以理解为在高斯分布的一个维度上<strong>做累加</strong>，这也符合边缘分布的一般定义。</li>
+<li>条件作用也有个很好的几何表达——我们可以把它想象成在多元分布上切下一刀，从而获得一个维数更少的高斯分布。</li>
+</ul>
+<hr>
+<p><strong>下面的例子是关于Y的边缘分布[MARGINALIZATION(Y)], 实际上就是去掉变量x, 把变量x边缘化掉</strong> (注意哦,与前面的描述是相反的, 这个是去掉变量X)</p>
+<p><span class="math display">\[
+\begin{aligned}
+p_Y(y)=\int_x p_{X,Y}(x,y)dx&amp;=
+\int_x p_{X|Y}(x|y)p_Y(y)dx \\
+&amp;=
+p_Y(y)\int_x p_{X|Y}(x|y)dx \\
+&amp;=p_Y(y)
+\end{aligned}
+\]</span></p>
+<p>上式的意思就是说, 求出来的边缘分布<span class="math inline">\(P_Y\)</span>就是给定一个y值, 在原来的联合概率分布<span class="math inline">\(P(X,Y)\)</span>上, 给定y值之后把变量<span class="math inline">\(x\)</span>在给定的y值方向上做累加.</p>
+<ul>
+<li>图左是 Y 的边缘分布,是边缘化掉变量 X 的结果，类似于沿着 Y 轴把所有的X值做累加</li>
+<li>图右是以给定的 X 为条件的关于变量Y的条件分布，类似于在原始分布上切下一刀 <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-48-37.png"> <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-09-38-08.png"> <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-10-15-22.png"></li>
+</ul>
+<p>图片来自:<a href="https://distill.pub/2019/visual-exploration-gaussian-processes/" target="_blank" rel="noopener">看得见的高斯过程(原文)</a></p>
+<hr>
+<h2 id="相关理论推导">1.2. 相关理论推导</h2>
+<h3 id="高斯分布的表示">1.2.1. 高斯分布的表示</h3>
+<ul>
+<li>协方差矩阵+均值</li>
+<li>信息矩阵+信息矢量</li>
+</ul>
+<p>常见的是"协方差矩阵+均值"形式, <span class="math display">\[p(x)=\eta \exp\{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\}\]</span></p>
+<p>其中对称正定矩阵Σ为随机变量x的协方差矩阵，μ为x的均值，简记为 <span class="math display">\[p(x) = N(\mu, \Sigma)\]</span></p>
+<p>信息矩阵+信息矢量的形式可以由上式推导而来 <span class="math display">\[
+\begin{aligned}
+p(x)&amp;=\eta \exp\{-\frac{1}{2}(x-\mu)^T\Sigma^{-1}(x-\mu)\} \\
+&amp;=\eta\exp\{-\frac{1}{2}x^T\Sigma^{-1}x+x^T\Sigma^{-1}\mu\}
+\end{aligned}
+\]</span> &gt; 其中,运算中产生的常数项都全部吸收到了 η 中.</p>
+<p>现在定义信息矩阵<span class="math inline">\(\Lambda=\Sigma^{-1}\)</span>, 信息矢量<span class="math inline">\(\xi=\Sigma^{-1}\mu=\Lambda\mu\)</span>, 则有 <span class="math display">\[ p(x)=\eta\exp\{-\frac{1}{2}x^T\Lambda x+x^T\xi\} \]</span> 即 <span class="math display">\[p(x) = N^{-1}(\xi, \Lambda)\]</span></p>
+<h3 id="联合高斯分布的分解">1.2.2. 联合高斯分布的分解</h3>
+<p>设随机变量<span class="math inline">\(X, Y\)</span>满足联合高斯分布<span class="math inline">\(p(X,Y)\)</span></p>
+<p>于是有 <span class="math display">\[ p(X,Y)=p(X)p(Y|X)\]</span></p>
+<blockquote>
+<p>所谓边缘化操作就是求出上面的分布p(X) * 也就是把变量Y边缘化掉(去掉)</p>
+</blockquote>
+<p>用"协方差矩阵+均值"形式给出联合分布的表示: <span class="math display">\[
+p(X,Y) = N\Bigg(\begin{pmatrix}
+\mu_X \\
+\mu_Y
+\end{pmatrix}, \begin{pmatrix}
+\Sigma_{XX} &amp; \Sigma_{XY} \\
+\Sigma_{YX} &amp; \Sigma_{YY}
+\end{pmatrix}\Bigg)
+\]</span></p>
+<blockquote>
+<p>补充:舒尔补公式</p>
+<ol type="1">
+<li><span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+I &amp; -BD^{-1} \\
+0 &amp; I
+\end{bmatrix}
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}
+=
+\begin{bmatrix}
+\Delta_D &amp; 0 \\
+C &amp; D
+\end{bmatrix}
+\end{aligned}
+\]</span> <span class="math display">\[
+\Delta_D=A-BD^{-1}C
+\]</span></li>
+<li><span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+I &amp; 0 \\
+-CA^{-1} &amp; I
+\end{bmatrix}
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}
+=
+\begin{bmatrix}
+A &amp; B \\
+0 &amp; \Delta_A
+\end{bmatrix}
+\end{aligned}
+\]</span> <span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}
+\begin{bmatrix}
+I &amp; -A^{-1}B \\
+0 &amp; I
+\end{bmatrix}
+=
+\begin{bmatrix}
+A &amp; 0 \\
+C &amp; \Delta_A
+\end{bmatrix}
+\end{aligned}
+\]</span> <span class="math display">\[\Delta_A=D-CA^{-1}B\]</span></li>
+</ol>
+<p>将上面两式联合起来,就可以把矩阵变成对角型 <span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+I &amp; 0 \\
+-CA^{-1} &amp; I
+\end{bmatrix}
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}
+\begin{bmatrix}
+I &amp; -A^{-1}B \\
+0 &amp; I
+\end{bmatrix}
+=
+\begin{bmatrix}
+A &amp; 0 \\
+0 &amp; \Delta_A
+\end{bmatrix}
+\end{aligned}
+\]</span> 也可以通过对角型恢复出原来的矩阵 <span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+I &amp; 0 \\
+CA^{-1} &amp; I
+\end{bmatrix}
+\begin{bmatrix}
+A &amp; 0 \\
+0 &amp; \Delta_A
+\end{bmatrix}
+\begin{bmatrix}
+I &amp; A^{-1}B \\
+0 &amp; I
+\end{bmatrix}
+=
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}
+\end{aligned}
+\]</span> 就可以快速写出矩阵的逆 <span class="math display">\[
+\begin{aligned}
+\begin{bmatrix}
+A &amp; B \\
+C &amp; D
+\end{bmatrix}^{-1}
+&amp;=
+\begin{bmatrix}
+I &amp; A^{-1}B \\
+0 &amp; I
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+A &amp; 0 \\
+0 &amp; \Delta_A
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+I &amp; 0 \\
+CA^{-1} &amp; I
+\end{bmatrix}^{-1} \\
+&amp;=
+\begin{bmatrix}
+I &amp; -A^{-1}B \\
+0 &amp; I
+\end{bmatrix}
+\begin{bmatrix}
+A^{-1} &amp; 0 \\
+0 &amp; \Delta_A^{-1}
+\end{bmatrix}
+\begin{bmatrix}
+I &amp; 0 \\
+-CA^{-1} &amp; I
+\end{bmatrix}
+\end{aligned}
+\]</span></p>
+</blockquote>
+<p>联合高斯分布p(X,Y)p(X,Y)的概率密度函数("信息矩阵+信息矢量形式")的表示为: <span class="math display">\[
+\begin{aligned}
+    p(X, Y)&amp;=
+    \eta \exp\Bigg\{-\frac{1}{2}\begin{pmatrix}
+    X-\mu_X \\
+    Y-\mu_Y
+    \end{pmatrix}^T\begin{pmatrix}
+    \Sigma_{XX} &amp; \Sigma_{XY} \\
+    \Sigma_{YX} &amp; \Sigma_{YY}
+    \end{pmatrix}^{-1}\begin{pmatrix}
+    X-\mu_X \\
+    Y-\mu_Y
+    \end{pmatrix}\Bigg\} \\
+    &amp;\propto
+    \exp\Bigg\{-\frac{1}{2}\begin{pmatrix}
+    a \\
+    b
+    \end{pmatrix}^T\begin{pmatrix}
+    A &amp; C^{T} \\
+    C &amp; D
+    \end{pmatrix}^{-1}\begin{pmatrix}
+    a \\
+    b
+    \end{pmatrix}\Bigg\}
+\end{aligned}
+\]</span> <img src="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/imgs/2020-02-13-12-29-56.png"></p>
+<p>于是, 就得到了关于X的边缘分布<span class="math inline">\(p(X)\)</span>和关于Y的条件概率分布<span class="math inline">\(p(Y|X)\)</span></p>
+<ol type="1">
+<li><p>关于X的边缘分布<span class="math inline">\(p(X)\)</span> <span class="math display">\[
+\begin{aligned}
+ p(X)
+ &amp;=\eta_1 \exp \Big\{-\frac{1}{2} (X-\mu_X)^{T} \Sigma_{XX}^{-1}(X-\mu_X) \Big\} \sim \mathcal{N}(0,\Sigma_{XX})
+\end{aligned}
+\]</span> &gt; 这说明了,边缘分布<span class="math inline">\(p(X)\)</span>的协方差就是联合分布<span class="math inline">\(P(X,Y)\)</span>的协方差矩阵中对应的矩阵块<span class="math inline">\(\Sigma_{XX}\)</span></p></li>
+<li><p>关于Y的条件概率分布 <span class="math display">\[
+\begin{aligned}
+ p(Y|X)&amp;=
+ \eta_2\exp\{-\frac{1}{2}[Y-(\mu_Y+\Sigma_{YX}\Sigma_{XX}^{-1}(X-\mu_X))]^T\Theta_{A}^{-1}[Y-(\mu_Y+\Sigma_{YX}\Sigma_{XX}^{-1}(X-\mu_X))]\} \\
+ &amp; \propto
+     \eta_2\exp\{-\frac{1}{2}[b-CA^{-1}a]^T\Theta_{A}^{-1}[b-CA^{-1}a]\} \\
+\end{aligned}
+\]</span></p></li>
+</ol>
+<p>其中,<span class="math inline">\(\Theta_A=\Delta_A=D-CA^{-1}B=D-CA^{-1}C^{T}\)</span> 表示矩阵块A在联合概率分布<span class="math inline">\(P(X|Y)\)</span>的协方差矩阵中的舒尔补</p>
+<p>所以, <span class="math display">\[
+    \Theta_A=\Delta_A=\Sigma_{YY}-\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}
+\]</span></p>
+<blockquote>
+<p>这说明了,关于Y的条件分布<span class="math inline">\(p(Y|X)\)</span>的协方差就是联合分布<span class="math inline">\(P(X,Y)\)</span>的协方差矩阵关于子块<span class="math inline">\(A=\Sigma_{XX}\)</span>的舒尔补<span class="math inline">\(\Delta_A=\Sigma_{YY}-\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}\)</span></p>
+</blockquote>
+<hr>
+<p>假定现在我们只有联合概率分布<span class="math inline">\(p(X,Y)\)</span>的信息矩阵 现在来讨论上面两个分布的信息矩阵</p>
+<p>首先利用舒尔补写出联合概率分布<span class="math inline">\(p(X,Y)\)</span>的信息矩阵 (也就是协方差矩阵的逆) <span class="math display">\[
+\begin{aligned}
+    \begin{bmatrix}
+        A &amp; B \\
+        C &amp; D
+    \end{bmatrix}^{-1}
+    &amp;=
+        \begin{bmatrix}
+        I &amp; -A^{-1}B \\
+        0 &amp; I
+    \end{bmatrix}
+    \begin{bmatrix}
+    A^{-1} &amp; 0 \\
+    0 &amp; \Delta_A^{-1}
+    \end{bmatrix}
+    \begin{bmatrix}
+        I &amp; 0 \\
+        -CA^{-1} &amp; I
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+    \begin{bmatrix}
+        A &amp; C^{T} \\
+        C &amp; D
+    \end{bmatrix}^{-1}
+    &amp;=
+    \begin{bmatrix}
+        A^{-1}+A^{-1}C^{T}\Delta_{A}^{-1}CA^{-1} &amp; -A^{-1}C^{T}\Delta_{A}^{-1} \\
+        -\Delta_{A}^{-1}CA^{-1} &amp; \Delta_{A}^{-1}
+    \end{bmatrix} \\
+    &amp;=
+    \begin{bmatrix}
+        \Sigma_{XX}^{-1}+\Sigma_{XX}^{-1}\Sigma_{XY}\Theta_{A}^{-1}\Sigma_{YX}\Sigma_{XX}^{-1} &amp; -\Sigma_{XX}^{-1}\Sigma_{XY}\Theta_{A}^{-1} \\
+        -\Theta_{A}^{-1}\Sigma_{YX}\Sigma_{XX}^{-1} &amp; \Theta_{A}^{-1}
+    \end{bmatrix} \\
+    &amp;=
+    \begin{bmatrix}
+        \Lambda_{XX} &amp; \Lambda_{XY} \\
+        \Lambda_{YX} &amp; \Lambda_{YY}
+    \end{bmatrix}
+\end{aligned}
+\]</span></p>
+<ol type="1">
+<li>关于X的边缘分布<span class="math inline">\(p(X)\)</span>的信息矩阵 &gt; 从前面的讨论, 已经知道了关于X的边缘分布<span class="math inline">\(p(X)\)</span>的信息矩阵就是联合分布<span class="math inline">\(P(X,Y)\)</span>的协方差矩阵中对应的矩阵块<span class="math inline">\(\Sigma_{XX}\)</span>, 那么对应的信息矩阵就是<span class="math inline">\(\Sigma_{XX}^{-1}\)</span></li>
+</ol>
+<p>那么现在的目的就是: 利用原有的联合概率分布信息矩阵, 求出关于X的边缘分布<span class="math inline">\(p(X)\)</span>的信息矩阵, 也就是边缘化掉变量Y之后的信息矩阵</p>
+<p>易得 <span class="math display">\[
+\begin{aligned}
+    \Sigma_{XX}^{-1}=\Lambda_{XX}-\Lambda_{XY}\Lambda_{YY}^{-1}\Lambda_{YX}
+\end{aligned}
+\]</span></p>
+<ol type="1">
+<li>关于Y的条件概率分布的信息矩阵 &gt; 从前面的讨论, 已经知道了关于Y的条件概率分布的信息矩阵就是联合分布<span class="math inline">\(P(X,Y)\)</span>的协方差矩阵关于子块<span class="math inline">\(A=\Sigma_{XX}\)</span>的舒尔补<span class="math inline">\(\Theta_A=\Delta_A\)</span>, 那么对应的信息矩阵就是<span class="math inline">\(\Theta_A^{-1}\)</span></li>
+</ol>
+<p>易得 <span class="math display">\[
+    \Theta_A^{-1}=\Lambda_{YY}
+\]</span></p>
+<hr>
+<h2 id="边缘化操作的作用">1.3. 边缘化操作的作用</h2>
+<blockquote>
+<p>所谓边缘化，就是求某个联合概率分布的边缘分布。比如对于联合概率<span class="math inline">\(p(X,Y)\)</span>，对<span class="math inline">\(Y\)</span>进行边缘化，就是对<span class="math inline">\(Y\)</span>在整个空间中积分，即 <span class="math display">\[
+\begin{aligned}
+p_X(x)=\int_y p_{X,Y}(x,y)dy&amp;=
+\int_y p_{Y|X}(y|x)p_X(x)dy \\
+&amp;=
+p_X(x)\int_y p_{Y|X}(y|x)dy \\
+&amp;=p_X(x)
+\end{aligned}
+\]</span></p>
+</blockquote>
+<p>因此，<font color="red">对<span class="math inline">\(Y\)</span>边缘化的结果就是X的边缘化分布的<span class="math inline">\(p(X)\)</span></font>，仍然是一个高斯函数。伴随着边缘化，<span class="math inline">\(p(Y|X)\)</span>就是<span class="math inline">\(p(X,Y)\)</span>对<span class="math inline">\(X\)</span>的条件化。</p>
+<h3 id="最小二乘">最小二乘</h3>
+<p>在信息矩阵+信息矢量的表示方式下，边缘化和条件化与最小二乘法有密切关系。在许多基于最小二乘的优化问题中，常有如下形式的优化目标： <span class="math display">\[
+\min_x\Vert e(x)\Vert_W^2=\min_x~e(x)^TW^{-1}e(x)
+\]</span> 其中<span class="math inline">\(W\)</span>是<span class="math inline">\(e(x)\)</span>的协方差矩阵。</p>
+<h4 id="高斯牛顿">高斯牛顿</h4>
+<p>为了寻找上式的最小值，常使用迭代优化的方法，每一次迭代都会寻找一个增量<span class="math inline">\(\Delta x\)</span>使目标函数减小。为了求增量，往往会将<span class="math inline">\(e(x)\)</span>在当前<span class="math inline">\(x\)</span>处展开为一阶近似（这种处理方式即Gauss-Newton Method），即: <span class="math display">\[
+e(x+\Delta x)\simeq e(x)+J(x)\Delta x
+\]</span> 其中, <span class="math display">\[
+    J(x)=\frac{\partial e}{\partial x}
+\]</span> 于是, 可以生成新的优化目标: <span class="math display">\[
+\min_{\Delta x}~[e(x)+J(x)\Delta x]^TW^{-1}[e(x)+J(x)\Delta x]
+\]</span> 这是关于<span class="math inline">\(\Delta x\)</span>的二次函数，对<span class="math inline">\(\Delta x\)</span>求导，并令导数等于0，有: <span class="math display">\[
+\begin{aligned}
+    J(x)^TW^{-1}J(x)\Delta x+J(x)^TW^{-1}e(x)=0 \\
+    \Longrightarrow J(x)^TW^{-1}J(x)\Delta x = -J(x)^TW^{-1}e(x)
+\end{aligned}
+\]</span> 令<span class="math inline">\(J(x)^TW^{-1}J(x) = H\)</span>, 是变量<span class="math inline">\(\Delta x\)</span>的信息矩阵</p>
+<p>令<span class="math inline">\(-J(x)^TW^{-1}e(x)=b\)</span>, 则有 <span class="math display">\[
+    H\Delta x=b
+\]</span> 这就是非线性优化中的增量方程, 通过不断迭代求解<span class="math inline">\(\Delta x\)</span>, 更新变量<span class="math inline">\(x+=\Delta x\)</span>, 使得目标函数不断下降, 直到达到要求.</p>
+<h4 id="slam问题求解">SLAM问题求解</h4>
+<p>在很多优化问题中，待优化的变量有明确意义，比如在SLAM或者SfM问题中，要优化的是所有相机的位姿<span class="math inline">\(c\)</span>以及地图中所有三维点(路标点)的坐标<span class="math inline">\(p\)</span>，设<span class="math inline">\(\Delta x\)</span>由这两个分量的增量构成，即 <span class="math display">\[
+\Delta x = 
+\begin{pmatrix}
+\Delta c \\
+\Delta p
+\end{pmatrix}
+\]</span> 并且求出了对应的信息矩阵<span class="math inline">\(\Lambda\)</span> <span class="math display">\[
+\Lambda=\begin{pmatrix}
+\Lambda{cc} &amp; \Lambda{cp} \\
+\Lambda{pc} &amp; \Lambda{pp}
+\end{pmatrix}, ~~~
+b = \begin{pmatrix}
+b_c \\
+b_p
+\end{pmatrix}
+\]</span> 于是有 <span class="math display">\[
+\begin{pmatrix}
+\Lambda{cc} &amp; \Lambda{cp} \\
+\Lambda{pc} &amp; \Lambda{pp}
+\end{pmatrix}
+\begin{pmatrix}
+\Delta c \\
+\Delta p
+\end{pmatrix}=
+\begin{pmatrix}
+b_c \\
+b_p
+\end{pmatrix}
+\]</span> 直接对信息矩阵求逆可以对上述方程求解, 但是当矩阵维度过大的时候, 直接求逆很难, 通常采用各种分解</p>
+<p>可以采用上面的舒尔补公式进行消元, 也就是所说的高斯消元法 &gt;(1) 舒尔补公式 &gt;<span class="math display">\[
+\begin{aligned}
+    \begin{bmatrix}
+        I &amp; -BD^{-1} \\
+        0 &amp; I
+    \end{bmatrix}
+        \begin{bmatrix}
+        A &amp; B \\
+        C &amp; D
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+    \Delta_D &amp; 0 \\
+    C &amp; D
+    \end{bmatrix}
+\end{aligned}
+&gt;\]</span> &gt;<span class="math display">\[
+    \Delta_D=A-BD^{-1}C
+&gt;\]</span> 即对方程两边同时左乘 <span class="math display">\[
+    \begin{bmatrix}
+        I &amp; -\Lambda{cp}\Lambda{pp}^{-1} \\
+        0 &amp; I
+    \end{bmatrix}
+\]</span> 得到一个下三角型的形式 <span class="math display">\[
+\begin{pmatrix}
+\Lambda{cc}-\Lambda{cp}\Lambda{pp}^{-1}\Lambda{pc} &amp; 0 \\
+\Lambda{pc} &amp; \Lambda{pp}
+\end{pmatrix}
+\begin{pmatrix}
+\Delta c \\
+\Delta p
+\end{pmatrix}=
+\begin{pmatrix}
+b_c-\Lambda{cp}\Lambda{pp}^{-1}b_c \\
+b_p
+\end{pmatrix}
+\]</span> 于是原方程可以转换为两个独立方程 <span class="math display">\[
+\begin{aligned}
+(\Lambda{cc}-\Lambda{cp}\Lambda{pp}^{-1}\Lambda{pc})\Delta c &amp;= b_c-\Lambda{cp}\Lambda{pp}^{-1}b_c \\
+\Lambda_{pp}\Delta p &amp;= b_p -\Lambda_{pc}\Delta c
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>可以发现，<span class="math inline">\(\Delta c\)</span>的系数矩阵，与上文中边缘分布<span class="math inline">\(p(X)\)</span>的信息矩阵和信息矢量有相同的形式。而<span class="math inline">\(\Delta p\)</span>的系数矩阵，则与关于Y的条件概率分布<span class="math inline">\(p(Y|X)\)</span>的信息矩阵有相同形式。</p>
+</blockquote>
+<p>也就是说，这里的高斯消元法，等价于对变量<span class="math inline">\(\Delta c\)</span>做了边缘化，先将<span class="math inline">\(\Delta p\)</span>边缘化掉,就是消掉路标点p，单独求相机位姿增量<span class="math inline">\(\Delta c\)</span>，然后再在<span class="math inline">\(\Delta c\)</span>已知的情况下求<span class="math inline">\(\Delta p\)</span>。</p>
+<hr>
+<p>参考: 1. <a href="https://aipiano.github.io/2019/01/09/%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E4%B8%8E%E8%BE%B9%E7%BC%98%E5%8C%96/#%E8%81%94%E5%90%88%E9%AB%98%E6%96%AF%E5%88%86%E5%B8%83%E7%9A%84%E5%88%86%E8%A7%A3" target="_blank" rel="noopener">高斯分布与边缘化</a> 2. <a href="https://www.chainnews.com/articles/600332576936.htm" target="_blank" rel="noopener">看得见的高斯过程(译文)</a> 3. <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/" target="_blank" rel="noopener">看得见的高斯过程(原文)</a></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    第四讲(下)_基于滑动窗口算法的VIO系统
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">第六讲_视觉前端</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/';
+        
+        this.page.identifier = 'VIO/第四讲/第四讲(拓展)_高斯过程(边缘化与条件作用)';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>

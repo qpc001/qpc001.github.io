@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析 | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="捷联惯导更新算法 姿态更新算法 选取“东-北-天”地理坐标系作为惯导系统的导航参考坐标系，后面记为n系，则以n系作为参考系的姿态微分方程为： \[     \dot{C}_b^n &#x3D; C_b^n(\omega_{nb}^b \times) \] 其中，矩阵\(C_b^n\)表示载体坐标系（b系）相对于导航坐标系（n系）的姿态矩阵，由于陀螺仪输出的是b系相对于惯性系（i系）的角速度\(\omega_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析">
+<meta property="og:url" content="http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="捷联惯导更新算法 姿态更新算法 选取“东-北-天”地理坐标系作为惯导系统的导航参考坐标系，后面记为n系，则以n系作为参考系的姿态微分方程为： \[     \dot{C}_b^n &#x3D; C_b^n(\omega_{nb}^b \times) \] 其中，矩阵\(C_b^n\)表示载体坐标系（b系）相对于导航坐标系（n系）的姿态矩阵，由于陀螺仪输出的是b系相对于惯性系（i系）的角速度\(\omega_">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-09-56-19.png">
+<meta property="og:image" content="http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-16-00-14.png">
+<meta property="og:image" content="http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-16-06-38.png">
+<meta property="article:published_time" content="2020-11-20T00:36:46.000Z">
+<meta property="article:modified_time" content="2020-12-07T03:33:14.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-09-56-19.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file active"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-多传感器融合定位/滤波器融合_1_惯导解算原理" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">
+            <time datetime="2020-11-20T00:36:46.000Z" itemprop="datePublished">2020-11-20</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/多传感器融合定位/滤波器融合_1_惯导解算原理.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/多传感器融合定位/滤波器融合_1_惯导解算原理.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/多传感器融合定位/滤波器融合_1_惯导解算原理.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#捷联惯导更新算法"><span class="toc-number">1.</span> <span class="toc-text">捷联惯导更新算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#姿态更新算法"><span class="toc-number">1.1.</span> <span class="toc-text">姿态更新算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#速度更新算法"><span class="toc-number">1.2.</span> <span class="toc-text">速度更新算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#比力方程"><span class="toc-number">1.2.1.</span> <span class="toc-text">比力方程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#位置更新算法"><span class="toc-number">1.3.</span> <span class="toc-text">位置更新算法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#捷联惯导误差分析"><span class="toc-number">2.</span> <span class="toc-text">捷联惯导误差分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本方法误差分析的思路"><span class="toc-number">2.1.</span> <span class="toc-text">基本方法——误差分析的思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#姿态误差方程"><span class="toc-number">2.2.</span> <span class="toc-text">姿态误差方程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#速度误差方程"><span class="toc-number">2.3.</span> <span class="toc-text">速度误差方程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#位置误差方程"><span class="toc-number">2.4.</span> <span class="toc-text">位置误差方程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整理"><span class="toc-number">2.5.</span> <span class="toc-text">整理</span></a></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="捷联惯导更新算法">捷联惯导更新算法</h1>
+<h2 id="姿态更新算法">姿态更新算法</h2>
+<p>选取“东-北-天”地理坐标系作为惯导系统的导航参考坐标系，后面记为<code>n系</code>，则以<code>n</code>系作为参考系的姿态微分方程为：</p>
+<p><span class="math display">\[
+    \dot{C}_b^n = C_b^n(\omega_{nb}^b \times)
+\]</span></p>
+<p>其中，矩阵<span class="math inline">\(C_b^n\)</span>表示载体坐标系（b系）相对于导航坐标系（n系）的姿态矩阵，由于陀螺仪输出的是b系相对于惯性系（i系）的角速度<span class="math inline">\(\omega_{ib}^b\)</span>，而角速度信息<span class="math inline">\(\omega_{nb}^b\)</span>不能直接测量获得，因此，进一步分解，有：</p>
+<p><span class="math display">\[
+\begin{aligned}
+        \dot{C}_b^n = C_b^n(\omega_{nb}^b \times)&amp;= C_b^n[(\omega_{ib}^b-\omega_{in}^b)\times] \\ 
+        &amp;= C_b^n(\omega_{ib}^b\times)-C_b^n(\omega_{in}^b\times) \\
+        &amp;= C_b^n(\omega_{ib}^b\times)-C_b^n(\omega_{in}^b\times)C_b^bC_b^n \\
+        &amp;= C_b^n(\omega_{ib}^b\times)-(\omega_{in}^n\times)C_b^n
+\end{aligned}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\omega_{in}^n\)</span>表示n系相对于i系的旋转，它包含两部分：地球自转引起的导航系旋转、以及惯导系统在地球表明附近运动因地球表面弯曲而引起的n系旋转，因此，有<span class="math inline">\(\omega_{in}^n=\omega_{ie}^n+\omega_{en}^n\)</span></li>
+</ul>
+<p><span class="math display">\[
+\omega_{ie}^n=
+\begin{bmatrix}
+    0 \\ \omega_{ie} \cos L \\ \omega_{ie} \sin L
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\omega_{en}^n=
+\begin{bmatrix}
+    -\frac{v_N}{R_M+h} \\ \frac{v_E}{R_N+h} \\ \frac{v_E}{R_N+h} \tan L
+\end{bmatrix}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\omega_{ie}\)</span>为地球自转角速率</li>
+<li><span class="math inline">\(L\)</span>表示地理纬度</li>
+<li><span class="math inline">\(h\)</span>表示高度</li>
+</ul>
+<p>与矩阵微分方程<span class="math inline">\(\dot{C}_b^n = C_b^n(\omega_{nb}^b \times)\)</span>相比，上面推导出来的离散化求解更麻烦，一般不会直接求解该方程，而是用如下方法解决姿态矩阵更新问题，</p>
+<p>根据矩阵乘法，有:</p>
+<p><span class="math display">\[
+    C_{b(m)}^{n(m)}=C_{i}^{n(m)}C_{b(m)}^{i}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li>角标符号m表示<span class="math inline">\(t_m\)</span>时刻</li>
+<li>由于i系是不动的惯性参考坐标系，其与时间无关，不需要标注时刻</li>
+</ul>
+<p>由:</p>
+<p><span class="math display">\[
+    C_{b(m)}^i=C_{b(m-1)}^iC_{b(m)}^{b(m-1)}
+\]</span></p>
+<p><span class="math display">\[
+    C_{i}^{n(m)}=C_{n(m-1)}^{n(m)}C_{i}^{n(m-1)}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li>矩阵<span class="math inline">\(C_{b(m)}^{b(m-1)}\)</span>表示以i系作为参考基准，b系从<span class="math inline">\(t_{m-1}\)</span>时刻到<span class="math inline">\(t_{m}\)</span>时刻的旋转变化，也就是以<span class="math inline">\(m-1\)</span>时刻下的载体坐标系作为基准，<span class="math inline">\(t_m\)</span>时刻下的载体姿态，同时也是载体从<span class="math inline">\(t_{m}\)</span>时刻载体坐标系到<span class="math inline">\(t_{m-1}\)</span>时刻载体坐标系的变换</li>
+<li><span class="math inline">\(C_{b(m)}^{b(m-1)}\)</span>可由陀螺仪角速度确定</li>
+<li><span class="math inline">\(C_{n(m-1)}^{n(m)}\)</span>表示以i系作为参考基准，n系从<span class="math inline">\(t_{m}\)</span>时刻到<span class="math inline">\(t_{m-1}\)</span>时刻的旋转变化</li>
+<li><span class="math inline">\(C_{n(m-1)}^{n(m)}\)</span>可以由计算角速度<span class="math inline">\(\omega_{in}^n\)</span>确定</li>
+</ul>
+<p>结合上面3条等式，有:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    C_{b(m)}^{n(m)}&amp;=C_{i}^{n(m)}C_{b(m)}^{i} \\
+    &amp;=C_{n(m-1)}^{n(m)}C_{i}^{n(m-1)} C_{b(m-1)}^iC_{b(m)}^{b(m-1)} \\
+    &amp;=C_{n(m-1)}^{n(m)}C_{b(m-1)}^{n(m-1)}C_{b(m)}^{b(m-1)}
+\end{aligned}
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(C_{b(m-1)}^{n(m-1)}\)</span>表示<span class="math inline">\(t_{m-1}\)</span>时刻的姿态阵</li>
+<li><span class="math inline">\(C_{b(m)}^{n(m)}\)</span>表示<span class="math inline">\(t_m\)</span>时刻的姿态阵</li>
+</ul>
+<p>若陀螺仪在时间段<span class="math inline">\([t_{m-1},t_m]\)</span>内<span class="math inline">\((T=t_m-t_{m-1})\)</span>进行了两次等间隔采样，角增量分别是<span class="math inline">\(\Delta \theta_{m1}\)</span>和<span class="math inline">\(\Delta \theta_{m2}\)</span>，采用二子样圆锥误差补偿算法，有：</p>
+<p><span class="math display">\[
+    C_{b(m)}^{b(m-1)}=M_{RV}(\phi_{ib(m)}^b)=\exp (\phi_{ib(m)}^b\times)
+\]</span></p>
+<p><span class="math display">\[
+    \phi_{ib(m)}^b=(\Delta \theta_{m1}+\Delta \theta_{m2})+\frac{2}{3} \Delta \theta_{m1} \times \Delta \theta_{m2}
+\]</span></p>
+<blockquote>
+<p>对于单子样，只需要把 <span class="math inline">\(\frac{2}{3}\)</span> 改成 <span class="math inline">\(\frac{1}{12}\)</span></p>
+</blockquote>
+<p>通常，在导航更新期间<span class="math inline">\([t_{m-1},t_m]\)</span>内，可以认为由速度和位置引起的<span class="math inline">\(\omega_{in}^n\)</span>变化很小，视为常数，记为<span class="math inline">\(\omega_{in(m)}^n\)</span>，则有：</p>
+<p><span class="math display">\[
+    C_{n(m-1)}^{n(m)}=(C_{n(m)}^{n(m-1)})^T = [M_{RV}(\phi_{in(m)}^n)]^T \approx [M_{RV}(T*\omega_{in(m)}^n)]^T
+\]</span></p>
+<h2 id="速度更新算法">速度更新算法</h2>
+<h3 id="比力方程">比力方程</h3>
+<p>比力方程是在地球表面附近进行惯性导航解算的基本方程</p>
+<p>参见图，假设在地球表面附近有一运载体（惯导系统），其中心为<span class="math inline">\(o_g\)</span>点，以<span class="math inline">\(o_g\)</span>为原点定义当地地理坐标系（g系）,<span class="math inline">\(o_g\)</span>在地球坐标系（e系）下的矢径记为<span class="math inline">\(R_{eg}\)</span> ，则<span class="math inline">\(R_{eg}\)</span>在惯性坐标系（i系）和e系之间的投影变换关系为:</p>
+<p><span class="math display">\[
+    R_{eg}^e = C_{i}^e R_{eg}^i
+\]</span></p>
+<p><img src="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-09-56-19.png"></p>
+<p>对上式两边同时微分，可得</p>
+<p><span class="math display">\[
+    \dot{R}_{eg}^e =C_i^e \dot{R}_{eg}^i+\dot C_{i}^e R_{eg}^i = C_i^e \dot{R}_{eg}^i + [C_i^e (\omega_{ei}^i \times)]R_{eg}^i = C_{i}^e(\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i)
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\dot{R}_{eg}^e\)</span>表示g系原点<span class="math inline">\(o_g\)</span>的速度，它是以e系作为参考坐标系的（即在e系观察得到的），即地速，<span class="math inline">\(v_{eg}^e=\dot{R}_{eg}^e\)</span></li>
+</ul>
+<p>使用变换阵<span class="math inline">\(C_e^g\)</span>同时对上式两边左乘:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    C_e^g v_{eg}^e &amp;= C_e^g C_{i}^e(\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i) \\
+    &amp;= C_i^g (\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i)
+\end{aligned}
+\]</span></p>
+<p>其中，上式左侧的<span class="math inline">\(C_e^g v_{eg}^e\)</span>表示地速在g系的投影，记为<span class="math inline">\(v_{eg}^g=C_e^g v_{eg}^e\)</span></p>
+<p>所以，有：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    v_{eg}^g = C_i^g (\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i)
+\end{aligned}
+\]</span></p>
+<p>用<span class="math inline">\(C_{g}^i\)</span>同时对上式两边左乘后，整理：</p>
+<p><span class="math display">\[
+    C_{g}^i v_{eg}^g =  (\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i)
+\]</span></p>
+<p><span class="math display">\[
+    \dot{R}_{eg}^i = C_{g}^i v_{eg}^g + \omega_{ie}^i \times R_{eg}^i
+\]</span></p>
+<p>对上式两边同时微分，可得：</p>
+<p><span class="math display">\[
+\begin{aligned}
+        \dot{v}_{eg}^g &amp;= \dot{C}_{i}^g(\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i) + C_i^g (\ddot{R}_{eg}^i - \omega_{ie}^i \times \dot{R}_{eg}^i) \\
+        &amp;= \underbrace{C_i^g(\omega_{gi}^i \times)C_g^i v_{eg}^g}_{\dot{C}_{i}^g(\dot{R}_{eg}^i-\omega_{ie}^i \times R_{eg}^i)} + C_i^g[\ddot{R}_{eg}^i - \omega_{ie}^i \times (C_g^i v_{eg}^g + \omega_{ie}^i \times R_{eg}^i)] \\
+        &amp;= C_i^g[\ddot{R}_{eg}^i-(\omega_{ie}^i \times)^2R_{eg}^i] + C_i^g[(\omega_{gi}^i-\omega_{ie}^i)\times]C_{g}^i v_{eg}^g \\
+        &amp;= C_i^g[\ddot{R}_{eg}^i-(\omega_{ie}^i \times)^2R_{eg}^i] - (\omega_{ie}^g+ \omega_{ig}^g) \times v_{eg}^g \\
+        &amp;= C_i^g[\ddot{R}_{eg}^i-(\omega_{ie}^i \times)^2R_{eg}^i] - (\omega_{ie}^g+ \omega_{ie}^g+ \omega_{eg}^g ) \times v_{eg}^g \\
+        &amp;= C_i^g[\ddot{R}_{eg}^i-(\omega_{ie}^i \times)^2R_{eg}^i] - (2\omega_{ie}^g+ \omega_{eg}^g) \times v_{eg}^g
+\end{aligned}
+\]</span></p>
+<p>由于<span class="math inline">\(R_{ig}^i=R_{ie}^i+R_{eg}^i\)</span>，当选择地心惯性系作为i系时，则i系和e系的坐标原点<strong>始终重合</strong>，即有<span class="math inline">\(R_{ie}^i=0\)</span>和<span class="math inline">\(\ddot{R}_{eg}^i=\ddot{R}_{ig}^i\)</span></p>
+<p>根据牛顿第二定律，有<span class="math inline">\(\ddot{R}_{ig}^i=f_{sf}^i+G^i\)</span>，其中:</p>
+<ul>
+<li><span class="math inline">\(f_{sf}^i\)</span>为比力</li>
+<li><span class="math inline">\(G^i\)</span>为地球引力加速度(注意，不是重力)</li>
+</ul>
+<p>再根据地球重力公式<span class="math inline">\(g^i=G^i - (\omega_{ie}^i \times)^2 R_{eg}^i\)</span></p>
+<p>可得：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{v}_{eg}^g &amp;= C_i^g[\ddot{R}_{eg}^i-(\omega_{ie}^i \times)^2R_{eg}^i] - (2\omega_{ie}^g+ \omega_{eg}^g) \times v_{eg}^g \\
+    &amp;= C_i^g(f_{sf}+g^i)-(2\omega_{ie}^g+ \omega_{eg}^g) \times v_{eg}^g \\
+    &amp;= C_b^g f_{sf}^b - (2 \omega_{ie}^g+\omega_{eg}^g) \times v_{eg}^g +g^g
+\end{aligned}
+\]</span></p>
+<p>将上式的地理过坐标系g系替换成“东-北-天”导航坐标系（n系），即可得到<strong>比力方程</strong>：</p>
+<p><span class="math display">\[
+    \dot{v}_{en}^n = C_b^n f_{sf}^b - (2 \omega_{ie}^n + \omega_{en}^n )\times v_{en}^n + g^n
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(f_{sf}^b\)</span>为加速度的输出（比力）</li>
+<li><span class="math inline">\((2 \omega_{ie}^n ) \times v_{en}^n\)</span> 为由载体运动和地球自转引起的哥氏加速度</li>
+<li><span class="math inline">\((\omega_{en}^n) \times v_{en}^n\)</span>为载体运动引起的对地向心加速度</li>
+<li><span class="math inline">\(g^n\)</span>为重力加速度</li>
+<li><span class="math inline">\(- (2 \omega_{ie}^n + \omega_{en}^n )\times v_{en}^n + g^n\)</span>统称为有害加速度</li>
+<li>以东北天坐标系为导航坐标系，则<span class="math inline">\(g^n=[0,0,-9.81]\)</span></li>
+</ul>
+<p>比力方程表明，加速度计输出中扣除有害加速度后，才能获取载体再导航坐标系的<strong>几何运动加速度</strong><span class="math inline">\(\dot{v}_{en}^n\)</span></p>
+<blockquote>
+<p>有时，为了计算简便，会把哥氏加速度和向心加速度忽略，即<span class="math inline">\(\dot{v}_{en}^n = C_b^n f_{sf}^b + g^n\)</span></p>
+</blockquote>
+<hr>
+<p>综上，可得，速度更新方程:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    V_{m}=V_{m-1}+[\dot{v}_{en}^n]\Delta T
+\end{aligned}
+\]</span></p>
+<p>或者由简化形式:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    V_{m}=V_{m-1}+\frac{1}{2}( C_{b(m-1)}^{n(m-1)}f_{sf(m-1)}^b + C_{b(m)}^{n(m)}f_{sf(m)}^b )\Delta T
+\end{aligned}
+\]</span></p>
+<h2 id="位置更新算法">位置更新算法</h2>
+<p>由位置微分方程：</p>
+<p><span class="math display">\[
+    \dot{P} = V
+\]</span></p>
+<p>可得，位置更新方程：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    P_{m}=P_{m-1}+\frac{1}{2}(V_m+V_{m-1})\Delta T
+\end{aligned}
+\]</span></p>
+<h1 id="捷联惯导误差分析">捷联惯导误差分析</h1>
+<h2 id="基本方法误差分析的思路">基本方法——误差分析的思路</h2>
+<p><strong>误差方程的形式</strong>——需要求的是啥？</p>
+<p>假设给定微分方程:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{z}=x+y
+\end{aligned} 
+\]</span></p>
+<p>且:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{z}&amp;=z+\delta z \\
+    \tilde{x}&amp;=x+\delta x \\
+    \tilde{y}&amp;=y+\delta y
+\end{aligned} 
+\]</span></p>
+<p>则误差方程的形式为:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta \dot{z}= ???
+\end{aligned}
+\]</span></p>
+<hr>
+<ol type="1">
+<li>写出原微分方程</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{z}=x+y
+\end{aligned} \tag{1}
+\]</span></p>
+<ol start="2" type="1">
+<li><p>写出考虑误差时的微分方程</p>
+<p>即把<span class="math inline">\(\dot{z}=x+y\)</span>使用带有误差的变量代替，得到:</p></li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{\dot{z}}=\tilde{x}+\tilde{y} 
+\end{aligned} \tag{2}
+\]</span></p>
+<ol start="3" type="1">
+<li><p>求出误差关系（真实值与理想值的关系）</p>
+<p>这一步中，并非所有的关系都是已知的，有些需要自己推</p></li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{z}&amp;=z+\delta z \\
+    \tilde{x}&amp;=x+\delta x \\
+    \tilde{y}&amp;=y+\delta y
+\end{aligned} \tag{3}
+\]</span></p>
+<ol start="4" type="1">
+<li>把(3)的误差关系代入到等式(2)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{z}+\delta{\dot{z}}=x+\delta x+ y+ \delta y 
+\end{aligned} \tag{4}
+\]</span></p>
+<ol start="5" type="1">
+<li>取原微分方程(1)，代入(4)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \because \dot{z}&amp;=x+y \\
+    \therefore x+y + \delta \dot{z}&amp;=x + y+ \delta x+\delta y
+\end{aligned}   \tag{5}
+\]</span></p>
+<ol start="6" type="1">
+<li>化简</li>
+</ol>
+<p><span class="math display">\[
+    \delta \dot{z} =\delta x+ \delta y
+\]</span></p>
+<h2 id="姿态误差方程">姿态误差方程</h2>
+<ol type="1">
+<li><p>写出原微分方程</p>
+<p>以“东-北-天(E-N-U)”坐标系为导航坐标系(n系)，“右-前-上”坐标系为(b系)时，姿态微分方程可以表示为</p></li>
+</ol>
+<p><span class="math display">\[
+    \dot{C}_b^n = C_b^n(\omega_{nb}^b \times)
+\]</span></p>
+<p>当考虑地球自转角速度时，不易直接测量，因此上面的微分方程可以拆解为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+        \dot{C}_b^n = C_b^n(\omega_{nb}^b \times)&amp;= C_b^n[(\omega_{ib}^b-\omega_{in}^b)\times] \\ 
+        &amp;= C_b^n(\omega_{ib}^b\times)-C_b^n(\omega_{in}^b\times) \\
+        &amp;= C_b^n(\omega_{ib}^b\times)-C_b^n(\omega_{in}^b\times)C_b^bC_b^n \\
+        &amp;= C_b^n(\omega_{ib}^b\times)-(\omega_{in}^n\times)C_b^n
+\end{aligned} \tag{1}
+\]</span></p>
+<p>其中，<span class="math inline">\(\omega_{in}^n\)</span>表示导航系(n系)相对于惯性系(i系)的旋转，它包含地球自转和导航系相对于地球的旋转，其表达式为：</p>
+<p><span class="math display">\[
+    \omega_{in}^n = \omega_{ie}^n + \omega_{en}^n
+\]</span></p>
+<ol start="2" type="1">
+<li>写出考虑误差的微分方程:</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{\tilde{C}_b^n}= \tilde{C}_b^n( \tilde{\omega}_{ib}^b\times)-( \tilde{\omega}_{in}^n\times) \tilde{C}_b^n
+\end{aligned} \tag{2}
+\]</span></p>
+<ol start="3" type="1">
+<li>求出误差关系（真实值与理想值的关系）</li>
+</ol>
+<ul>
+<li>姿态误差关系</li>
+<li>imu角速度误差关系</li>
+<li>导航系计算误差关系</li>
+</ul>
+<p><strong>姿态误差关系</strong></p>
+<p>理想情况下，从载体坐标系(b系)到导航坐标系(n系)的变换矩阵为<span class="math inline">\(C_b^n\)</span>，而姿态计算时会有误差，一般假设误差在n系(global)上。</p>
+<p>有误差的导航坐标系称为计算导航坐标系，简记为<span class="math inline">\(n&#39;\)</span>系。此时有误差的姿态矩阵<span class="math inline">\(\tilde{C}_b^n\)</span>表示为</p>
+<p><span class="math display">\[
+    \tilde{C}_b^n = C_b^{n&#39;}=C_n^{n&#39;}C_b^n
+\]</span></p>
+<p>以n系作为参考坐标系，记从 n' 系到 n 系的旋转矩阵为<span class="math inline">\(C_\phi\)</span>，n'系在n系中的姿态为<span class="math inline">\(C_\phi\)</span>，对应的等效旋转矢量为<span class="math inline">\(\phi\)</span>(其3个元素也被称作失准角)，也就是说，n系绕等效旋转矢量为<span class="math inline">\(\phi\)</span>旋转之后，得到n' 系</p>
+<p>当<span class="math inline">\(\phi\)</span>为小量时，根据等效旋转矢量与方向余弦阵关系式——罗德里格斯公式：</p>
+<p><span class="math display">\[
+    C_{n&#39;}^{n}=I+\frac{\sin \phi}{\phi}(\phi \times)+ \frac{1-\cos \phi}{ \phi^2}(\phi  \times)^2 \approx I+(\phi \times)
+\]</span></p>
+<p><span class="math display">\[
+    C_n^{n&#39;}=I-\frac{\sin \phi}{\phi}(\phi \times)+ \frac{1-\cos \phi}{ \phi^2}(\phi \times)^2 \approx I-(\phi \times)
+\]</span></p>
+<blockquote>
+<p>这个怎么理解，假设n系矩阵<span class="math inline">\(C_n\)</span>等于<span class="math inline">\(I\)</span>, 对n系绕z轴逆时针旋转<span class="math inline">\(30\)</span>度，得到n'系，这个等效旋转矢量是<span class="math inline">\(\phi=[0,0,\frac{1}{6} \pi]\)</span>，那么n'系在n系的姿态是<span class="math inline">\(I+(\phi \times)\)</span>，n'系到n系的旋转变换为<span class="math inline">\(C_{n&#39;}^{n}=I+(\phi \times)\)</span></p>
+</blockquote>
+<p>因此，带误差的姿态矩阵表示为：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{C}_b^{n}=C_b^{n&#39;} = C_n^{n&#39;}C_b^n = [I-(\phi \times)] C_b^n
+\end{aligned} \tag{3}
+\]</span></p>
+<p><strong>IMU角速度误差关系</strong></p>
+<p>陀螺仪测量误差关系：</p>
+<p><span class="math display">\[
+    \tilde{\omega}_{ib}^b = \omega_{ib}^b + \delta \omega_{ib}^b
+\]</span></p>
+<blockquote>
+<p>一般来说，imu内参的影响会在imu测量的时候先补偿掉，这里就不用考虑了 <img src="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-16-00-14.png"></p>
+</blockquote>
+<p><strong>导航系计算误差</strong></p>
+<p><span class="math display">\[
+    \tilde{\omega}_{in}^n=\tilde{\omega}_{ie}^n+\tilde{\omega}_{en}^n = \omega_{ie}^n + \delta \omega_{ie}^n  + \omega_{en}^n + \delta \omega_{en}^n
+\]</span></p>
+<p>在实际使用过程中，对于mems惯导，可以忽略这误差：</p>
+<ul>
+<li>在中等精度及以下的惯性导航中，这两项角速度误差相比于器件误差，量级太小，没有考虑的必要;</li>
+<li>在组合导航中，速度误差和位置误差一直被修正，会使他们的量级进一步减小。</li>
+</ul>
+<blockquote>
+<p>两项误差的具体推导如下：</p>
+<p><img src="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/2020-11-20-16-06-38.png"></p>
+</blockquote>
+<ol start="4" type="1">
+<li>将(3)中的误差关系代入(2)</li>
+</ol>
+<ul>
+<li>姿态误差关系： <span class="math inline">\(\tilde{C}_b^{n} = [I-(\phi \times)] C_b^n\)</span></li>
+<li>imu测量误差关系: <span class="math inline">\(\tilde{\omega}_{ib}^b = \omega_{ib}^b + \delta \omega_{ib}^b\)</span></li>
+<li>导航系计算误差关系: <span class="math inline">\(\tilde{\omega}_{in}^n= \omega_{ie}^n + \delta \omega_{ie}^n + \omega_{en}^n + \delta \omega_{en}^n\)</span></li>
+</ul>
+<p>对式(2)重新抄写如下：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{\tilde{C}_b^n}= \tilde{C}_b^n( \tilde{\omega}_{ib}^b\times)-( \tilde{\omega}_{in}^n\times) \tilde{C}_b^n
+\end{aligned} \tag{2}
+\]</span></p>
+<p>代入之后，可得：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    (-\dot{\phi}\times)C_{b}^n +[I-(\phi\times)]\dot{C}_n^b = [I-(\phi \times)]C_b^n[(\omega_{ib}^b+\delta \omega_{ib}^b)\times]-(\omega_{in}^n\times)[I-(\phi \times)]C_b^n
+\end{aligned} \tag{4}
+\]</span></p>
+<ol start="5" type="1">
+<li>将(1)中的原微分方程代入(4)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    (-\dot{\phi}\times)C_b^n + [I - (\phi \times)][C_b^n (\omega_{ib}^b\times)-(\omega_{in}^n)C_b^n] \\
+    = [I-(\phi \times)]C_b^n[(\omega_{ib}^b+\delta \omega_{ib}^b)\times]-(\omega_{in}^n\times)[I-(\phi \times)]C_b^n
+\end{aligned}
+\]</span></p>
+<ol start="6" type="1">
+<li>化简</li>
+</ol>
+<ol type="1">
+<li>两边同时右乘<span class="math inline">\(C_n^b\)</span><br>
+</li>
+<li>展开，忽略其中的二阶项<br>
+</li>
+<li>利用定理<span class="math inline">\((a\times)(b\times)-(b\times)(a\times)=[(a\times b)\times]\)</span> 进一步化简</li>
+</ol>
+<p>最终，得到:</p>
+<p><span class="math display">\[
+    (\dot{\phi}\times)=[(\phi \times \omega_{in}^n -\delta \omega_{ib}^n)\times]
+\]</span></p>
+<p>最后，把两边的反对称符号同时去掉</p>
+<p><span class="math display">\[
+    \dot{\phi} = \phi \times \omega_{in}^n - \delta \omega_{ib}^n
+\]</span></p>
+<h2 id="速度误差方程">速度误差方程</h2>
+<ol type="1">
+<li>写出原微分方程</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{V}^n=C_b^n f^b + g^n
+\end{aligned} \tag{1}
+\]</span></p>
+<ol start="2" type="1">
+<li>写出考虑误差的微分方程</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{\tilde{V}}^n = \tilde{C}_b^n \tilde{f}^b + \tilde{g}^n
+\end{aligned} \tag{2}
+\]</span></p>
+<ol start="3" type="1">
+<li>求出误差关系（真实值与理想值的关系）</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    &amp; \tilde{V}^n = V^n +\delta V^n \\
+    &amp; \tilde{C}_b^n = [I-\phi\times]C_b^n \\
+    &amp; \tilde{f}^b = f^b +\delta f^b \\
+    &amp; \tilde{g}^n = g^n +\delta g^n
+\end{aligned} \tag{3}
+\]</span></p>
+<p>其中：</p>
+<ul>
+<li><span class="math inline">\(\delta f^b\)</span>表示加速度测量误差</li>
+<li><span class="math inline">\(g^n\)</span>表示重力误差，非高精度模型下可忽略</li>
+</ul>
+<ol start="4" type="1">
+<li>将(3)代入(2)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{V}^n+\delta \dot{V}^n = (I-\phi \times)C_b^n(f^b+\delta f^b)+g^n
+\end{aligned} \tag{4}
+\]</span></p>
+<ol start="5" type="1">
+<li>将原微分方程代入(4)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    C_b^n f^b +g^n + \delta \dot{V}^n = (I-\phi \times)C_b^n(f^b+\delta f^b)+g^n
+\end{aligned} \tag{5}
+\]</span></p>
+<ol start="6" type="1">
+<li>化简</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta \dot{V}^n &amp;= C_b^n \delta f^b - (\phi \times)C_b^n(f^b +\delta f^b) \\
+    &amp; \approx C_b^n \delta f^b - (\phi \times)C_b^n(f^b) \\
+    &amp;= \delta f^n + (f^n \times)(\phi)
+\end{aligned} \tag{6}
+\]</span></p>
+<h2 id="位置误差方程">位置误差方程</h2>
+<ol type="1">
+<li>写出原微分方程</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot {P} = V
+\end{aligned} \tag{1}
+\]</span></p>
+<ol start="2" type="1">
+<li>写出考虑误差的微分方程</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{\tilde{P}}=\tilde{V}
+\end{aligned} \tag{2}
+\]</span></p>
+<ol start="3" type="1">
+<li>求出误差关系（真实值与理想值的关系）</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \tilde{P} = P + \delta P \\
+    \tilde{V} = V + \delta V 
+\end{aligned} \tag{3}
+\]</span></p>
+<ol start="4" type="1">
+<li>将(3)代入(2)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{P} + \delta \dot{P} = V+ \delta V
+\end{aligned}
+\]</span></p>
+<ol start="5" type="1">
+<li>将原微分方程代入(4)</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    V+\delta \dot{P} = V+ \delta V
+\end{aligned} \tag{5}
+\]</span></p>
+<ol start="6" type="1">
+<li>化简</li>
+</ol>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta \dot{P} = \delta V
+\end{aligned} \tag{6}
+\]</span></p>
+<h2 id="整理">整理</h2>
+<p><strong>姿态误差方程</strong></p>
+<p><span class="math display">\[
+\begin{aligned}
+    \dot{\phi} = \phi \times \omega_{in}^n - \delta \omega_{ib}^n
+\end{aligned}
+\]</span></p>
+<p><strong>速度误差方程</strong></p>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta \dot{V}^n = \delta f^n + (f^n \times)(\phi)
+\end{aligned}
+\]</span></p>
+<p><strong>位置误差方程</strong></p>
+<p><span class="math display">\[
+\begin{aligned}
+    \delta \dot{P} = \delta V
+\end{aligned}
+\]</span></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    滤波器分析——状态方程和观测方程
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">第五章-(2)-组合导航常见现象解释</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/';
+        
+        this.page.identifier = '多传感器融合定位/滤波器融合_1_惯导解算原理';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>

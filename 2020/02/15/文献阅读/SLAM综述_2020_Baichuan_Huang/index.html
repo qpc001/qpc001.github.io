@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>SLAM综述_2020_Baichuan_Huang | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="SLAM综述_2020_Baichuan_Huang" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="1. SLAM综述_2020_Baichuan_Huang  2. 摘要 文章对激光SLAM，视觉SLAM以及它们的融合进行回顾。对于激光或者视觉slam而言，文章阐述了传感器的基本类型和产品、开源系统的种类和历史，深度学习的嵌入，挑战以及未来。另外的，视觉惯性里程计VIO也有被提及。对于激光和视觉融合的SLAM，本文重点提到了关于多传感器的标定，硬件、数据、任务层级的融合。最后，文章讲述了一些开">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SLAM综述_2020_Baichuan_Huang">
+<meta property="og:url" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="1. SLAM综述_2020_Baichuan_Huang  2. 摘要 文章对激光SLAM，视觉SLAM以及它们的融合进行回顾。对于激光或者视觉slam而言，文章阐述了传感器的基本类型和产品、开源系统的种类和历史，深度学习的嵌入，挑战以及未来。另外的，视觉惯性里程计VIO也有被提及。对于激光和视觉融合的SLAM，本文重点提到了关于多传感器的标定，硬件、数据、任务层级的融合。最后，文章讲述了一些开">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-15-18-19-49.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216180340199.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216180904410.png">
+<meta property="og:image" content="https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/5639431/5648787/5649043/5649043-fig-3-source-large.gif">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181320934.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181526674.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181627701.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181704046.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-18-51-40.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/Lego-Loam.gif">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-18-55-39.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/Lego-Loam_0.gif">
+<meta property="og:image" content="https://j.gifs.com/wp3BJM.gif">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-01-11.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-01-25.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-05-45.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-12-30.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-17-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-21-56.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-26-15.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-28-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-31-42.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/OpenVSLAM.gif">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-34-52.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-36-51.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-37-44.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-38-45.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-39-52.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-41-57.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-42-37.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-44-08.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-50-01.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-52-45.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-53-41.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-55-48.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-57-24.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-59-08.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-00-34.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-02-52.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-07-09.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-09-14.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-11-55.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-12-57.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-14-15.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-15-11.png">
+<meta property="og:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-22-53.png">
+<meta property="article:published_time" content="2020-02-15T10:19:19.000Z">
+<meta property="article:modified_time" content="2020-03-01T10:21:59.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-15-18-19-49.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file active"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2%20copy/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-文献阅读/SLAM综述_2020_Baichuan_Huang" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">
+            <time datetime="2020-02-15T10:19:19.000Z" itemprop="datePublished">2020-02-15</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/文献阅读/SLAM综述_2020_Baichuan_Huang.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/文献阅读/SLAM综述_2020_Baichuan_Huang.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/文献阅读/SLAM综述_2020_Baichuan_Huang.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            SLAM综述_2020_Baichuan_Huang
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#slam综述_2020_baichuan_huang"><span class="toc-number">1.</span> <span class="toc-text">1. SLAM综述_2020_Baichuan_Huang</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">2. 摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">3. 介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#激光slam"><span class="toc-number">4.</span> <span class="toc-text">4. 激光SLAM</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#激光传感器"><span class="toc-number">4.1.</span> <span class="toc-text">4.1. 激光传感器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#slam"><span class="toc-number">4.2.</span> <span class="toc-text">4.2. SLAM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#d-激光slam"><span class="toc-number">4.2.1.</span> <span class="toc-text">4.2.1. 2D 激光SLAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#d-激光slam-1"><span class="toc-number">4.2.2.</span> <span class="toc-text">4.2.2. 3D 激光SLAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#深度学习deep-learn在激光slam中的应用"><span class="toc-number">4.2.3.</span> <span class="toc-text">4.2.3. 深度学习Deep Learn在激光SLAM中的应用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#视觉slam"><span class="toc-number">5.</span> <span class="toc-text">5. 视觉SLAM</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#视觉传感器"><span class="toc-number">5.1.</span> <span class="toc-text">5.1. 视觉传感器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#视觉slam系统"><span class="toc-number">5.2.</span> <span class="toc-text">5.2. 视觉SLAM系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#稀疏视觉slam"><span class="toc-number">5.2.1.</span> <span class="toc-text">5.2.1. 稀疏视觉SLAM：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#半稠密视觉slam"><span class="toc-number">5.2.2.</span> <span class="toc-text">5.2.2. 半稠密视觉SLAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#稠密视觉slam"><span class="toc-number">5.2.3.</span> <span class="toc-text">5.2.3. 稠密视觉SLAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视觉惯性里程计slam"><span class="toc-number">5.2.4.</span> <span class="toc-text">5.2.4. 视觉惯性里程计SLAM</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于深度学习的视觉slam"><span class="toc-number">5.2.5.</span> <span class="toc-text">5.2.5. 基于深度学习的视觉SLAM</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#挑战和未来"><span class="toc-number">5.3.</span> <span class="toc-text">5.3. 挑战和未来</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#激光和视觉slam系统"><span class="toc-number">6.</span> <span class="toc-text">6. 激光和视觉SLAM系统</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多传感器标定"><span class="toc-number">6.1.</span> <span class="toc-text">6.1. 多传感器标定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#激光雷达和视觉融合"><span class="toc-number">6.2.</span> <span class="toc-text">6.2. 激光雷达和视觉融合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#挑战和未来-1"><span class="toc-number">6.3.</span> <span class="toc-text">6.3. 挑战和未来</span></a></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="slam综述_2020_baichuan_huang">1. SLAM综述_2020_Baichuan_Huang</h1>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-15-18-19-49.png"></p>
+<h1 id="摘要">2. 摘要</h1>
+<p>文章对激光SLAM，视觉SLAM以及它们的融合进行回顾。对于激光或者视觉slam而言，文章阐述了传感器的基本类型和产品、开源系统的种类和历史，深度学习的嵌入，挑战以及未来。另外的，视觉惯性里程计VIO也有被提及。对于激光和视觉融合的SLAM，本文重点提到了关于多传感器的标定，硬件、数据、任务层级的融合。最后，文章讲述了一些开放的问题以及前言的思考。文章的贡献可总结如下：</p>
+<ul>
+<li>提供了SLAM领域高质量和全面的overview</li>
+<li>对于新入门的研究者十分容易的理解SLAM的发展历史</li>
+<li>可作为一部SLAM词典供研究者</li>
+</ul>
+<h1 id="介绍">3. 介绍</h1>
+<p>SLAM的主要任务：定位和建图。 1990年，“Randall Smith, Matthew Self, and Peter Cheeseman. Estimating un-certain spatial relationships in robotics. InAutonomous robot vehicles,pages 167–193. Springer, 1990.”首先提出了利用EKF进行增量式的位姿和地图估计，事实上，从未知环境的未知位置出发，机器人在运动过程中通过反复观察环境特征来确定自己的位置和姿态，然后根据周围环境的位置，绘制出一幅递增的周边环境地图。<strong>定位</strong>是近年来一个非常复杂和热点的问题。定位技术取决于环境和对成本、精度、频率和鲁棒性的要求，可以通过gps(全球定位系统)、IMU(惯性测量单元)和无线信号等来实现。但GPS只能在户外工作，IMU系统存在累积误差[5]。无线技术作为一种主动系统，无法在成本和精度之间取得平衡。近年来，随着激光雷达、相机、IMU等传感器的迅速发展，SLAM系统应运而生</p>
+<p>从基于滤波器的SLAM开始，目前基于图优化的SLAM占据主导地位，该算法由卡尔曼滤波(KF)、EKF和粒子滤波(PF)演化为基于图的优化算法，该算法由卡尔曼滤波(KF)、EKF和粒子滤波(PF)演化为基于图的优化算法。SLAM技术也从最早的军事原型发展到后来多传感器融合的机器人应用。</p>
+<h1 id="激光slam">4. <font color="red">激光SLAM</font></h1>
+<h2 id="激光传感器">4.1. 激光传感器</h2>
+<p>激光传感器分为2D和3D激光雷达，具体区分是以传感器的激光束数量来定义。在生产过程中，激光雷达也可以分为机械雷达、MEMS (micro- electromechanical)等混合固态激光雷达和固态激光雷达。固态激光雷达可以通过相控阵技术和flash技术来实现。</p>
+<ul>
+<li><strong>Velodyne</strong>：在机械激光雷达，它有VLP-16, HDL - 32E和HDL-64E。在混合固态激光雷达，它有Ultra Puck auto-32E</li>
+<li>SLAMTEC：低成本激光雷达和机器人平台，如RPLIDAR A1, A2和R3</li>
+<li><strong>Ouster</strong>：16到128线的机械激光雷达</li>
+<li><strong>Quanergy</strong>：S3是世界上第一个发布的固态激光雷达，M8是机械激光雷达。S3-QI是微小型固态激光雷达</li>
+<li><strong>Ibeo</strong>：在机械激光雷达中，有Lux 4L和Lux 8L。与Valeo公司合作，它发布了一款名为Scala的混合固态激光器</li>
+</ul>
+<p>在未来的发展趋势中，小型化、轻量化的固体无级变速器将会占据市场并满足大多数的应用，其他激光雷达公司包括但不限于<strong>sick, Hokuyo, HESAI, RoboSense, LeddarTech, ISureStar, benewake, Livox, Innovusion, Innoviz, Trimble, LeishenIntelligent System</strong></p>
+<h2 id="slam">4.2. SLAM</h2>
+<p>激光SLAM在理论和实际应用中是可靠的。《概率机器人》阐述了基于概率的二维激光雷达同步定位与建图的数学理论。“An evalu-ation of 2d slam techniques available in robot operating system”对2D激光SLAM做了一个综述。</p>
+<h3 id="d-激光slam">4.2.1. 2D 激光SLAM</h3>
+<ol type="1">
+<li><p><strong>Gmapping</strong>：它是基于RBPF(Rao-Blackwellisation Partical Filter)方法的机器人中最常用的SLAM包，使用了扫描匹配(Scan matching)方法来估计位置(《概率机器人》、Improvedtechniques for grid mapping with rao-blackwellized particle filter.2007)。它是基于占据地图的FastSLAM的进阶版本。</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216180340199.png"></p></li>
+<li><p><strong>HectorSlam</strong>：使用扫描匹配(Scan matching)和IMU传感器实现了结合2D SLAM和3D导航。（A flexible and scalable slam system with full 3d motionestimation.2011）</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216180904410.png"></p></li>
+<li><p><strong>KartoSLAM</strong>：一种基于图的SLAM系统（Efficient sparse pose adjustmentfor 2d mappin.2010）</p>
+<p><img src="https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/5639431/5648787/5649043/5649043-fig-3-source-large.gif"></p></li>
+<li><p><strong>LagoSLAM</strong>：基于图的SLAM，讨论了非线性非凸的损失函数。（A linear approximation for graph-based simultaneous localization andmapping.2012）</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181320934.png" style="zoom:150%;"></p></li>
+<li><p><strong>CoreSLAM</strong>/Tiny SLAM：可以理解为性能损失最小的算法（A slam algorithm in less than200 lines c-language program.2010）</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181526674.png" style="zoom:80%;"></p></li>
+<li><p><strong>Cartographer</strong>：Google的SLAM系统，采用了子图和回环检测技术达到了最好的产品级别性能。算法可以提供2D和3D的多平台和传感器配置。（ Real-time loop closure in 2d lidar slam.2016）</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181627701.png"></p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/image-20200216181704046.png"></p></li>
+</ol>
+<h3 id="d-激光slam-1">4.2.2. 3D 激光SLAM</h3>
+<ol type="1">
+<li><p><strong>Loam</strong>：是一种利用三维激光雷达进行状态估计和建图的<strong>实时</strong>方法。它也有前后旋转版本和连续扫描2D激光雷达版本(Loam: Lidar odometry and mapping inreal-time.2014)</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-18-51-40.png"></p></li>
+<li><p><strong>Lego-Loam</strong>：采用点云从VelodyneVLP-16激光雷达(水平放置)和（可选的）IMU作为数据输入。系统实时输出6D位姿估计，具有全局最优化和回环检测功能。（Lego-loam: Lightweight and ground-optimized lidar odometry and mapping on variable terrain 2018） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/Lego-Loam.gif"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-18-55-39.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/Lego-Loam_0.gif"></p></li>
+<li><p><strong>Cartographer</strong>：支持2D和3D SLAM</p>
+<p><img src="https://j.gifs.com/wp3BJM.gif"></p></li>
+<li><p><strong>IMLS-SLAM</strong>：基于（扫描-模型匹配）框架，提出了一种基于三维激光雷达数据的低漂移SLAM算法（Imls-slam: scan-to-model matching basedon 3d data.2018）</p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-01-11.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-01-25.png"></p></li>
+</ol>
+<h3 id="深度学习deep-learn在激光slam中的应用">4.2.3. 深度学习Deep Learn在激光SLAM中的应用</h3>
+<ol type="1">
+<li><p>特征提取和检测：</p>
+<p><strong>PointNetVLAD</strong>——提供了端到端的训练以及推理来实现从给定的3D点云中提取全局描述符，解决基于点云的位置识别检索问题（ointnetvlad: Deeppointcloud based retrieval for large-scale place recognition）。</p>
+<p><strong>VoxelNet</strong>——一个通用的三维检测网络，它将特征提取和边界框预测统一到一个单阶段模型，端到端可训练的网络（Voxelnet: End-to-end learning for pointcloud based 3d object detection.）</p>
+<p><strong>BirdNet</strong>、<strong>LMNet</strong>：描述了效率的单阶段卷积神经网络，用来检测物体病输出一个对象映射和每个点的边界框偏移值。</p>
+<p><strong>PIXOR</strong>：是一个无提议的单阶段检测器，它从像素级别的神经网络中进行解码，输出3D物体的姿态估计（Pixor: Real-time 3d objectdetection from point clouds）</p>
+<p><strong>Yolo3D</strong>：基于2D透视图像空间中单阶段回归架构的成功，将其扩展到从激光雷达点云生成定向三维物体边界盒（Yolo3d: End-to-end real-time 3d oriented objectbounding box detection from lidar point cloud）</p>
+<p><strong>PointCNN</strong>：提出了从输入点云中学习X变换，X变换应用于典型卷积（点乘）运算符的元素-向量积和求和运算（Pointcnn: Convolution on x-transformed points.）</p>
+<p><strong>MV3D</strong>：将激光雷达点云和RGB图像作为输入，并预测带姿态方向的的3D边界框（Multi-view3d object detection network for autonomous driving）</p>
+<p><strong>PU-GAN</strong>：提出一种新的点云上采样网络，基于generative adversarial network (GAN)，其他类似的工作可以参考CVPR2018等最佳论文。（ Pu-gan: A point cloud upsampling adversarial network.）</p></li>
+<li><p>识别与分割</p>
+<p>实际上，对三维点云的分割方法可以分为基于边缘、区域生长、模型拟合、混合方法，机器学习和深度学习方法。（A review of point cloudssegmentation and classification algorithms）</p>
+<p><strong>PointNet</strong>：设计了一种直接利用点云的新型神经网络，具有分类、分割和语义分析的功能（Pointnet:Deep learning on point sets for 3d classification and segmentation）</p>
+<p><strong>Point-Net++</strong>：通过增加上下文的规模来获得层次特征（Pointnet++: Deephierarchical feature learning on point sets in a metric space.）</p>
+<p><strong>VoteNet</strong>：构建点云三维检测pipline作为端到端三维目标探测网络，基于Point-Net++。（eephough voting for 3d object detection in point clouds）</p>
+<p><strong>SegMap</strong>：基于3D点云的语义分割作为一种SLAM问题中的地图表示（SegMap: 3d segment mapping usingdata-driven descriptors. ）</p>
+<p><strong>SqueezeSeg</strong>：使用循环CRF (Conditionalrandom fields)进行实时道路目标分割的三维激光雷达点云的卷积神经网络 （queezeseg:Convolutional neural nets with recurrent crf for real-timeroad-objectsegmentation from 3d lidar point cloud. / queezesegv2: Improved model structure and unsuperviseddomain adaptation for road-object segmentation from a lidar pointcloud / A lidar point cloud generator: from a virtualworld to autonomous driving )</p>
+<p><strong>PointSIFT</strong>：一个三维点云的语义分割框架，它基于一个简单的模块，从八个方向的邻域点提取特征。（Pointsift: A sift-like network module for 3d point cloud semanticsegmentation.）</p>
+<p><strong>PointWise</strong>：提出了一种基于三维点云的语义分割和目标识别的神经网络（Pointwise convo-lutional neural networks.）</p>
+<p><strong>3P-RNN</strong>：（3d recurrent neural networks with context fusion for point cloudsemantic segmentation. ）提出了一种基于两水平方向的非结构化点云语义分割的端到端方法，利用了云的上下文特征，其他类似的工作如SPG 以及 综述（A review of point cloudssegmentation and classification algorithms.）</p>
+<p><strong>SegMatch</strong>：基于3D 分割（线段？）的检测和匹配的回环检测方法。（Segmatch: Segment based place recognitionin 3d point clouds. ）</p>
+<p><strong>Kd-Network</strong>：专为三维模型识别任务和工作与非结构化点云（ Escape from cells: Deep kd-networks for the recognition of 3d point cloud models）</p>
+<p><strong>DeepTempo-ralSeg</strong>：提出了一种基于深度卷积神经网络(DCNN)的激光雷达语义分割算法（eeptemporalseg: Temporallyconsistent semantic segmentation of 3d lidar scans）</p>
+<p><strong>LU-Net</strong>：实现了语义分割的功能，代替了传统的全局三维分割方法（Lu-net: An efficient network for 3d lidar pointcloud semantic segmentation based on end-to-end-learned 3d featuresand u-net） ，其他类似的工作如 <strong>PointRCNN</strong> (Pointrcnn: 3d ob-ject proposal generation and detection from point cloud.)</p></li>
+<li><p>定位</p></li>
+</ol>
+<p><strong>L3-Net</strong>：是一种新的基于学习的激光雷达定位系统，达到厘米级定位精度（L3-net: Towards learning based lidar localization for autonomous driving.2019）<font color="red">[<strong>This work is supported by Baidu Autonomous DrivingBusiness Unit (Baidu ADU) in conjunction with the ApolloProject (http://apollo.auto/</strong>)]</font></p>
+<p><img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-05-45.png"></p>
+<p><strong>SuMa++</strong>：在像素点云级别标签基础上为全部扫描计算语义分割结果，允许我们建立语义丰富的图元标签地图，<strong>利用语义约束改进投影扫描匹配</strong>(Suma++:Efficient lidar-based semantic slam 2019) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-12-30.png"></p>
+<ol start="4" type="1">
+<li>挑战和未来</li>
+</ol>
+<ul>
+<li>成本和适应性：激光雷达的优点是可以提供三维信息，不受夜晚和光线变化的影响，另外，视角相对较大，可以达到360度。但是，激光雷达的技术门槛很高，发展周期长，成本大。未来的发展趋势是小型化、合理化、固态、高可靠性和适应性</li>
+<li>低纹理和动态环境：大多数SLAM系统只能在一个固定的环境下工作，但事情总是在不断变化。<font color="red">此外，长走廊、大管道等低结构环境会给激光雷达SLAM带来麻烦。</font>（Imu-assisted 2d slam method for low-texture and dynamic environments）使用IMU协助2D SLAM来解决上面的问题。（Dynamic pose graph slam: Long-term mapping in lowdynamic environments）在绘图过程中加入时间维度，使机器人在动态环境中工作时能够保持精确的地图。如何使激光雷达对低纹理和动态环境具有更强的鲁棒性，以及如何保持地图的更新是需要深入考虑的问题。</li>
+<li>对抗传感器攻击：深度神经网络容易受到反样本的攻击，这一点在基于摄像头的感知中也得到了证明。在基于激光的感知中，这是非常重要的，但是还没有被开拓。通过攻击，（Illusionand dazzle: Adversarial optical channel exploits against lidars forautomotive applications.）该算法首先对输出数据和距离估计进行干扰，使得基于VLP-16的激光雷达无法感知某个方向上的距离。（Adversarial sensor attack on lidar-based perception in autonomousdriving.）探索了通过战略控制来愚弄机器学习模型的可能性，把它看作一个优化问题，根据输入的扰动函数和目标函数进行建模，这将攻击成功率提高到大约75%。对抗式的传感器攻击将对基于激光雷达点云的SLAM系统进行欺骗，是无形的，很难被发现和保护在这种情况下，如何防止激光SLAM系统受到敌方传感器的攻击应该成为一个新的课题。</li>
+</ul>
+<h1 id="视觉slam">5. <font color="red">视觉SLAM</font></h1>
+<p>随着CPU和GPU的发展，图形处理的能力越来越强大，相机传感器变得更便宜，更轻，同时更多功能。过去的十年见证了视觉SLAM的飞速发展。视觉SLAM使用相机也使系统更便宜和更小，和激光SLAM相比，视觉SLAM系统可以在微PC和嵌入式设备上运行，甚至可以在智能手机等移动设备上运行。</p>
+<ul>
+<li>a versatile and accurate monocular slam system.</li>
+<li>Vins-mono: A robust andversatile monocular visual-inertial state estimator</li>
+<li>Parallel tracking and mapping on acamera phone ery High Frame Rate Volumetric Integration ofDepthImages on Mobile Device.</li>
+<li>Get out of my lab: Large-scale, real-time visual-inertial localization.)</li>
+</ul>
+<p>视觉SLAM包括传感器数据的收集(如相机或惯性测量单元)，前端的：视觉里程计、视觉惯性里程计， 后端的：回环检测和优化，建图。《视觉SLAM 14讲》。重定位模块是增加稳定性和准确率的模块。（Visual slamalgorithms: A survey from 2010 to 2016）</p>
+<p>在视觉里程计中，除了<strong>基于特征</strong>或<strong>模板匹配</strong>的方法，或相关方法来确定相机的运动，<strong>还有一种方法依赖于傅里叶-梅林变换</strong>（An fft-based techniquefor translation, rotation, and scale-invariant image registration.）。 文献（Visual odometry based on thefourier-mellin transform for a rover using a monocular ground-facingcamera）和（Visualodometry based on the fourier transform using a monocular ground-facing camera）给出了一个在没有明显视觉特征的环境下，使用面向地面的相机的例子。</p>
+<h2 id="视觉传感器">5.1. 视觉传感器</h2>
+<p>照相机可分为单目照相机、立体照相机、RGB-D照相机、事件照相机等</p>
+<ul>
+<li><strong>单目相机</strong>：基于单目摄像机的视觉slam对真实大小的轨迹和地图<strong>有一个比例尺</strong>。也就是说，单目相机无法获得真实的深度，这就是所谓的尺度模糊。（A survy of monocularsimultaneous localization and mapping，2016）。基于单目摄像机的SLAM必须进行初始化，并面临漂移问题</li>
+<li><strong>立体相机</strong>：立体摄像机是由两个单目摄像机组合而成，但两个单目摄像机之间的基线距离是已知的，虽然深度可以通过校准、校正、匹配和计算得到，但这个过程是浪费资源的</li>
+<li><strong>RGB-D</strong> camera：RGB-D相机也称为深度相机，相机可以直接以像素输出深度，深度相机可以通过立体、结构光和TOF技术来实现。结构光理论是指红外激光对物体表面发出具有结构特征的图案，然后红外相机将收集由于不同深度的表面图案的变化，然后红外相机将收集由于不同深度的表面图案的变化。</li>
+<li><strong>事件相机</strong>：（Event-based vision: A survey. 2019)事件相机不是以固定的速率捕获图像，而是异步地测量每个像素的亮度变化,事件相机有非常高的动态范围(140 dB vs. 60 dB)，高时间分辨率(按us的顺序)，低功耗，不受运动模糊的影响。因此，事件相机在高速、高动态范围内的性能优于传统相机。以动态视觉传感器为例，（A 128x128 120db 15us latency asynchronous temporal contrast vision sensor. / a 640×480 dynamic vision sensor with a 9μm pixel and 300meps address-event representation / A microbolometer asynchronous dynamicvision sensor for lwir./ sparc-compatible general purpose address-event processor with 20-bit l0ns-resolution asynchronous sensor data interface in 0.18μm cmos.)</li>
+</ul>
+<p>接下来介绍视觉传感器的产品和公司:</p>
+<ul>
+<li><strong>Microsoft</strong>: Kinectc v1(structured-light), Kinect v2(TOF),Azure Kinect(with microphone and IMU)</li>
+<li><strong>Intel</strong>：200 Series, 300 Series, Module D400 Series,D415(Active IR Stereo, Rolling shutter), D435(Active IRStereo, Global Shutter), D435i(D435 with IMU)</li>
+<li><strong>Stereolabs</strong> ZED：ZED Stereo camera(depth up to 20m)</li>
+<li><strong>MYNTAI</strong>：D1000 Series(depth camera), D1200(for smartphone), S1030 Series(standard stereo camera)</li>
+<li><strong>Occipital Structure</strong>：Structure Sensor(Suitable for ipad)</li>
+<li><strong>Samsung</strong>：Gen2 and Gen3 dynamic vision sensors andevent-based vision solution</li>
+</ul>
+<p>其他深度相机还有：<strong>Leap Motion</strong>,<strong>Orbbec</strong> <strong>Astra,Pico Zense</strong>,<strong>DUO</strong>,<strong>Xtion</strong>,<strong>Camboard</strong>,<strong>IMI</strong>,<strong>Humanplus</strong>,<strong>PERCIPIO</strong>,<strong>Prime-Sense</strong>. 事件相机有：<strong>toiniVation</strong>,<strong>AIT</strong>,<strong>SiliconEye</strong>,<strong>Prophesee</strong>,<strong>CelePixel</strong>,<strong>Dilusense</strong>。</p>
+<h2 id="视觉slam系统">5.2. 视觉SLAM系统</h2>
+<p>利用图像信息的方法可分为直接法和基于特征的方法，直接法产生半密度和稠密构造，而基于特征的方法产生了稀疏构造</p>
+<h3 id="稀疏视觉slam">5.2.1. <strong>稀疏视觉SLAM</strong>：</h3>
+<p><strong>MonoSLAM</strong>：（单目）第一个实时单目SLAM，基于EKF（Monoslam: Real-time single camera slam.2007） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-17-37.png"></p>
+<p><strong>PTAM</strong>：（单目）第一个并行跟踪和建图的SLAM系统。首先采用了BA优化和关键帧的概念（Parallel tracking and mapping forsmall ar workspaces. 2007），后一个版本支持一个简单但有效的重定位方法（Improving the agility of keyframe-based slam.2008） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-21-56.png"></p>
+<p><strong>ORB-SLAM</strong>：（单目）使用三个线程:跟踪、Local mapping和闭环检测（Orb: An efficient alternative to sift or surf，2011）； <strong>ORB-SLAM v2</strong>：支持单目，立体相机，和深度相机（Orb-slam2: An open-source slamsystem for monocular, stereo, and rgb-d cameras.2016）； <strong>CubemapSLAM</strong>：一个单目的鱼眼相机SLAM系统，基于ORB-SLAM。<strong>Visual Inertial ORB-SLAM</strong>：阐述了IMU的初始化过程和可视化信息的联合优化（isual-inertial monocular slamwith map reuse. / On-manifold preintegration for real-time visual–inertial odom-etry.） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-26-15.png"></p>
+<p><strong>proSLAM</strong>：（立体相机）这是一个轻量级的视觉SLAM系统，易于理解（ProSLAM: GraphSLAM froma Programmer’s Perspective.2017） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-28-37.png"></p>
+<p><strong>ENFT-sfm</strong>：（单目）一种高效的可以在一帧或者多帧视频序列中进行特征点匹配，的特征跟踪方法。其更新版本ENFT-SLAM可以运行在大的场合。(fficient non-consecutive feature tracking forrobust structure-from-motion.2016) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-31-42.png"></p>
+<p><strong>OpenVSLAM</strong>：（适用各种相机）基于具有稀疏特征的非直接（间接）SLAM算法。OpenVSLAM的优秀之处在于，该系统支持透视、鱼眼和等矩形，甚至支持您设计的相机模型。(Openvslam: aversatile visual slam framework.2019) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/OpenVSLAM.gif"></p>
+<p><strong>TagSLAM</strong>：意识到SLAM可以用AprilTag，AprilTag是一个视觉基准库，在AR，机器人，相机校准领域广泛使用。通过特定的标志（<strong>与二维码相似</strong>，但是降低了复杂度以满足实时性要求），可以快速地检测标志，并计算相对位置。此外，它提供了一个前端的GT-SAM因素图优化器，可以设计大量的实验(agslam: Robustslam withfiducial markers.2019) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-34-52.png"></p>
+<h3 id="半稠密视觉slam">5.2.2. <strong>半稠密视觉SLAM</strong></h3>
+<p><strong>LSD-SLAM</strong>：（单目）提出了一种基于李代数和直接法的直接跟踪方法，（Lsd-slam: Large-scale direct monocular slam.2014），（Large-scale directslam with stereo cameras.2015）使其支持立体相机。 <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-36-51.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-37-44.png"></p>
+<p><strong>SVO</strong>：（单目）半直接法视觉里程计（Svo: Semidirect visual odometry formonocular and multicamera systems.2016）它采用基于稀疏模型的图像对齐来获得更快的速度。其更新的版本扩展应用于鱼眼相机。<strong>（On-manifold preintegration for real-time visual–inertial odom-etry.2016）文献给出了关于VIO的详细理论推导和证明</strong>。<strong>CNN-SVO</strong>是一个从单图像深度预测网络中获取深度预测值的SVO版本。 <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-38-45.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-39-52.png"></p>
+<p><strong>DSO</strong>：（单目）（Direct sparseodometry. 2016 / 2017）是LSD-SLAM作者的另一个新的工作。这是一个不需要检测特征点和描述符的，基于直接法和稀疏法的的视觉里程计。 <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-41-57.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-42-37.png"></p>
+<p><strong>EVO</strong>：（事件相机）（Evo: A geometric approach to event-based 6-dofparalleltracking and mapping in real time.2016）提出了一种基于事件的视觉里程计算法，算法不受运动模糊的影响，并在具有挑战性的，高动态范围条件下与强烈的照明变化运行得很好。其他的基于事件相机的半稠密SLAM系统可以见（Semi-dense 3d reconstruction with a stereoevent camera.） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-44-08.png"></p>
+<h3 id="稠密视觉slam">5.2.3. <strong>稠密视觉SLAM</strong></h3>
+<p><strong>DTAM</strong>：（单目）可实时重建3D模型基于最小化全局空间正则化能量函数，使用一种新的非凸优化框架，称之为直接法。（Inversedepth parametrization for monocular slam 2008 / Dtam: Dense tracking and mapping in real-time.2011） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-50-01.png"></p>
+<p><strong>MLM SLAM</strong>：（单目）可以不使用GPU在线重建3D稠密模型，其关键贡献在于多分辨率深度估计和空间平滑过程。（Multi-level mapping: Real-time dense monocular slam.2016） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-52-45.png"></p>
+<p><strong>Kinect Fusion</strong>：（RGB-D摄像机）几乎是第一个使用深度相机进行3D重建的系统（Kinectfusion: Real-time dense surface mapping and tracking 2011 / Kinectfusion: real-time 3drecon-struction and interaction using a moving depth camera 2011） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-53-41.png"></p>
+<p><strong>DVO</strong>：（RGB-D相机）提出一种稠密视觉SLAM方法，一种基于熵的关键帧选择和闭环检测的相似度度量方法，使用G2O框架（Real-time visual odometry from dense rgb-d images.2011 / Robust odometryestimation for rgb-d cameras.2013 / Dense visual slamfor rgb-d cameras.2013) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-55-48.png"></p>
+<p><strong>RGBD-SLAM-V2</strong>：（RGB-D相机）在不借助其他传感器的情况下重建出准确的三维致密模型（3-d mapping with an rgb-d camera.2014） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-57-24.png"></p>
+<p><strong>Kintinuous</strong>：（RGB-D相机）一个带有实时全局一致的点和网格重构的视觉SLAM系统（Kintinuous: Spatially extendedkinectfusion 2012） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-19-59-08.png"></p>
+<p><strong>RTAB-MAP</strong>：（RGB-D相机）支持SLAM，但难以作为算法开发的基础（Online global loop closuredetection for large-scale multi-session graph-based slam.2014）， 其后版本支持了视觉和激光SLAM（ Rtab-map as an open-sourcelidar and visual simultaneous localization and mapping library forlarge-scale and long-term online operation.2019） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-00-34.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-02-52.png"></p>
+<p><strong>Dynamic Fusion</strong>：（RGB-D相机）第一个具有实时重建重建非刚性变形的场景的稠密SLAM系统，基于Kinect Fusion（Dynamicfu-sion: Reconstruction and tracking of non-rigid scenes in real-time.2015）。<strong>VolumeDeform</strong>也实现了实时非刚性重建，但不是开源的，其他相似的工作有<strong>Fusion4D</strong>。</p>
+<p><strong>Elastic Fusion</strong>：（RGB-D相机）一个实时稠密的视觉SLAM系统，能够捕获全面的、基于全局一致性的基于平面的房间尺度环境地图，使用RGB-D摄像机进行探索（Elasticfusion: Dense slam without a pose graph 2015）</p>
+<p><strong>InfiniTAM</strong>：（RGB-D相机）在Linux、IOS、Android平台运行的，具有CPU的实时三维重构系统（finiTAM v3: A Framework forLarge-Scale 3D Reconstruction with Loop Closure 2017 / Real-timelarge-scale dense 3d reconstruction with loop closure 2018）</p>
+<p><strong>Bundle Fusion</strong>：（RGB-D相机）支持鲁棒跟踪从严重跟踪故障中恢复，并实时重新估计3d模型，以确保全局一致性（Bundlefusion: Real-time globally consistent 3d re-construction using on-the-fly surface re-integration 2017）</p>
+<p><strong>KO-Fusion</strong>：（RGB-D相机）提出一种基于动态和里程计测量的轮式移动机器人的稠密RGB-D视觉SLAM系统（Ko-fusion: Dense visual slam with tightly-coupled kinematic and odo-metric tracking 2019）</p>
+<p><strong>SOFT-SLAM</strong>：（立体相机）（Soft-slam: Computationally efficient stereo visual slam for autonomousuavs 2017）得益于大范围的回环检测，系统可以创建稠密地图，基于SOFT进行位姿估计。（Stereo odometry based on careful featureselection and tracking. 2015）</p>
+<h3 id="视觉惯性里程计slam">5.2.4. <strong>视觉惯性里程计SLAM</strong></h3>
+<p>确定性在SLAM在技术上具有挑战性。<strong>单目视觉SLAM存在必要的初始化、尺度模糊和尺度漂移等问题</strong>（Scaledrift-awarelarge scale monocular slam 2010），虽然立体摄像机和RGB-D摄像机可以解决初始化和缩放的问题，但是有些障碍是不能忽视的，比如快速移动（可以用全局快门、鱼眼、全景相机等解决），以及小视场，大计算，遮挡，特征丢失，动态场景和变化的光线等问题。<font color="red">近年来，视觉惯性测程（VIO）SLAM技术成为研究热点。</font></p>
+<p>首先（Keyframe-based visual–inertial odometry using non-linear optimization.2015 / Towards consis-tent visual-inertial navigation 2014 / igh-precision, consistentekf-based visual-inertial odometry 2013）在VIO方面进行了尝试。<strong>文献（Visual-inertial monocular slamwith map reuse.2017 / On-manifold preintegration for real-time visual–inertial odom-etry 2016 ）在VIO进行了理论上的证明和推导</strong>。（Fast and robustinitialization for visual-inertial slam. 2019）使用几轮的视觉-惯性BA来为VIO进行稳健的初始化。特别的，tango（Aninvestigationof google tangoR©tablet for low cost 3d scanning 2017）、Dyson 360 Eye 以及 hololens （ Real-time high resolution 3ddata on the hololens. 2016）都是VIO类的真实产品，并且得到了较好的反馈。</p>
+<p>除此以外，苹果的ARkit (filter-based) ，Google的ARcore (filter-based) 以及从内到外的uSens等都是VIO的技术。PennCOSYVIO（Penncosyvio: A challenging visual inertial odometry benchmark 2017）从一个VI传感器（立体相机和IMU）中进行数据同步，两个tang相关手持设备，以及三个GoProHero 4摄像头，内部校准，外部校准。</p>
+<p><font color="red"><strong>下面是一些开源的VIO系统</strong></font>（A benchmarkcomparisonof monocular visual-inertial odometry algorithms for flying robots) 2018：</p>
+<ul>
+<li><p><strong>SSF</strong>：（松耦合、基于滤波器）基于EKF的时间延迟补偿的单传感器和多传感器融合框架(Vision based navigation for micro helicopters 2012)</p></li>
+<li><p><strong>MSCKF</strong>：（紧耦合、基于滤波器）Google Tango产品所采用的，基于EKF滤波器（A multi-state con-straint kalman filter for vision-aided inertial navigation. 2007）。相似的工作有<strong>MSCKF-VIO</strong>，是开源的（Robuststereo visual inertial odometry for fast autonomous flight 2018） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-07-09.png"></p></li>
+<li><p><strong>ROVIO</strong>：（紧耦合、基于滤波器）基于使用跟踪全部3D路标点和图像块特征的EKF滤波器，支持单目相机。（Robust visual inertial odometry using a direct ekf-based approach. 2015） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-09-14.png"></p></li>
+<li><p><strong>OKVIS</strong>：（紧耦合、基于优化）一个开放的和经典的基于关键帧的视觉惯性SLAM，它支持单目和立体摄像机的滑动窗口估计。（Monocular visual-inertial state estimation for mobile augmented reality 2017） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-11-55.png"></p></li>
+<li><p><strong>VINS</strong>：<strong>VINS-Mono</strong>（紧耦合、基于优化方法）是一个实时的单目视觉-惯性SLAM框架，开源源码在Linux上运行，并与ROS完全集成。（Monocular visual-inertial state estimation for mobile augmented reality. 2017 / Online temporal calibration for monocularvisual-inertial systems.2018）<strong>VINS-Mobile</strong>是一个实时的单目视觉-惯性里程计VIO在IOS设备上运行。<strong>VINS-Fusion</strong>支持多个视觉-惯性（VI）传感器 (GPS, 单目相机 + IMU,立体相机 + IMU, 或甚至单个立体相机)它包括在线空间校准、在线时间校准和视觉回环检测。 <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-12-57.png"></p></li>
+<li><p><strong>ICE-BA</strong>：（紧耦合、基于优化方法）提出了一种增量式的、一致性的、高效的BA优化的视觉-惯性SLAM，在基于滑动窗口的小范围local的BA和在所有关键帧上的全局BA优化<strong>同时进行</strong>，实时的为每一帧输出相机位姿和更新地图上的点。（ice-ba: Incremental, consistent and efficient bundle adjustmentfor visual-inertial slam 2018）。</p></li>
+<li><p><strong>Maplab</strong>：（紧耦合、基于优化方法）一个开放的，面向研究的可视化惯性建图框架，用c++编写，用于创建，处理和多区域的地图。一方面，<strong>maplab</strong>可以被认为是一个现成的视觉惯性建图和定位系统，另一方面，maplab为研究社区提供了一套多区域建图工具，包括地图合并、视觉-惯性批处理优化、回环检测、3D稠密场景重建。（maplab: An open framework forresearch in visual-inertial mapping and localization 2018） <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-14-15.png"> <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-15-11.png"></p></li>
+</ul>
+<p>还有：<strong>VI-ORB</strong>（紧耦合、基于优化方法）是ORB-SLAM作者的另外的工作，但不是开源的。<strong>StructVIO</strong>、<strong>RKSLAM</strong>可以可靠地处理快速运动和强旋转的AR应用（Structvio: Visual-inertial odometry with structural regularity of man-made environments 2019 / Robust keyframe-basedmonocular slam for augmented reality.2018)。<strong>mi-VINS</strong>使用了多个IMU，用来应对IMU传感器失效的情况（Sensor-failure-resilient multi-imu visual-inertial navigation 2019）。其他工作还有（Continuous-time visual-inertial odometry for event cameras 2018 / Event-basedvisual inertial odometry.2017 / Event-based visual-inertial odometry on a fixed-wingunmanned aerial vehicle 2019）</p>
+<p>另外，基于深度学习的VIO SLAM系统可以参见文献（Unsupervised deep visual-inertial odometry with onlineerror correction for rgb-d imagery. 2019）该方法提出了一个VIO的网络，而不需要IMU的内参以及IMU和相机的外部标定（外参）。文献（Visual-inertial odometry for unmanned aerial vehicle using deep learning 2019）提供了一个避免IMU和相机之间的标定的网络。</p>
+<h3 id="基于深度学习的视觉slam">5.2.5. <strong>基于深度学习的视觉SLAM</strong></h3>
+<p>目前，深度学习在计算机视觉的维护中起着至关重要的作用，随着视觉SLAM的发展，越来越多的人将目光投向了深度学习。“语义SLAM”指包括了语义信息到SLAM过程处理，通过提供高层次的理解、健壮的性能、资源意识和任务驱动的感知来提高SLAM表现和表示。下面介绍带有语义信息的SLAM的实现：</p>
+<ul>
+<li><strong>特征和检测</strong>：
+<ul>
+<li><strong>Pop-up SLAM</strong>（单目）提出了一种实时单目平面SLAM的方法，证明了场景理解可以改善状态估计和稠密建图，特别是在低纹理环境中。平面测量来自应用于每张图像的三维平面模型。文献（6-dof object pose from semantickeypoints 2017）通过卷积神经网络获取了语义的关键点预测。</li>
+<li><strong>LIFT</strong>可以比<strong>SIFT</strong>获取更多的稠密的特征点（Lift:Learned invariant feature transform 2016）。</li>
+<li>在捕捉特征点的任务上，<strong>DeepSLAM</strong>有显著的性能差距表现（Towardgeometric deep slam. 2017）。</li>
+<li><strong>SuperPoint</strong>提出了一种用于训练兴趣点检测器和描述符的自监督框架，该框架适用于计算机视觉中大量的多视图几何问题Su-perpoint: Self-supervised interest point detection and description 2018）。</li>
+<li>文献（<strong>Stereo vision-based semantic3d object and ego-motion tracking for autonomous driving.2018</strong>）提出了使用易于标注的二维检测和离散视点分类，并结合轻量级语义推理方法来获得粗略的三维目标测量结果。</li>
+<li><strong>GCN-SLAM</strong>提出了一个基于深度的网络<strong>GCNv2</strong>，用于生成关键点和描述符。</li>
+<li>文献（Volumetric instance-aware semantic mapping and 3d object discovery 2019）融合了关于3D形状、位置、甚至是语义类别的信息。</li>
+<li><strong>SalientDSO</strong>借助深度学习实现视觉显著性和环境感知。文献（Structure aware slam using quadrics and planes.2018）将检测到的目标作为二次模型集成到SLAM系统中。</li>
+<li><strong>CubeSLAM</strong>（单目）一个3D物体检测和SLAM系统，基于立方体模型，实现了对象级别的建图、定位和动态对象跟踪。</li>
+<li>文献（<strong>Monocular objectand plane slamin structured environments 2019</strong>）与基于特征点的SLAM相比，结合了cubeSLAM(高级对象)和Pop-up SLAM(平面地标)的系统使地图更密集、更紧凑、语义更有意义。</li>
+<li><strong>MonoGRNet</strong>一个几何推理网络，用于单目3D目标检测和定位。其他的基于特征方法在事件相机的应用有文献（Fast event-based corner detection 2017 / Event-basedfeatures for robotic vision 2013）。</li>
+<li>另外关于检测方面的深度学习综述，还有文献（Recent advances indeep learning for object detection 2019）</li>
+</ul></li>
+<li><strong>识别和分割</strong>：
+<ul>
+<li><strong>SLAM++</strong>（cad模型）介绍了一种新的面向对象的3D SLAM范式的主要优点，充分利用先验知识的循环，如许多场景由重复的、领域特定的对象和结构组成。</li>
+<li>文献（Semi-dense 3d semantic mappingfrom monocular slam. 2016）结合了先进的深度学习方法和基于单目摄像机视频流的<strong>LSD-SLAM</strong>，二维语义信息通过具有空间一致性的连接关键帧之间的对应关系转移到三维映射中。</li>
+<li><strong>Semanticfusion</strong>（RGBD）结合了CNN和先进的SLAM系统，<strong>ElasticFusion</strong>用来构建语义的3D地图。</li>
+<li>文献（Meaningful maps with object-oriented semantic mapping. ）采用了基于特征的RGB-DSLAM，基于图像的深度学习对象检测和3d无监督分割。</li>
+<li><strong>MarrNet</strong>提出了一个端到端的可训练框架，顺序估计2.5D草图和3D物体形状。</li>
+<li><strong>3DMV</strong>（RGBD）结合RGB颜色和几何信息对RGB-D扫描进行三维语义分割。</li>
+<li><strong>Pix3D</strong>研究三维形状建模从单一的图像。</li>
+<li><strong>ScanComplete</strong>一种数据驱动的方法，以一个不完整的三维场景扫描作为输入，并预测一个完整的三维模型，以及每体素语义标签。</li>
+<li><strong>Fusion++</strong> 一个在线对象级的SLAM系统，它可以为任意的被测对象建立一个精确的三维图形映射。</li>
+<li>当RGB-D摄像机浏览杂乱的室内场景时，<strong>Mask-RCNN</strong>的实例分割用于初始化紧凑的对象截断函数重建。</li>
+<li><strong>SegMap</strong>基于3d片段的地图表示，允许机器人定位、环境重建和语义提取。</li>
+<li><strong>3D-SIS</strong>一种商用的RGB-D扫描三维语义实例分割的新型神经网络结构。</li>
+<li><strong>DA-RNN</strong>采用一种新的递归神经网络结构对RGB-D视频进行语义标注。</li>
+<li><strong>DenseFusion</strong>从RGB-D图像中估计一组已知对象的6d位姿的通用框架。</li>
+<li>其他用于事件相机的可参考文献（An event-based classifier for dynamicvision sensor and synthetic data 2017 / Event-based gesture recog-nition with dynamic background suppression using smartphone com-putational capabilities. 2018 / Investigation of event-based mem-ory surfaces for high-speed detection, unsupervised feature extraction,and object recognition.2018）</li>
+</ul></li>
+<li><strong>尺度恢复</strong>：
+<ul>
+<li><strong>CNN-SLAM</strong>（单目）使用深度学习估计深度，其他工作还有<strong>DeepVO</strong>、<strong>GS3D</strong>。</li>
+<li><strong>UnDeepVO</strong>基于深度学习，使用单目相机可以得到6自由度的姿势。</li>
+<li>谷歌提出了文献（Learning the depths of moving peopleby watching frozen people.2019）提出了一种基于无监督学习的单目摄像机和人在场景中自由移动的稠密深度场景预测方法。</li>
+<li>其他基于单目相机获取真实尺度的工作还有（Recovering stable scale inmonocular slam using object-supplemented bundle adjustment.2018）（Bayesian scale estimation formonocular slam based on generic object detection for correcting scaledrift.2017）。</li>
+<li><strong>GeoNet</strong>一种用于从视频中估计单目深度、光流和帧间运动估计的联合无监督学习框架。</li>
+<li><strong>CodeSLAM</strong>提出了一种从单张图片获取深度图的网络，该深度图可以与位姿变量一起有效地优化。</li>
+<li><strong>Mono-stixels</strong>使用动态场景中的深度、动作和语义信息来估计深度？？？</li>
+<li><strong>GANVO</strong>使用无监督学习框架，用来从无标签的图像中获取6D姿态估计和单目深度图，使用GAN网络。</li>
+<li><strong>GEN-SLAM</strong>利用传统的几何网格和单目的拓扑约束输出稠密地图。</li>
+<li>其他的还有<strong>DeepMVS、DeepV2D</strong></li>
+</ul></li>
+<li><strong>姿态输出和优化</strong>：
+<ul>
+<li>文献（Learning visual odom-etry with a convolutional network 2015）是同步的立体的VO。</li>
+<li>文献（Exploring representation learning with cnns for frame-to-frame ego-motion estimation 2015）利用CNN从光流中估计运动。</li>
+<li><strong>PoseNet</strong>可以从单个RGB图像在没有优化的情况下得到6自由度的姿态估计。</li>
+<li><strong>VInet</strong>（单目）首先实现对VIO中的运动进行估计，减少了对人工同步和校准的依赖。</li>
+<li><strong>DeepVO</strong>（单目）提出了一种利用深度递归卷积神经网络(RCNNs)实现单目的端到端VO框架，类似的工作还有<strong>SFMlearner</strong>、<strong>SFM-Net</strong>。</li>
+<li><strong>VSO</strong>提出了提出了一种新的视觉语义里程计(VSO)框架，利用语义实现对点的中期连续跟踪。</li>
+<li><strong>MID-Fusion</strong>(RGBD,稠密点云)使用面向对象的跟踪方法估计每个存在的移动对象的姿态，将分割的MASK与现有模型关联起来，并逐步将相应的颜色、深度、语义和前景对象概率融合到每个对象模型中。</li>
+</ul></li>
+<li><strong>长时间定位</strong>：
+<ul>
+<li>文献（<strong>Probabilistic data association for semantic slam.</strong> 2017）提出了一个基于传感器状态和语义地标位置的优化问题，集成了度量信息、语义信息和数据关联。</li>
+<li>文献（Lightweight unsupervised deep loopclosure.2018）提出了一种新颖的无监督的特征嵌入深度神经网络，该网络用于视觉的回环检测问题。</li>
+<li>文献（Long-term visuallocalization using semantically segmented images 2018）提出的方法展示了语义信息比传统的描述符在长期视觉定位中更有效。</li>
+<li><strong>X-View</strong>利用语义图描述符匹配进行全局定位，使得不同视点下的定位成为可能。</li>
+<li>文献（Multimodal seman-tic slam with probabilistic data association. 2019）提出了一个解决方案，表示假设作为等效非高斯传感器模型的多模态，来预测目标类别标签和测量路标点的相关性。</li>
+</ul></li>
+<li><strong>动态SLAM</strong>：
+<ul>
+<li><strong>RDSLAM</strong>提出了一种能在动态环境下鲁棒工作的实时单目SLAM系统，基于新的在线关键帧表示以及更新的方法。</li>
+<li><strong>DS-SLAM</strong>一个带有语义信息的SLAM系统，基于优化的<strong>ORB-SLAM</strong>，语义信息可以使得SLAM系统在动态环境下得到更好的鲁棒性。</li>
+<li><strong>MaskFusion</strong>（RGBD，稠密点云）一个实时的、关注对象的、语义的、动态的RGB-D SLAM系统，基于<strong>Mask R-CNN</strong>，该系统对物体进行语义的标签，相似的工作还有<strong>Co-Fusion</strong>(RGBD)。</li>
+<li><strong>Detect-SLAM</strong>将SLAM与基于深度神经网络的目标检测相结合，使这两种功能在未知动态环境中相互受益。</li>
+<li><strong>DynaSLAM</strong>在静态地图的帮助下的一个单目立体、RGB-D相机SLAM系统，适用与动态环境。</li>
+<li><strong>StaticFusion</strong>提出了一种动态环境下的鲁棒稠密RGB-D SLAM方法，该方法检测运动目标并同时对背景结构进行重建。</li>
+</ul></li>
+</ul>
+<p>最近，还有一些工作利用深度学习来主导SLAM的整个过程，<strong>SimVODIS</strong>可以输出深度和帧之间的相对位姿，同时检测对象和分割对象边界框。</p>
+<h2 id="挑战和未来">5.3. 挑战和未来</h2>
+<ol type="1">
+<li><p><strong>鲁棒性和可移植性</strong></p>
+<p>视觉SLAM仍然面临着光照条件、高动态环境、快速运动、强烈旋转和低纹理环境等重要障碍，<strong>首先，全局快门代替滚动快门是实现精确相机姿态估计的基础</strong>，像动态视觉传感器这样的事件相机每秒可以产生多达100万个事件，这对于高速和高动态范围的快速运动来说已经足够了。其次，使用语义特征，如边缘、平面、表面特征，甚至减少特征依赖，如跟踪接合边缘、直接跟踪或机器学习的组合可能成为更好的选择。三是基于SfM/SLAM的数学机制，最好使用精确的数学公式，使其性能更优。可以预见，SLAM的未来将是基于智能手机或无人机等嵌入式平台的，另一个方面就是3D场景重建，基于深度学习的场景理解。如何平衡实时性和准确性是一个重要的开放性问题，针对动态、非结构化、复杂、不确定和大规模环境的解决方案有待探索。（Simultaneous localization andmapping in the epoch of semantics: A survey. 2019）</p></li>
+<li><p><strong>多传感器融合</strong></p>
+<p>实际的机器人和硬件设备通常不只是携带一种传感器，通常是多种传感器的融合。例如，目前对手机VIO的研究将视觉信息和IMU信息结合起来，实现了两个传感器的互补优势，为SLAM的小型化和低成本提供了非常有效的解决方案。<strong>DeLS-3D</strong>是一个融合了摄像机视频、运动传感器(GPS/IMU)的传感器融合方案，以及一个3D的语义地图来达到系统的鲁棒性和效率。目前常用的有以下传感器，但不限于激光雷达，声纳，IMU，红外，相机，GPS，雷达等，传感器的选择取决于环境和所需的地图类型。</p></li>
+<li><p><strong>语义SLAM</strong></p>
+<p>事实上，人类识别物体的运动是基于感知，而不是图像的特征，在SLAM系统中，深度学习可以实现目标识别和分割，有助于SLAM系统更好地感知周围环境。语义SLAM对全局优化、回环检测以及重定位有一定的帮助。文献（ A unifying view of geometry, semantics, and data associationin slam. 2018）提出：传统的SLAM系统依赖几何特征（如点、线——<strong>PL-SLAM</strong>、<strong>StructSLAM</strong>和平面来推断环境结构）。在大规模场景中，高精度实时定位的目标可以通过语义SLAM来实现。</p></li>
+<li><p><strong>硬件和软件</strong></p>
+<p>SLAM不是一个算法，而是一个集成的、复杂的技术。它不仅依赖于软件，而且还依赖于硬件，未来的SLAM系统将侧重于算法和传感器的深度结合。基于以上的说明，该领域的特定处理器而不是通用的处理器，集成的传感器模块而不是单独的传感器就像照相机将显示出巨大的潜力。</p></li>
+</ol>
+<h1 id="激光和视觉slam系统">6. 激光和视觉SLAM系统</h1>
+<h2 id="多传感器标定">6.1. 多传感器标定</h2>
+<ul>
+<li><strong>相机和IMU</strong>：
+<ul>
+<li><strong>Kalibr</strong>（kalibr: Calibrating the extrinsics ofmultiple imus and of individual axes.）是一个用来解决以下标定问题的工具箱：多相机标定、视觉-惯性传感器标定（相机-IMU）以及旋转快门相机标定。</li>
+<li><strong>Vins-Fusion</strong>有在线空间校准和在线时间校准。</li>
+<li><strong>MSCKF-VIO</strong>有相机和IMU传感器之间的校准。</li>
+<li><strong>mc-VINS</strong>可以标定所有多相机和IMU之间的外参和时间偏移量。</li>
+<li>另外，<strong>IMU-TK</strong>可以标定IMU的内参。</li>
+<li>除此以外，文献（Selective sensor fusion forneural visual-inertial odometry 2019）提出了一个端到端的单目VIO网络，融合来自摄像头和IMU的数据。</li>
+</ul></li>
+<li><strong>相机和深度</strong>：
+<ul>
+<li><strong>BAD SLAM</strong>为这个任务提出一个使用同步全局快门、RGB和深度相机的计算基准。</li>
+</ul></li>
+<li><strong>相机之间</strong>：
+<ul>
+<li><strong>mcptam</strong>是一个使用多相机的SLAM系统，可以校准内部和外部参数。</li>
+<li><strong>MultiCol-SLAM</strong>是一个多鱼眼相机的SLAM系统。此外，升级版的<strong>SVO</strong>也支持多相机。</li>
+</ul></li>
+<li><strong>激光雷达和IMU</strong>：
+<ul>
+<li><strong>LIO-mapping</strong>介绍了一种紧耦合的Lidar-IMU融合方法。</li>
+<li><strong>Lidar-Align</strong>一种简单的方法来寻找三维激光雷达和6自由度姿态传感器之间的外参。</li>
+<li>激光雷达的外部校准可参见（Extrinsic calibration of 2d laser rangefinders using an existingcuboid-shaped corridor as the reference 2018 / Extrinsiccalibration of 2d laser rangefinders based on a mobile sphere. 2018)</li>
+</ul></li>
+<li><strong>相机和激光雷达</strong>：
+<ul>
+<li>文献（Automatic onlinecalibration ofcameras and lasers. 2013）介绍了一种概率监测算法和一种连续校准优化器，实现了相机和激光雷达在线自动校准。</li>
+<li><strong>Lidar-Camera</strong>初步试验利用3D-3D点对相关性寻找激光雷达和相机之间的精确的刚体变换（外参）。</li>
+<li><strong>RegNet</strong>第一个利用(CNN)推导出多模态传感器之间的6个自由度的外参校准，并以激光雷达和单目摄像机为例进行了验证。</li>
+<li><strong>LIMO</strong>提出一种从激光雷达测量中提取深度的算法，用于相机特征跟踪和运动估计。</li>
+<li><strong>CalibNet</strong>一个自我监督的深度网络能够实时自动估计三维激光雷达和二维摄像机之间的6自由度刚体转换。</li>
+<li><strong>Autoware</strong>是一个可以标定激光和相机光束的标定工具。</li>
+</ul></li>
+</ul>
+<p>其他工作如<strong>SVIn2</strong>展示了融合声呐、视觉、IMU、深度传感器的水下SLAM系统，基于<strong>OKVIS</strong>。文献（nvironment driven under-water camera-imu calibration for monocular visual-inertial slam. 2019）提出了一种新的水下摄像机-IMU标定模型，文献（Improving underwater obstacle detection using semanticimage segmentation.2019）利用语义图像分割来检测水下障碍物。<strong>WiFi-SLAM</strong>演示了一种名为WiFi的新型无线信号SLAM技术。文献（Leveraging mmwave imaging and communications for simul-taneous localization and mapping 2019）使用毫米波来定位NLOS机器人。<strong>KO-Fusion</strong>融合视觉和轮式里程计，文献（ Keyframe-based direct thermalinertial odometry 2019）在视觉退化的环境（如黑暗）中使用了热成像摄像机和IMU。</p>
+<h2 id="激光雷达和视觉融合">6.2. 激光雷达和视觉融合</h2>
+<ul>
+<li><strong>硬件层</strong>：来自HESAI的<strong>Pandora</strong>是集成40线激光雷达的软硬件解决方案，5中彩色摄像机和识别算法。集成的解决方案可以使开发人员便于时间和空间上的同步问题。</li>
+<li><strong>数据层</strong>：激光雷达深度数据稀疏、精度高，而摄像机深度数据密集、精度低，这将可以实现基于图像的深度上采样。
+<ul>
+<li>文献（mage guided depth upsampling using anisotropictotal generalized variation.2013）提出了一种深度图上采样的方法。</li>
+<li>文献（In defense of classicalimage processing: Fast depth completion on the cpu.2018）仅依靠基本的图像处理操作来完成激光雷达稀疏的深度数据补全。</li>
+<li>在深度学习方面，</li>
+<li>文献（Sparse-to-dense: Depth predictionfrom sparse depth samples and a single image2018）提出了使用一个深度回归网络直接从RGB-D原始数据中进行学习，并探讨了深度样本数量的影响。</li>
+<li>文献（Sparsity invariant cnns. 2017）使用CNN对稀疏的输入进行操作，应用与对稀疏激光雷达扫描数据的深度数据补全。</li>
+<li><strong>DFuseNet</strong>提出了一种基于从高分辨率图像中提取的上下文线索来对稀疏的范围测量进行上采样的CNN网络。</li>
+<li><strong>LIC-Fusion</strong>融合IMU测量、稀疏视觉特征和提取激光雷达点。</li>
+</ul></li>
+<li><strong>任务层</strong>：
+<ul>
+<li><p>文献（Intersection safety using lidar and stereo vision sensors.2011）融合了立体相机和激光雷达进行感知。</p></li>
+<li><p>文献（Multiple sensorfusion and classification for moving object detection and tracking.2015）融合了雷达、激光雷达和相机对运动物体进行检测和分类。</p></li>
+<li><p>文献（Real-time depth enhancedmonocular odometry 2014）可以通过（RGB-D、和相机关联的激光雷达）的深度信息来增强VO，尽管这些信息是稀疏的。</p></li>
+<li><p><strong>V-Loam提出了一种结合视觉里程计和激光里程计的通用融合框架</strong>。在线的方法从视觉里程计和基于激光里程计的扫描匹配开始，同时运动估计和点云配准。</p></li>
+<li><p><strong>VI-SLAM</strong>考虑了结合精确激光里程计并使用视觉的环境识别进行回环检测。( Visual-LiDAR SLAM with loop closure.2018) <img src="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/2020-02-16-20-22-53.png"></p></li>
+<li><p>文献（Slam of robot based onthe fusion of vision and lidar.2018）目的是在SLAM的跟踪部分使用RGB-D相机和2D低成本激光雷达来完成鲁棒性的室内SLAM，基于模式转换和数据融合。</p></li>
+<li><p><strong>VIL-SLAM对（紧耦合的VIO）与激光雷达建图进行组合，并利用激光雷达提高视觉上的回环检测</strong>（Stereo visual inertial lidar simultaneous localization and mapping 2019）。</p></li>
+<li><p>文献（Lidar-aided cam-era feature tracking and visual slam for spacecraft low-orbit navigationand planetary landing. 2015）结合了单目相机图片和激光距离测量使视觉SLAM系统消除尺度不确定性带来的误差。</p></li>
+<li><p><strong>在深度学习方面</strong>，许多方法来检测和识别融合的来自摄像机和激光雷达数据，如<strong>PointFusion</strong>、<strong>RoarNet</strong>、<strong>AVOD</strong>、<strong>MV3D</strong>、<strong>FuseNet</strong>。<font color="red">此外，文献（Deepcontinuous fusion for multi-sensor 3d object detection. 2018）利用端到端的学习架构以激光雷达和相机数据输入，获得了十分精确的定位性能表现。</font></p></li>
+</ul></li>
+</ul>
+<h2 id="挑战和未来-1">6.3. 挑战和未来</h2>
+<ul>
+<li><strong>数据关联</strong>：未来的SLAM必须集成多传感器，但是不同的传感器具有不同的数据类型、时间戳和坐标系统表达式，需要统一处理。此外，还需要考虑多传感器之间的物理模型建立、状态估计和优化问题。</li>
+<li><strong>硬件整合</strong>：目前，尚无合适的芯片和集成硬件使SLAM技术更容易成为产品。另一方面，如果传感器的准确性由于故障而下降，非正常条件，或老化，传感器测量的质量(如噪音、偏差)与噪声模型不匹配，那么鲁棒性和硬件的整合也要跟随。前端传感器应具备数据处理能力，从硬件层向算法层演进，再由功能层向软件开发工具包(SDK)进行应用。</li>
+<li><strong>协同</strong>：分散的视觉SLAM对于多机器人在绝对位置系统不可用的环境下十分有用。协同优化视觉多机器人SLAM需要分散数据和优化，这被称为协同。</li>
+<li><strong>高精地图</strong>：高清晰度地图对机器人（无人车）来说是至关重要的，但是哪种地图最适合机器人呢，密集地图或稀疏地图可以进行导航、定位和路径规划吗？一个相关的开放问题是长期建图需要多久更新一次地图上的信息，以及如何决定哪些信息是过时的需要被去除的。</li>
+<li><strong>适应性、鲁棒性、可伸缩性</strong>：当前还没有一个SLAM系统可以覆盖所有的场景。为了在给定的场景中正确工作，大多数都需要大量的参数调优。为了让机器人像人类一样感知，我们倾向于使用基于外观的方法，而不是基于特征的方法，这将有助于在白天和夜晚之间或不同季节之间形成语义信息的循环。</li>
+<li><strong>抗风险和约束的能力</strong>：完美的系统应该是故障安全的和故障感知的，这里不是关于重定位或者回环检测的问题。SLAM系统必须具备对风险或失败做出反应的能力，同时，一个理想的SLAM解决方案应该能够在不同的平台上运行，而不受到平台算力条件的限制。如何平衡准确性、鲁棒性和有限的资源是一个挑战性的问题。</li>
+<li><strong>应用</strong>：SLAM技术有着广泛的应用如：大范围的位置、导航、3D和语义地图的重建，环境识别和理解，地面机器人，无人机，VR、AR、MR、AGV，自动驾驶，虚拟装潢，虚拟室内拟合，沉浸式游戏，抗震救灾等。</li>
+<li><strong>开放问题</strong>：<font color="red" size="5"><strong>端到端学习会攻占SLAM吗？</strong></font></li>
+</ul>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">线性方程组求解</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/';
+        
+        this.page.identifier = '文献阅读/SLAM综述_2020_Baichuan_Huang';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
