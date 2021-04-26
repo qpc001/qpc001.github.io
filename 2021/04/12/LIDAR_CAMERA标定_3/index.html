@@ -16,21 +16,21 @@
 <meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
 <meta property="og:description" content="Automatic Extrinsic Calibration Method for LiDAR and Camera Sensor Setups  摘要 本文提出了一种无需用户干预即可进行激光雷达-立体相机对的外在校准的方法。我们的校准方法旨在解决汽车设置中常见的限制，例如低分辨率和特定的传感器姿态。 介绍 现有的校准方法要么需要复杂的设置，要么缺乏通用性，因此结果的准确性在很大程度上取决于传感">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413113205.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413141802.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413142957.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413220250.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413221315.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413222309.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413225825.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413230741.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413230807.png">
-<meta property="og:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413230839.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413113205.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413141802.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413142957.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413220250.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413221315.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413222309.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413225825.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413230741.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413230807.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413230839.png">
 <meta property="article:published_time" content="2021-04-12T13:05:30.000Z">
-<meta property="article:modified_time" content="2021-04-13T15:08:47.000Z">
+<meta property="article:modified_time" content="2021-04-26T12:41:11.141Z">
 <meta property="article:author" content="EpsilonJohn">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s1.nsloop.com:59443/images/2021/04/13/20210413113205.png">
+<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/04/13/20210413113205.png">
     
 
     
@@ -618,7 +618,7 @@
         
         
             <h1 id="automatic-extrinsic-calibration-method-for-lidar-and-camera-sensor-setups">Automatic Extrinsic Calibration Method for LiDAR and Camera Sensor Setups</h1>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413113205.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413113205.png"></p>
 <h1 id="摘要">摘要</h1>
 <p>本文提出了一种无需用户干预即可进行激光雷达-立体相机对的外在校准的方法。我们的校准方法旨在解决汽车设置中常见的限制，例如低分辨率和特定的传感器姿态。</p>
 <h1 id="介绍">介绍</h1>
@@ -627,7 +627,7 @@
 <p>我们的方法可以使用简单的设置在合理的时间内执行，该设置旨在利用来自两个设备的数据中的对应关系。</p>
 <h1 id="标定">标定</h1>
 <p>一个定制的平面target用于提供两个传感器之间的特征配对关系，如图2所示</p>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413141802.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413141802.png"></p>
 <p>图2所示的模式具有几何和视觉特性，可以估计lidar、双目、单目的关键点。一方面，4个圆孔可以利用激光、双目点云的不连续性获取，另一方面，4个ArUco标记放置于4个角点附近，可以使用单目摄像头获取。</p>
 <p>这种方法不会对传感器之间的相对姿态有较强的限制，因此适用于平移和旋转较大的情况。实际上，只需要满足两个约束即可：</p>
 <ul>
@@ -640,7 +640,7 @@
 <li>第一阶段包括校准目标的分割和每个传感器的参考点定位</li>
 <li>第二阶段是求解参考点的转换</li>
 </ol>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413142957.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413142957.png"></p>
 <h2 id="目标分割">目标分割</h2>
 <p>这第一阶段旨在在每个传感器的数据中对校准目标进行定位，在此阶段中的信息是相对于该传感器坐标系而言的。最终输出一组包含4个3D点数据，</p>
 <h3 id="激光雷达数据">激光雷达数据</h3>
@@ -690,7 +690,7 @@ p_{i, \Delta}=\max \left(p_{i-1, r}-p_{i, r}, p_{i+1, r}-p_{i, r}, 0\right)
 <p>提出了一种策略，来避免设置两组<span class="math inline">\(\mathcal{P}_{p}^{&#39;}\)</span>点云的点具有相同的顺序关系。</p>
 <p>首先将<span class="math inline">\(\mathcal{P}_{p}^{&#39;}\)</span>点云中的4个点投影到球面坐标系，然后（only assume that the point that appears highest in the cloud, that is, the one with the lowest inclination angle, belongs to the upper row of the calibration target (i.e., either the top-left or the top-right circle).）</p>
 <p>上面步骤首先确定了一个上方的点，然后根据这一点到另外三个的距离确定了正确的排序。因此，可以建立起关联：</p>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413220250.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413220250.png"></p>
 <h3 id="求解">求解</h3>
 <p>排序好的两组点云，记为<span class="math inline">\(\mathcal{P}_{c}^{&#39;X},\mathcal{P}_{c}^{&#39;Y}\)</span>，通过使用<code>Umeyama</code>配准[30]，可以寻找两组点云的刚体变换，其中，两组点云中的点具有匹配关系如下：</p>
 <p><span class="math display">\[
@@ -703,10 +703,10 @@ p_{i, a}^{X}=p_{i, a}^{Y} \wedge p_{i, m}^{X}=p_{i, m}^{Y}
 <p>由于点云配对关系已知，所以使用svd即可求得闭式解。方便的是，<code>Umeyama</code>方法可以处理所有点都在同一平面上的情况，例如使用单个图案位置（M = 1）时，这样可以避免将它们误认为是反射。</p>
 <h1 id="实验">实验</h1>
 <p>除了需要人工放置标记板之外，其他参数使用固定值如下表：</p>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413221315.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413221315.png"></p>
 <p>其中，除非另有说明，否则参考点累积超过30帧（n = 30）</p>
 <h2 id="gazebo仿真">gazebo仿真</h2>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413222309.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413222309.png"></p>
 <p>在实验中，将目标放置在后面的墙壁，使得穿过圆孔的LIDAR梁到达表面，在前景和背景点之间产生必要的梯度。</p>
 <p>高斯噪声<span class="math inline">\(\epsilon \sim \mathcal{N}(0,(K\sigma_{0})^{2})\)</span>被施加到传感器的捕获数据，对于像素强度和激光距离，<span class="math inline">\(\sigma_{0}= 0.007\)</span> m和<span class="math inline">\(\sigma_{0}= 0.008\)</span>米，其中：</p>
 <ul>
@@ -717,12 +717,12 @@ p_{i, a}^{X}=p_{i, a}^{Y} \wedge p_{i, m}^{X}=p_{i, m}^{Y}
 <h3 id="特征提取实验">特征提取实验</h3>
 <p>实际上，该方法无法在一些极端配置中提供结果; 具体为在LIDAR扫描仪的情况下，它们有限的分辨率使得不可能在远距离找到圆圈，而立体声受到深度估计的实质性降级的影响，即这种模块遭受的距离增加。</p>
 <p>因此，在典型用例中，应该通过将图案位置限制为相对于传感器的合理距离范围来避免这些情况</p>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413225825.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413225825.png"></p>
 <h3 id="求解结果">求解结果</h3>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413230741.png"></p>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413230807.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413230741.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413230807.png"></p>
 <h2 id="真实环境实验">真实环境实验</h2>
-<p><img src="https://s1.nsloop.com:59443/images/2021/04/13/20210413230839.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/04/13/20210413230839.png"></p>
 
             </div>
         
