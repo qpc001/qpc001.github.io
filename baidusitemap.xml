@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yoursite.com/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/</loc>
+    <lastmod>2021-06-03</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/</loc>
+    <lastmod>2021-06-03</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/</loc>
+    <lastmod>2021-06-03</lastmod>
+  </url>
+  <url>
     <loc>http://yoursite.com/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/</loc>
-    <lastmod>2021-06-02</lastmod>
+    <lastmod>2021-06-03</lastmod>
+  </url>
+  <url>
+    <loc>http://yoursite.com/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/</loc>
+    <lastmod>2021-06-03</lastmod>
   </url>
   <url>
     <loc>http://yoursite.com/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/</loc>
@@ -21,10 +37,6 @@
     <lastmod>2021-05-31</lastmod>
   </url>
   <url>
-    <loc>http://yoursite.com/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/</loc>
-    <lastmod>2021-05-31</lastmod>
-  </url>
-  <url>
     <loc>http://yoursite.com/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/</loc>
     <lastmod>2021-05-31</lastmod>
   </url>
@@ -35,18 +47,6 @@
   <url>
     <loc>http://yoursite.com/2021/05/09/Incremental_Segmental_localization/</loc>
     <lastmod>2021-05-09</lastmod>
-  </url>
-  <url>
-    <loc>http://yoursite.com/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/</loc>
-    <lastmod>2021-04-28</lastmod>
-  </url>
-  <url>
-    <loc>http://yoursite.com/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/</loc>
-    <lastmod>2021-04-26</lastmod>
-  </url>
-  <url>
-    <loc>http://yoursite.com/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/</loc>
-    <lastmod>2021-04-26</lastmod>
   </url>
   <url>
     <loc>http://yoursite.com/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/</loc>
