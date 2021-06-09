@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Cross_view_slam论文阅读 | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="SLAM" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Any Way You Look at It: Semantic Crossview Localization and Mapping With LiDAR  摘要 GPS是迄今为止最受欢迎的全球本地化方法。 但是，在所有环境中，它并不总是可靠或准确。 SLAM方法使能局部估计能够提供将本地地图注册到全局的局部估计，这对于机器人间协作或人类互动可能是重要的。 在这项工作中，提出了一种利用语义的实时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cross_view_slam论文阅读">
+<meta property="og:url" content="http://yoursite.com/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="Any Way You Look at It: Semantic Crossview Localization and Mapping With LiDAR  摘要 GPS是迄今为止最受欢迎的全球本地化方法。 但是，在所有环境中，它并不总是可靠或准确。 SLAM方法使能局部估计能够提供将本地地图注册到全局的局部估计，这对于机器人间协作或人类互动可能是重要的。 在这项工作中，提出了一种利用语义的实时">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/05/20210605180434.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/06/20210606185558.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/07/20210607101819.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/07/20210607153338.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/07/20210607153818.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/07/20210607164532.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/06/20210606185558.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/06/07/20210607185914.png">
+<meta property="article:published_time" content="2021-06-05T10:03:53.000Z">
+<meta property="article:modified_time" content="2021-06-07T11:16:55.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta property="article:tag" content="SLAM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/06/05/20210605180434.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://gitlab.epsilonjohn.club" target="_blank" rel="noopener">Gitlab</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Autoware.ai
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            C++
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Cartographer-Google相关
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            IMU相关
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Marker_SLAM
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ROS2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            utils
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            四元数的状态误差卡尔曼
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            多传感器融合定位
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            平台对比
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            数学基础
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            数据集整理
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            文献阅读
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            深度学习
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            激光SLAM
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/03/01/%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%B1%80%E9%83%A8ENU/">WGS-84转局部ENU坐标</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file"><a href="/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file active"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-Cross_view_slam论文阅读" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/SLAM/" rel="tag">SLAM</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
+            <time datetime="2021-06-05T10:03:53.000Z" itemprop="datePublished">2021-06-05</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Cross_view_slam论文阅读.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Cross_view_slam论文阅读.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Cross_view_slam论文阅读.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Cross_view_slam论文阅读
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#any-way-you-look-at-it-semantic-crossview-localization-and-mapping-with-lidar"><span class="toc-number">1.</span> <span class="toc-text">Any Way You Look at It: Semantic Crossview Localization and Mapping With LiDAR</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#相关工作"><span class="toc-number">4.</span> <span class="toc-text">相关工作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#图像匹配"><span class="toc-number">4.1.</span> <span class="toc-text">图像匹配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于视觉"><span class="toc-number">4.2.</span> <span class="toc-text">基于视觉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于激光雷达"><span class="toc-number">4.3.</span> <span class="toc-text">基于激光雷达</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#具体方法"><span class="toc-number">5.</span> <span class="toc-text">具体方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定位"><span class="toc-number">5.1.</span> <span class="toc-text">定位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题描述"><span class="toc-number">5.1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运动模型"><span class="toc-number">5.1.2.</span> <span class="toc-text">运动模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观测模型"><span class="toc-number">5.1.3.</span> <span class="toc-text">观测模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能优化"><span class="toc-number">5.1.4.</span> <span class="toc-text">性能优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语义分割"><span class="toc-number">5.2.</span> <span class="toc-text">语义分割</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#卫星分割"><span class="toc-number">5.2.1.</span> <span class="toc-text">卫星分割</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#激光扫描分割"><span class="toc-number">5.2.2.</span> <span class="toc-text">激光扫描分割</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#建图"><span class="toc-number">5.3.</span> <span class="toc-text">建图</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实验"><span class="toc-number">6.</span> <span class="toc-text">实验</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考文献"><span class="toc-number">7.</span> <span class="toc-text">参考文献</span></a></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="any-way-you-look-at-it-semantic-crossview-localization-and-mapping-with-lidar">Any Way You Look at It: Semantic Crossview Localization and Mapping With LiDAR</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/05/20210605180434.png"></p>
+<h1 id="摘要">摘要</h1>
+<p>GPS是迄今为止最受欢迎的全球本地化方法。 但是，在所有环境中，它并不总是可靠或准确。 SLAM方法使能局部估计能够提供将本地地图注册到全局的局部估计，这对于机器人间协作或人类互动可能是重要的。</p>
+<p>在这项工作中，提出了一种利用语义的实时方法，仅使用以自我为中心的 3D 语义标记的 LiDAR 和 IMU 以及从卫星或空中机器人获得的自上而下的 RGB 图像来全局定位机器人。</p>
+<h1 id="介绍">介绍</h1>
+<p>提出一种将地面机器人的局部观测信息与来自卫星或无人机的大范围全局地图进行匹配的定位方法，这种方法比传统的基于已知地图定位方法更加具有挑战性，因为对于大多数机器人而言，<code>the overhead views</code> 与 以自我为中心的观测数据有较大不同。因此，在鸟瞰图中直接应用基于特征的配准方法对机器人进行定位通常是无效的。此外，卫星图通常在不同的时间拍摄，这意味着配准方法必须适应季节的变化。</p>
+<p>近年来，使用人工神经网络（ANNS）的图像语义分割已成为成熟的技术。地图语义对于<code>cross-view registration</code>是理想的，因为在足够多样化的训练数据中，可提取具有视角和季节不变性的语义信息。此外，从鸟瞰图中提取粗略的语义信息比从<code>the overhead views</code> 中提取更加简单，无论是手工提取还是基于ANN的方法。</p>
+<p>与此同时，Lidars在光束密度增加同事，价格和重量下降，因此将它们放在小型移动机器人上现在是实用的。同时应用两种传感技术将可以产生稠密的语义点云。</p>
+<p>最近的工作使用了用于<code>cross-view</code>定位的图像语义信息[15]，[16]，但通常没有只有很少的利用了深度信息或环境的有力的结构假设。如基于几何方法如 [3] 通常在没有足够几何结构的环境中失效，相反，我们引入了一种结合这两种信息来源的方法，以实现更强大的语义<code>cross-view</code>定位系统。</p>
+<p>主要贡献如下：</p>
+<ul>
+<li>提出一种实时的<code>cross-view</code>定位和建图框架，如果鸟瞰地图未知但有界，我们的方法也能够估计它的比例。</li>
+<li>我们使用Semantickitti [17]以及我们自己的数据集以及在包括农村和城市环境的各个地点，验证我们所提出的方法。</li>
+<li><a href="https://github.com/iandouglas96/cross_view_slam" target="_blank" rel="noopener">开源了代码</a></li>
+</ul>
+<h1 id="相关工作">相关工作</h1>
+<h2 id="图像匹配">图像匹配</h2>
+<p><code>Cross-view localization</code>问题定义为图像匹配问题[12]：给定一个由图片构成的数据库作为全局地图，以及一张待查询的图片作为局部观测。问题可描述为该问题通过获取一些描述符，使得来自多个视图的相同位置的图像在一些潜在的空间中接近。</p>
+<p>早期的工作如[18]，[19]，使用局部特征描述符。 Majdik等[11]使用来自Google Street View的图像特征来与四旋翼无人机飞行拍摄图来进行匹配。然而，这些方法往往在极端视角的情况下失效。</p>
+<p>这个限制导致了最近兴起的使用孪生神经网络[20], [21]方向，这些网络通过对不同视点的图像使用权重共享的分支网络结构在潜在空间进行交叉关联，来决定两个图像的相似度。整个网络在已知的图像对上训练，在线处理图像对时，这些网络相对较慢，因此不能在机器人应用程序中实时运行，其中必须同时查询许多可能的状态。</p>
+<h2 id="基于视觉">基于视觉</h2>
+<p>图像匹配算法提供了一种将图像与提供的现有图像数据库进行比较的方法，但它们并未明确寻求估计机器人或传感器的位置。定位需要具有<code>pose label</code>或整个航拍地图的图像数据库，如[22]中的描述。在这项工作中，作者使用鸟瞰坐标系中的一系列边缘来代表全局地图，然后在粒子滤波框架中与地面图像进行边缘匹配。但是，通过将全局地图减少为一系列边缘，将会丢弃大量的有用信息。</p>
+<p>其他工作如[23]，使用立体图像来生成RGBD图像，然后将它从鸟瞰角度进行渲染生成，然后使用<code>chamfer matching</code>与已知地图进行匹配，尽管如此，这种方法未能解决由季节变化或环境中的动态物体（如人或汽车）等因素引起的摄影变化。</p>
+<p>为了更好地应对季节性变化和更加极端的观点变化，最近的工作越来越多地分析了语义的定位使用。Castaldo等 [15]对地面图像分割，并使用<code>homography</code>和地平面将语义特征投影到自上而下的视角。然后开发出一种针对分割图像的语义描述符，并与已知地图进行比较，以在相机位置集合生成对应的热图(heatmap)。然而，改方法并没有利用时间或深度信息，导致大规模定位系统的收敛速度较慢。另外，他们的方法在<code>homography</code>不成立的情况下失效，如路面并非平坦的工况。</p>
+<p>类似的工作还有Gawel et al. [16]，为空中图和地面视图生成语意图表示，然后构建描述符以匹配各种合成数据集。</p>
+<h2 id="基于激光雷达">基于激光雷达</h2>
+<p>Wolcott等人 [24]通过从各种透视图渲染一个已知的高分辨率点云并最大化互相关信息来对相机进行定位。Gawel等人 [3]通过从两个角度构建点云地图并使用几何描述符匹配它们来交叉定位地面和空中机器人。Barsan等人 [25]使用孪生网络实现厘米级定位。虽然上述方法准确和强大，这些方法需要相关环境的预先存在点云图，而我们只需要单个航拍图像。</p>
+<p>与基于视觉的方法一样，最先进的基于Lidar的方法利用环境的语义结构。在早期的工作中，Matei等人[26] 从无人机采集的点云来拟合一个最接近的建筑模型，用于创建与地面图像相比的地面预测。</p>
+<p>……</p>
+<p>与这些工作相比，我们的框架只需要一个卫星或环境的鸟瞰图，这适合更多的应用。</p>
+<h1 id="具体方法">具体方法</h1>
+<p>我们的方法由两个主要组件组成：基于ICP的LIDAR SLAM系统 - Panoramas Slam [32]（Upslam） - 以及基于粒子滤波器的语义定位器，如图2所示</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/06/20210606185558.png"></p>
+<h2 id="定位">定位</h2>
+<p>粒子滤波器特别擅长处理多模态分布，这在机器人定位问题中经常出现，这将带来计算量的问题，我们通过使用优化策略来减少计算成本：</p>
+<h3 id="问题描述">问题描述</h3>
+<p>对于2D地图的定位，我们系统状态<span class="math inline">\(x\)</span>由<code>tuple</code>(<span class="math inline">\(p\in SE(2) , s \in [S_{min},S_{max}]\)</span>)构成，其中，<span class="math inline">\(p\)</span>表示机器人位姿，<span class="math inline">\(s\)</span>表示地图尺度(px/m)。我们还有控制输入量<span class="math inline">\(u\in SE(3)\)</span>，从上一帧到当前帧的相对位姿变换，该值来源于<code>UPSLAM</code>或者其他里程计。</p>
+<p>因此，对于每个时间步t，都有一个运动模型<span class="math inline">\(P(x_t|x_{t-1},u_{t-1})\)</span>。此外，在每个时刻t，我们都有来自LiDAR和cameras的语义扫描<span class="math inline">\(z_t\)</span>，为了定义我们的粒子滤波器，我们必须先定义观测模型<span class="math inline">\(P(z_{t}|x_{t})\)</span></p>
+<h3 id="运动模型">运动模型</h3>
+<p>实际上，我们并不能获取真正的控制输入量，而是从frame-to-frame的估计中获取一个近似。</p>
+<p>因为<code>UPSLAM</code>在3D空间中操作，因此我们首先将帧间运动投影到local的x-y地平面上，记为<span class="math inline">\(\operatorname{proj}(u) \in SE(2)\)</span>。此外，我们只使用<code>UPSLAM</code>的基于ICP的初始解作为运动估计，忽略了来自闭环后的优化位姿（这是为了避免里程的运动不连续性）。</p>
+<p>最后，我们假设分布具有恒定的协方差，在<code>log-space</code>中具有尺度噪声，因此，有：</p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(x_{t} \mid x_{t-1}, u_{t-1}\right)=(&amp;\left[\operatorname{proj}\left(u_{t-1}\right)+\mathcal{N}\left(0, \Sigma_{p}\right)\right] * p_{t-1},\left.\mathcal{N}\left(1, \Sigma_{s}\right) * s_{t-1}\right)
+\end{aligned}
+\]</span></p>
+<p>另外，我们使用到起点位置的距离的inverse来对协方差<span class="math inline">\(\Sigma_s\)</span>进行缩放，以使得可以自然的收敛。一旦尺度方差低于阈值，我们则可固定尺度s。</p>
+<h3 id="观测模型">观测模型</h3>
+<p>我们的观测<span class="math inline">\(z\)</span>是语义的点云，我们可以表示为在机器人坐标系中具有相关性的标签：<span class="math inline">\(z=\{ (p_1,l_1),(p_2,l_2),\dots,(p_n,l_n) \}\)</span>。因此，我们可以将这些点投影到地平面上。</p>
+<p>进一步的，对于任意给定的粒子状态，我们可以对机器人坐标系中的点在俯视的空中地图<span class="math inline">\(L\)</span>中查询，比较地图上的类别与预期类别，在给定粒子状态(位姿为<span class="math inline">\(d\)</span>)的条件下，一个简单的计算cost方法如下：</p>
+<p><span class="math display">\[
+C^{\prime}=\sum_{i \in[1, n]} \mathbf{1}\left(L\left(d * p_{i}\right) \neq l_{i}\right)
+\]</span></p>
+<p>为了通过扩大局部最小来提高收敛性，我们选择一个更柔软的成本函数。因此，我们不使用以二进制方式评估cost，而是以机器人坐标系中的点对应的类别为目标类别，在空中地图中查询相同类别的最近点，以两点距离作为cost：</p>
+<p><span class="math display">\[
+C=\sum_{i \in[1, n]} \min _{\left\{p \mid L(p)=l_{i}\right\}}\left(\left\|p-p_{i}\right\|\right)
+\]</span></p>
+<p>最后，我们通过对<span class="math inline">\(C\)</span>求逆和正则化来计算一个<code>ad-hoc probability</code>，另外，对于每一个类别的点，可以设置一个权重因子<span class="math inline">\(\alpha_l\)</span>：</p>
+<p><span class="math display">\[
+P\left(z_{t} \mid x_{t}\right) \approx \frac{n}{\sum_{i \in[1, n]} \min _{\left\{p \mid L(p)=l_{i}\right\}}\left(\alpha_{l_{i}}\left\|p-p_{i}\right\|\right)}+\gamma
+\]</span></p>
+<p>其中，<span class="math inline">\(\gamma\)</span>是正则化常数项，用于slow convergence??? 所有粒子的概率最后都要进行归一化，以使得所有粒子对应的观测模型概率之和为1。</p>
+<p>可以注意到，这是一个<code>ad-hoc</code>观测，在实践中可以通过实验对常数进行调整，然而，这对于基于蒙特卡罗的定位方法并不少见，例如 [29]。</p>
+<h3 id="性能优化">性能优化</h3>
+<p>如果单纯的实现<span class="math inline">\(C^{\prime}\)</span>的cost计算，将会导致较大计算成本，因为它总结了所有的非凸最小值的情况。我们通过预先计算空中语义地图关于类别的截断场(Truncated Distance Field, TDF)来优化这个问题，这个计算非常直观，大概需要1分钟，但是只需要进行一次。</p>
+<p>这个TDF地图对每一个点到其同类别的最近点的距离阈值进行编码，将最小化<span class="math inline">\(C^{\prime}\)</span>变成了一个简单的查表。另外，相比于简单的对所有点的结果进行求和，使用了如下方法优化：首先将语义激光扫描分散到极坐标系中，统计在每个极坐标系分割中每个类别的点数。然后局部的类别TDF场使用同种方式渲染显示。然后通过对两个图像的元素进行乘法，得到关于每个类别的内积，来近似<span class="math inline">\(C^{\prime}\)</span>的计算，提高计算效率。</p>
+<p>我们发现，对于<code>100x25</code>像素的极坐标地图，每个粒子大概需要<code>500μs</code>来计算，几乎是用于查表的时间，如图3所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/07/20210607101819.png"></p>
+<p>另外，地图的旋转在极坐标中表示为索引的偏移，计算非常快，可用于初始化阶段。我们随机采样了地图上的道路点，因为我们有强壮的先验信息：因为是从道路上开始的。对于每一个点，我们初始化<span class="math inline">\(k_s\)</span>个在<span class="math inline">\(s_{min}\)</span>和<span class="math inline">\(s_{max}\)</span>(1~10 px/m)尺度内均匀分布的粒子。对于每一个粒子，我们采样<span class="math inline">\(k_{\theta}\)</span>个可能的观测，使得我们可以高效的对索引进行偏移（可参考scan-context），然后选取最佳的观测作为初始粒子。</p>
+<p>为了进一步加速算法，我们使用CPU并行计算每个粒子的cost，我们还基于高斯混合模型（GMM）的协方差的区域的总和适应粒子分布的基础上的粒子数</p>
+<h2 id="语义分割">语义分割</h2>
+<h3 id="卫星分割">卫星分割</h3>
+<p>我们使用在 ImageNet 上预训练的 ResNet-34 [34] 骨干训练两个稍微修改过的完全卷积网络 (FCN) [33] 版本以分割卫星图像，图像直接从<code>Google-Earth</code>中获取。</p>
+<p>我们使用了4个类别：</p>
+<ul>
+<li>road（道路）</li>
+<li>terrain（地面）</li>
+<li>vegetation（植被）</li>
+<li>building（建筑）</li>
+</ul>
+<p>为了分析卫星图像，256×256 PX RGB图像被传递为图像分割网络的输入，该网络由3个手工标注的卫星图像数据训练得到，如表1所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/07/20210607153338.png"></p>
+<p>图像是随机缩放，旋转，裁剪的，并翻转以产生更多的训练样本，卫星图像的随机缩放也允许模型在从多个高度收集的图像上概率更好地泛化。</p>
+<p>网络输出例子和训练数据如图5所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/07/20210607153818.png"></p>
+<p>令人惊讶的是，尽管模型只在3张图片上训练，但是每张图片都包含了许多对象实例</p>
+<h3 id="激光扫描分割">激光扫描分割</h3>
+<p>我们使用图 2 中绿色方框中显示的两个不同的pipline，用于根据数据集生成语义点云。通过使用不同的分割方法进行测试，展示了我们的方法可以适用于不同的传感系统，提供点级别的标签点云。</p>
+<p><strong>PC</strong> 对于kitti数据集，使用了与卫星图像分割同样的FCN结构，对于激光扫描，使用带有X,Y,Z,Depth通道的64x2048的<code>2D-Poloar-Grid-Map</code>来表示(没有利用强度信息)。</p>
+<p>我们在<code>SemanticKITTI</code>数据集上训练，然后使用序列{10}和{00,02,09}作为验证集和测试集。另外，我们添加地面车辆转化为road类别。</p>
+<p><strong>RGB</strong></p>
+<p>对于我们自己的Morgantown和Ucity数据集，我们使用不同于Kitti的激光雷达（Ouster OS-1），因此不能使用Semantickitti进行训练。因此，我们使用HRNets[13]来对RGB图像进行分割，然后校准到激光扫描中。利用外参信息，可以将激光点云投影到相机图像帧，然后根据RGB的分割对点云进行分配。</p>
+<h2 id="建图">建图</h2>
+<p>我们使用<code>UPSLAM</code>，但此处给出了在本工作中的一些更改的概况。对于这项工作，我们扩展了<code>UPSLAM</code>，整合从图像中提取的语义标签，以形成语义全景。需要注意的是，<code>UPSLAM</code>并没有使用语义信息来进行<code>scan-matching</code>，只是简单的使用刚体变换信息来整合语义信息。因此，由于我们不需要每一帧扫描的语义数据，我们可以以低于LIDAR的速率来运行推断，而无需删除ICP数据，以提高地图质量。深度、法向量、语义全景如图4所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/07/20210607164532.png"></p>
+<p>除了使用<code>UPSLAM</code>估计的粒子过滤器运动模型之外，我们还计算每个更新的后粒子滤波器估计的协方差和均值。一旦协方差低于阈值<span class="math inline">\(\Sigma_t\)</span>，我们使用粒子滤波器估计的位置作为位子图中对应状态节点的先验，最终得到如图2所示的pose graph。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/06/20210606185558.png"></p>
+<p>通过这样的方式，我们使得图优化结果与地理保持对齐，我们的实验表明，添加这些语义约束边可去除漂移，并有效地构建语义闭环约束。这使得建图器在没有闭环的情况下可以应对更大规模的轨迹，并保持全局一致性。</p>
+<h1 id="实验">实验</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/06/07/20210607185914.png"></p>
+<h1 id="参考文献">参考文献</h1>
+<p>[1] W.Maetal.,“Findyourwaybyobservingthesunandothersemanticcues,”in Proc. IEEE Int. Conf. Robot. Automat., May 2017, pp. 6292–6299. [2] T. Dang et al., “Autonomous search for underground mine rescue using aerial robots,” in Proc. IEEE Aerosp. Conf., 2020, pp. 1–8. [3] A. Gawel et al., “3D registration of aerial and ground robots for disaster response: An evaluation of features, descriptors, and transformation esti- mation,” in Proc. IEEE Int. Symp. Saf., Secur. Rescue Robot., Oct. 2017, pp. 27–34. [4] J. Peterson et al., “Online aerial terrain mapping for ground robot naviga- tion,” Sensors, vol. 18, no. 2, Feb. 2018, Art no. 630. [5] N. Michael et al., “Collaborative mapping of an earthquake-damaged building via ground and aerial robots,” J. Field Robot., vol. 29, no. 5, pp. 832–841, 2012. [6] X. Liang, H. Wang, Y. Liu, W. Chen, and T. Liu, “Formation control of non- holonomic mobile robots without position and velocity measurements,”IEEE Trans. Robot., vol. 34, no. 2, pp. 434–446, Apr. 2018. [7] A. Franchi, G. Oriolo, and P. Stegagno, “Mutual localization in multi- robot systems using anonymous relative measurements,” Int. J. Robot. Res., vol. 32, no. 11, pp. 1302–1322, 2013. [8] A. Howard, “Multi-robot simultaneous localization and mapping using particle filters,” Int. J. Robot. Res., vol. 25, no. 12, pp. 1243–1256, 2006. [9] S. Wang et al., “A novel approach for lidar-based robot localization in a scale-drifted map constructed using monocular slam,” Sensors, vol. 19, no. 10, 2019, Art. no. 2230. [10] F. Dellaert, D. Fox, W. Burgard, and S. Thrun, “Monte Carlo localization for mobile robots,” in Proc. IEEE Int. Conf. Robot. Automat., vol. 2, 1999, pp. 1322–1328 vol.2. [11] A. L. Majdik, Y. Albers-Schoenberg, and D. Scaramuzza, “MAV urban localization from google street view data,” in Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst., Nov. 2013, pp. 3979–3986. [12] X. Gao, S. Shen, Z. Hu, and Z. Wang, “Ground and aerial meta-data integration for localization and reconstruction: A review,” Adv. Visual Corresp.: Models, Algorithms Appl., Pattern Recognit. Lett. vol. 127, pp. 202–214, 2019. [13] J. Wang et al., “Deep high-resolution representation learning for visual recognition,” IEEE Trans. Pattern Anal. Mach. Intell., early access: Apr. 01, 2020, doi: 10.1109/TPAMI.2020.2983686. [14] M. Wu, C. Zhang, J. Liu, L. Zhou, and X. Li, “Towards accurate high resolution satellite image semantic segmentation,” IEEE Access, vol. 7, pp. 55 609–55 619, 2019. [15] F. Castaldo, A. Zamir, R. Angst, F. Palmieri, and S. Savarese, “Semantic cross-view matching,” in Proc. IEEE Int. Conf. Comput. Vis. Workshops, Dec. 2015, pp. 9–17. [16] A. Gawel, C. D. Don, R. Siegwart, J. Nieto, and C. Cadena, “X-view: Graph-based semantic multi-view localization,” IEEE Robot. Automat. Lett., vol. 3, no. 3, pp. 1687–1694, Jul. 2018. [17] J. Behley et al., “SemanticKITTI: A dataset for semantic scene under- standing of LiDAR sequences,” in Proc. IEEE/CVF Int. Conf. Comput. Vis., 2019, pp. 9297–9307. [18] D.M. Chen et al., “City-scale landmark identification on mobile devices,”in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., Jun. 2011, pp. 737–744. [19] Y. Li, N. Snavely, and D. P. Huttenlocher, “Location recognition using prioritized feature matching,” Computer Vision – ECCV, K. Daniilidis, P. Maragos, and N. Paragios, eds. Springer Berlin Heidelberg, 2010, pp. 791–804. [20] D. Kim and M. R. Walter, “Satellite image-based localization via learned embeddings,” in Proc. IEEE Int. Conf. Robot. Automat., May 2017, pp. 2073–2080. [21] Y. Tian, X. Deng, Y. Zhu, and S. Newsam, “Cross-time and orientation- invariant overhead image geolocalization using deep local features,” in Proc. IEEE Winter Conf. Appl. Comput. Vis., 2020, pp. 2512–2520. [22] K. Y. K. Leung, C. M. Clark, and J. P. Huissoon, “Localization in urban environments by matching ground level video images with an aerial image,” in Proc. IEEE Int. Conf. Robot. Automat., May 2008, pp. 551–556. [23] T. Senlet and A. Elgammal, “A framework for global vehicle localization using stereo images and satellite and road maps,” in Proc. IEEE Int. Conf. Comput. Vis. Workshops, Nov. 2011, pp. 2034–2041. [24] R. W. Wolcott and R. M. Eustice, “Visual localization within lidar maps for automated urban driving,” in Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst., Sep. 2014, pp. 176–183. [25] I. A. Barsan, S. Wang, A. Pokrovsky, and R. Urtasun, “Learning to localize using a lidar intensity Map,” in Proc. 2nd Conf. Robot Learn., Proc. Mach. Learn. Res., A. A. Billard Dragan, J. Peters, and J. Morimoto, Eds. PMLR, 29-31, vol. 87, Oct. 2018, pp. 605–616. [26] B. C. Matei et al., “Image to LiDar matching for geotagging in urban environments,” in Proc. IEEE Workshop Appl. Comput. Vis., Jan. 2013, pp. 413–420. [27] T. Senlet, T. El-Gaaly, and A. Elgammal, “Hierarchical semantic hashing: Visual localization from buildings on maps,” in Proc. 22nd Int. Conf. Pattern Recognit., Aug. 2014, pp. 2990–2995. [28] Y. Tian, C. Chen, and M. Shah, “Cross-view image matching for geo- localization in urban environments,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., Jul. 2017, pp. 3608–3616. [29] F. Yan, O. Vysotska, and C. Stachniss, “Global localization on open- streetmap using 4-bit semantic descriptors,” in Proc. Eur. Conf. Mobile Robots, 2019, pp. 1–7. [30] E. Stenborg, C. Toft, and L. Hammarstrand, “Long-term visual localization using semantically segmented images,” in Proc. IEEE Int. Conf. Robot. Automat., 2018, pp. 6484–6490. [31] Y. Liu, Y. Petillot, D. Lane, and S. Wang, “Global localization with object- level semantics and topology,” in Proc. Int. Conf. Robot. Automat., 2019, pp. 4909–4915. [32] A. Cowley, I. D. Miller, and C. J. Taylor, “UPSLAM: Union of panoramas SLAM,” in Proc. Int. Conf. Robot. Automat., 2021. [33] J. Long, E. Shelhamer, and T. Darrell, “Fully convolutional networks for semantic segmentation,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2015, pp. 3431–3440. [34] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2016, pp. 770–778. [35] M. Cordts et al., “The cityscapes dataset for semantic urban scene un- derstanding,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2016, pp. 3213–3223. [36] A. Geiger, P. Lenz, and R. Urtasun, “Are we ready for autonomous driving? The KITTI vision benchmark suite,” in Proc. IEEE Conf. Comput. Vis. Pattern Recognit., 2012, pp. 3354–3361. [37] S. S. Shivakumar, T. Nguyen, I. D. Miller, S. W. Chen, V. Kumar, and C. J. Taylor, “Dfusenet: Deep fusion of RGB and sparse depth information for image guided dense depth completion,” in Proc. IEEE Intell. Transp. Syst. Conf., 2019, pp. 13–20.</p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    UPSLAM论文阅读
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Adjoints and Covariances（伴随与协方差）</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2021 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/';
+        
+        this.page.identifier = 'Cross_view_slam论文阅读';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
