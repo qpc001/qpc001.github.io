@@ -3,19 +3,71 @@
 <head>
     <meta charset="utf-8">
     
-    <title>Archive: 2020/11 | EpsilonJohn&#39;s Blog</title>
+    <title>Localization_for_Ground_Robots论文阅读 | EpsilonJohn&#39;s Blog</title>
     
     
-        <meta name="keywords" content="EpsilonJohn&#39;s Blog" />
+        <meta name="keywords" content="SLAM" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta property="og:type" content="website">
-<meta property="og:title" content="EpsilonJohn&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/archives/2020/11/index.html">
+    <meta name="description" content="Localization for Ground Robots: On Manifold Representation, Integration, Re-Parameterization, and Optimization  摘要 本文专注于通过概率融合里程计和单目相机进行地面机器人定位的任务。具体而言，(1) 提出了一种新的方法，通过参数重表示的方法形成motion manifold (2) 使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Localization_for_Ground_Robots论文阅读">
+<meta property="og:url" content="http://yoursite.com/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/index.html">
 <meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="Localization for Ground Robots: On Manifold Representation, Integration, Re-Parameterization, and Optimization  摘要 本文专注于通过概率融合里程计和单目相机进行地面机器人定位的任务。具体而言，(1) 提出了一种新的方法，通过参数重表示的方法形成motion manifold (2) 使用">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725191637.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725192754.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725193727.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725194550.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725194602.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725194634.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725195200.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725195226.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725195457.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725200153.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725201713.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725202130.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725202446.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725203623.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725204222.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725204351.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725204442.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725204846.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726094454.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726094542.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726094603.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726094747.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726094813.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095241.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095305.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095335.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095523.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095838.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726095918.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726100122.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726100809.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726100831.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726100939.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726100956.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726101008.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/26/20210726101304.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727094742.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727094813.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727094923.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727095419.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727095810.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/27/20210727100145.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/28/20210728095058.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/29/20210729094813.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/29/20210729095318.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/07/29/20210729095444.png">
+<meta property="article:published_time" content="2021-07-25T11:03:53.000Z">
+<meta property="article:modified_time" content="2021-07-29T01:57:34.352Z">
 <meta property="article:author" content="EpsilonJohn">
+<meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/07/25/20210725191637.png">
     
 
     
@@ -479,7 +531,7 @@
                         </a>
                          <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  </ul> 
                     </li> 
-                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/03/01/%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%B1%80%E9%83%A8ENU/">WGS-84转局部ENU坐标</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file"><a href="/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  </ul> 
+                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/03/01/%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%B1%80%E9%83%A8ENU/">WGS-84转局部ENU坐标</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file"><a href="/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file active"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  </ul> 
     </div>
     <script>
         $(document).ready(function() {
@@ -550,349 +602,283 @@
     <div id="toTop" class="fa fa-angle-up"></div>
 </aside>
             
-            <section id="main"><div class="timeline timeline-wrap">
-    
-            <div class="timeline-row timeline-row-major">
-                <span class="node"><i class="fa fa-calendar-o"></i></span>
-                <h1 class="title"><a href="/archives/2020/">2020</a></h1>
-            </div>
-    
-            <div class="timeline-row timeline-row-major">
-                <span class="node"><i class="fa fa-calendar"></i></span>
-                <h1 class="title"><a href="/archives/2020/11/">2020-11</a><span class="archive-list-count">10</span></h1>
-            </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
+            <section id="main"><article id="post-Localization_for_Ground_Robots论文阅读" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
                 
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a>
-        </h1>
-    
+                    <div class="article-meta">
+                        
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/SLAM/" rel="tag">SLAM</a>
+    </div>
 
-                
-                <div class="article-meta">
-                    
+                        
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">
-            <time datetime="2020-11-27T05:05:29.000Z" itemprop="datePublished">2020-11-27</time>
+        <a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
+            <time datetime="2021-07-25T11:03:53.000Z" itemprop="datePublished">2021-07-25</time>
         </a>
     </div>
 
 
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/IMU%E7%9B%B8%E5%85%B3/">IMU相关</a>
-    </div>
-
-                    
-                </div>
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Localization_for_Ground_Robots论文阅读.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Localization_for_Ground_Robots论文阅读.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Localization_for_Ground_Robots论文阅读.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
                 
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
                 
     
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a>
+        <h1 class="article-title" itemprop="name">
+            Localization_for_Ground_Robots论文阅读
         </h1>
     
 
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">
-            <time datetime="2020-11-20T13:36:46.000Z" itemprop="datePublished">2020-11-20</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#localization-for-ground-robots-on-manifold-representation-integration-re-parameterization-and-optimization"><span class="toc-number">1.</span> <span class="toc-text">Localization for Ground Robots: On Manifold Representation, Integration, Re-Parameterization, and Optimization</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#符号标记和传感器模型"><span class="toc-number">3.</span> <span class="toc-text">符号标记和传感器模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#符号"><span class="toc-number">3.1.</span> <span class="toc-text">符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#轮式里程计观测模型"><span class="toc-number">3.2.</span> <span class="toc-text">轮式里程计观测模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#基于流形的6d位姿整合"><span class="toc-number">4.</span> <span class="toc-text">基于流形的6D位姿整合</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#流形表示"><span class="toc-number">4.1.</span> <span class="toc-text">流形表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#状态和误差状态预测"><span class="toc-number">4.2.</span> <span class="toc-text">状态和误差状态预测</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流形重新参数化"><span class="toc-number">4.3.</span> <span class="toc-text">流形重新参数化</span></a></li></ol></li></ol>
                 </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a>
-        </h1>
-    
+            
+        
+        
+            <h1 id="localization-for-ground-robots-on-manifold-representation-integration-re-parameterization-and-optimization">Localization for Ground Robots: On Manifold Representation, Integration, Re-Parameterization, and Optimization</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725191637.png"></p>
+<h1 id="摘要">摘要</h1>
+<p>本文专注于通过概率融合里程计和单目相机进行地面机器人定位的任务。具体而言，(1) 提出了一种新的方法，通过参数重表示的方法形成<code>motion manifold</code> (2) 使用轮式里程计进行6D的整合 (3) 重新参数化流形等式，减少误差。最后，提出一种基于流形辅助的滑动窗口估计器的完整定位算法，其中使用轮式里程计、单目相机以及可选的IMU。</p>
+<h1 id="符号标记和传感器模型">符号标记和传感器模型</h1>
+<h2 id="符号">符号</h2>
+<p>在这项工作中，我们假设关于全局参考框架{G}的地面机器人，其车轮始终与路面接触。我们使用{C}和{O}来表示相机和里程计的坐标系。</p>
+<p>里程计坐标系{O}的中心位于机器人的轮子中间，其中x轴向前，z轴向上，如图2所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725192754.png"></p>
+<p>另外，我们使用<span class="math inline">\({ }^{\mathbf{A}} \mathbf{p _ { B }}\)</span>和<span class="math inline">\({ }^{\mathbf{A}}_{\mathbf{B}}\bar {\mathbf{q}}\)</span>来表示B系相对于A系的位置和旋转。<span class="math inline">\({ }^{A}_{B} \mathbf{R}\)</span>表示与<span class="math inline">\({ }^{\mathbf{A}}_{\mathbf{B}}\bar {\mathbf{q}}\)</span>对应的旋转矩阵。</p>
+<p>另外，</p>
+<ul>
+<li><span class="math inline">\(\hat{a}\)</span>表示估计值</li>
+<li><span class="math inline">\(\tilde{a}\)</span>表示误差</li>
+<li><span class="math inline">\(a^{T}\)</span>表示转置</li>
+<li><span class="math inline">\(\dot{a}\)</span>表示微分</li>
+<li><span class="math inline">\(\|a\|\)</span>表示二范数</li>
+<li><span class="math inline">\(e_i\)</span>是 3x1的向量，其中第i个元素为1，其他为0</li>
+<li><span class="math inline">\(e_{ij}=[e_i,e_j]\)</span></li>
+</ul>
+<h2 id="轮式里程计观测模型">轮式里程计观测模型</h2>
+<p>与[1,6,21]相似，在时间t，经过标定后的轮式里程计测量值如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725193727.png"></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{v}}\)</span>表示车轮坐标系{0}的线速度在车轮坐标系{0}的表示</li>
+<li><span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>表示车轮坐标系{0}的角速度在车轮坐标系{0}的表示</li>
+<li><span class="math inline">\(n_{v o}\)</span> and <span class="math inline">\(n_{\omega o}\)</span>是测量噪声</li>
+<li><span class="math inline">\(\mathbf{n}_{v}=\left[\begin{array}{lll}n_{v o} &amp; 0 &amp; 0\end{array}\right]^{\top}\)</span></li>
+<li><span class="math inline">\(\mathbf{n}_{\omega}=\left[\begin{array}{lll}0 &amp; 0 &amp; n_{\omega o}\end{array}\right]^{\top}\)</span></li>
+</ul>
+<p>等式(1)清晰的展示了轮式里程计测量仅提供2D的运动信息，即向前的线速度和关于yaw角的旋转速度。因此，通过使用等式1提供的测量值，理论上可以进行基于平面表面的位姿整合，而执行6D姿态集成。</p>
+<h1 id="基于流形的6d位姿整合">基于流形的6D位姿整合</h1>
+<h2 id="流形表示">流形表示</h2>
+<p>为了允许使用车轮测量测量的6D姿态集成，我们首先通过参数方程式进行运动建模。特别的，我们选用了通过二次多项式来对3D位置p的运动流形进行近似：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725194550.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725194602.png"></p>
+<p>流形的参数如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725194634.png"></p>
+<p>我们注意到，传统方法[1,6,21]假设平面环境，等同于流形参数为<span class="math inline">\(\mathbf{m}=[c, 0,0,0,0,0]^{T}\)</span>。他们的设计选择不能代表室外路面的一般情况，因此不适合高精度估计</p>
+<p>现有的工作如[6,21]展示了使用里程计观测对6D定位的困难，这主要是轮速计仅提供2D的测量，仅使用这些测量值，在6D空间进行姿态估计是不可行的。</p>
+<p>然而，使用如式(4)的流形参数定义，6D的位姿估计变得可行，为了进一步描述，我们记姿态微分方程：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725195200.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725195226.png"> 为了进行旋转积分，由轮速计提供的角速度<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>需要知道。然而，显然式(1)中的轮速计只能提供向量<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>的第三个元素。</p>
+<p>为了获取另外两个元素，需要使用流形的参数表达，首先：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725195457.png"></p>
+<blockquote>
+<p>这个式子的物理意义是，机器人的旋转矢量与机器人所处位置的流形的法向量是垂直的。</p>
+</blockquote>
+<p>这个式子表达的是，运动流形<span class="math inline">\(\mathcal{M}\)</span>已经显式定义了地面机器人的roll和pitch，其应该与<span class="math inline">\({}_{\mathbf{O}(t)}^{G} {\mathbf{R}}\)</span>具有一致性。换句话说，流形的梯度向量应该与机器人z轴方向平行。</p>
+<p>因此，对式(7)进行微分，得到：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725200153.png"></p>
+<p>通过使用<span class="math inline">\(\mathcal{M}(t)=\mathcal{M}\left({ }^{\mathrm{G}} \mathbf{p}_{\mathbf{O}(t)}\right)\)</span>作为缩写，然后将式（5）和（7）代入式（8），得到：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725201713.png"></p>
+<p>根据上述等式，<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>的前两个元素可以被计算，而第3个元素不能被识别，因为<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>被<span class="math inline">\([e_3]_{\times}\)</span>左乘，其中：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725202130.png"></p>
+<p>另一方面，<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>被<span class="math inline">\([e_3]_{\times}\)</span>的第三个元素起始可以直接从轮速计中读取。这些观测结果验证了我们将轮速计观测和流形表示进行结合的动机，依赖于他们的互补特性，以实现6D的位姿估计。</p>
+<p>为了从式（11）寻找<span class="math inline">\({}^{\mathbf{O}(t)} {\mathbf{\omega}}\)</span>的前两个元素，为了实现这个目的，基于式（7）可以写出如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725202446.png"></p>
+<blockquote>
+<p>这是基于两个向量平行得到的，不信的话等式两边同时叉乘一个<span class="math inline">\(({}_{\mathbf{O}(t)}^{G} {\mathbf{R}} e_3)\)</span></p>
+</blockquote>
+<p>结果，等式（11）变成：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725203623.png"></p>
+<p>其中，还用到了如下性质：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725204222.png"></p>
+<p>且有：<span class="math inline">\({}^{\mathbf{O}^{(t)}} \boldsymbol{\omega}_{12}=\mathbf{e}_{12}^{T} {}^{\mathbf{O}^{(t)}} \boldsymbol{\omega}\)</span></p>
+<p>通过考虑里程计的测量，我们有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725204351.png"></p>
+<p>通过整合式（18），就可以计算3D的旋转估计了。一旦旋转被计算，就可以进一步通过积分计算位置：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725204442.png"></p>
+<p>我们同样注意到我们的流形表示，如式（2），其隐式定义了运动模型的积分位置必须满足<span class="math inline">\(\mathcal{M}\left({ }^{\mathbf{G}} \mathbf{p}_{\mathbf{O}(t)}\right)=0\)</span>。</p>
+<p>实际上，等式（19）确实满足这个流形约束，为了展示，我们记：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/25/20210725204846.png"></p>
+<blockquote>
+<p>应用到了链式求导，矩阵求导法则，以及等式（13）</p>
+</blockquote>
+<p>其中，在等式（21）中<span class="math inline">\({}_{\mathbf{G}}^{\mathbf{O}(t)} \mathbf{R}^{T} \mathbf{e}_{3}\)</span>与<span class="math inline">\(\nabla \mathcal{M}\left({ }^{\mathbf{G}} \mathbf{p}_{\mathbf{O}(t)}\right)\)</span>成比例，（根据等式13的结果）。</p>
+<p>可以发现，等式（19）中<span class="math inline">\({ }^{\mathrm{G}} \mathbf{v}_{\mathbf{O}(t)}\)</span>的表达明确的满足等式（21）中的manifold约束（天向速度为0呗）。</p>
+<p>随着等式（18）和（19），我们可以进行在流形上的基于里程计的6D位姿整合。整个过程不需要IMU的使用，为了直观地解释这个过程，我们注意到，执行6D姿态估计需要使用传感器测量值或者运动约束来解析6个自由度。在我们的系统中，两个自由度来自轮式里程计测量，两个自由度来自车辆约束（非完整性约束），最后两个自由度由流形等式决定（如等式（18）），并且直觉的解释与数学推导相符。</p>
+<blockquote>
+<p>非完整性约束：来源于等式（19），这个约束表明局部线速度只有在x轴有非零值。 然而当底盘是麦克纳姆轮时，机器人不受该约束，并且必须重新设计方程。然而，这类型的底盘不常用于商业户外机器人或车辆。</p>
+</blockquote>
+<h2 id="状态和误差状态预测">状态和误差状态预测</h2>
+<p>本节，将描述使用提出的流形表示来进行状态和误差状态的传播。由于积分过程需要姿态(位置和方向向量)和流形方程的显式表示，我们定义状态向量如下</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726094454.png"></p>
+<p>状态向量微分方程如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726094542.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726094603.png"></p>
+<p>我们指出，流形参数的运动动力学将在后面的小节中详细描述，在式（25）这里先忽略。</p>
+<p>进一步的，有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726094747.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726094813.png"></p>
+<p>式（27）到（29）可以基于轮式里程计进行数值积分（如龙格库塔）。</p>
+<p>为了描述误差状态的传播细节，我们首先对式（18）进行一阶泰勒展开，得到：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095241.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095305.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095335.png"></p>
+<blockquote>
+<p>这是角速度对状态和噪声求导</p>
+</blockquote>
+<hr>
+<p>本文定义的误差角<span class="math inline">\(\delta \theta\)</span>是local的[48]，因此，有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095523.png"></p>
+<blockquote>
+<p>这个推导可以参见深蓝多传感器融合ppt</p>
+</blockquote>
+<p>进一步的，参考附录，我们可以写出等式（35），关于误差角的微分方程：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095838.png"></p>
+<blockquote>
+<p>附录A：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726095918.png"></p>
+</blockquote>
+<p>因为<span class="math inline">\(\delta \theta\)</span>是误差状态<span class="math inline">\(\tilde{x}\)</span>的一部分，式（35)的前两项可以结合，因此得到：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726100122.png"></p>
+<p>关于位置项，基于等式（19），可以直接得到如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726100809.png"></p>
+<p>对于流形参数，我们有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726100831.png"></p>
+<p>结合等式（35）（38）（39），误差状态的微分方程已经推导完成，我们可以进行6D的误差状态集成，把所有的等式放到向量中，我们可以得到误差状态模型：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726100939.png"></p>
+<p>其中，</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726100956.png"></p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726101008.png"></p>
+<p>需要注意的是：</p>
+<ul>
+<li><span class="math inline">\((\cdot)_{[:, i]}\)</span>表示矩阵的第i列</li>
+</ul>
+<p>我们注意到，<span class="math inline">\(\mathbf{F}_{c}\)</span>和<span class="math inline">\(\mathbf{G}_{c}\)</span>是连续时间下的误差状态转移矩阵和噪声雅可比矩阵，为了实现离散时间的概率估计器，则需要离散时间下的误差状态转移矩阵<span class="math inline">\(\boldsymbol{\Phi}(t, \tau)\)</span>，这可以通过积分得到：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/26/20210726101304.png"></p>
+<p>数值积分的具体实现和剩下的步骤是离散时间局部化估计的标准步骤，可以参考[12,48]</p>
+<h2 id="流形重新参数化">流形重新参数化</h2>
+<p>等式（2）定义了全局参考坐标系的运动流形，其数值上是正确的，并且能够很容易地给出一个随机估计量。然而，这种表示方式使得流形参数m的传播过程极具挑战性。具体地说，很难描述流形的运动动力学，它随时间而变化。文献[24]简单使用<span class="math inline">\(\dot{\mathbf{m}}=\mathbf{n}_{\omega m}\)</span>，其中<span class="math inline">\(\mathbf{n}_{\omega m}\)</span>是零均值高斯噪声向量。然而，这个方法受限于大规模应用。为了说明细节，让我们以下面的方程为例：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727094742.png"></p>
+<p>等式绘制如图3所示。</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727094813.png"></p>
+<p>实际上，等式（44）可以考虑为一个二维的流形，如果一个二次二维流形可以用如下方程表示：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727094923.png"></p>
+<p>等式（44）实际上是一个分段二次二维流形，其分段形式的参数是：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727095419.png"></p>
+<p>可以清晰的看见，当<span class="math inline">\(x=1000\)</span>时，会有明显的jump，在所估计的流形参数，由于我们选择了二次表示来模拟一个非二次方程。</p>
+<p>如果我们能用无穷多个多项式来近似流形，这个问题就不会产生了，然而，这在计算上是不可行的。因此，流形参数的正常传播过程(见Eq. 25)无法捕捉这种类型的变化。</p>
+<p>虽然流形表示在此条件下仍然可行，但通过去除和重新初始化流形参数，这肯定不是高精度姿态估计的首选。为此，我们建议将Eq. 45修改为：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727095810.png"></p>
+<p>其中，<span class="math inline">\(x_{o}\)</span>是固定的常值参数，可以通过当前<span class="math inline">\(x\)</span>的估计来得到。如果当<span class="math inline">\(x=1000\)</span>，我们得到一个估计的<span class="math inline">\(x_{o}=999.9\)</span>，来代替等式（46）所展示的jump，即我们的流形参数为：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/27/20210727100145.png"></p>
+<p>通过使用参数<span class="math inline">\(x_{o}\)</span>，流形参数的jump大幅减小。这使得流形的传播等式（状态、误差状态估计）变得可行。</p>
+<p>通过用上面的例子说明我们的动机和高级概念，我们介绍了我们的正式数学-局部流形表示和重新参数化的数学方程。通过假设前一个重新参数化步骤是在时间t k时执行的，下一个步骤是在t k+1时触发的，我们有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/28/20210728095058.png"></p>
+<p>其中，等式（49）：</p>
+<ul>
+<li><span class="math inline">\(\mathbf{R}_{o}\)</span>和<span class="math inline">\(\mathbf{x}_{o}\)</span>是m(tk)的固定重参数化参数</li>
+<li><span class="math inline">\(\mathbf{R}_{1}\)</span>和<span class="math inline">\(\mathbf{x}_{1}\)</span>是m(tk+1)的固定重参数化参数</li>
+<li><span class="math inline">\(\gamma, \Xi,\boldsymbol{\Psi}\)</span>都是关于<span class="math inline">\(\delta \mathbf{R}\)</span>和<span class="math inline">\(\delta \mathbf{x}\)</span>的函数</li>
+</ul>
+<p>为了选择重新参数化参数，类似于等式（48），我们为<span class="math inline">\(\mathbf{x}_{o}\)</span>的选择<span class="math inline">\({ }^{\mathbf{G}} \mathbf{p}_{\mathbf{O}\left(t_{k}\right)}\)</span>的第一次估计和为<span class="math inline">\(\mathbf{x}_{1}\)</span>选择<span class="math inline">\({ }^{\mathbf{G}} \mathbf{p}_{\mathbf{O}\left(t_{k+1}\right)}\)</span>的第一次估计</p>
+<p>等式（49）的详细推导和 <span class="math inline">\(\mathbf{R}_{o}，\mathbf{R}_{1}\)</span>的选择参见附录C。</p>
+<p>因此，通过式（49），对于状态估计及其相应的不确定性，我们能够在任何时间t周围重新参数化流形表示。我们注意到，这类似于用逆深度参数化重新参数化SLAM特征[15][35]。重要的是要指出，在我们的重新参数化过程中，<span class="math inline">\(\mathbf{R}_{o}，\mathbf{x}_{o}, \mathbf{R}_{1} ，\mathbf{x}_{1}\)</span>被用作固定的常量向量和矩阵，而不是随机变量。这样就不需要计算它们对应的雅可比矩阵，这也是SLAM特征重参数化中广泛使用的技巧[35]，[15]。</p>
+<p><strong>需要指出的是，我们的数值微分和重表示都是基于参数<span class="math inline">\(m\)</span>的，如（Sec. IV-A - IV-B and Appendix B），并且这个参数<span class="math inline">\(m\)</span>还未被任何重新参数化的步骤之前。</strong></p>
+<p>一旦引入重参数化，在<span class="math inline">\(t_{k+1}\)</span>时刻存储在状态向量中的流形变为<span class="math inline">\(m(t_{k+1})\)</span>，而在状态积分中使用的相应流形参数仍为<span class="math inline">\(m\)</span>，这是由于全局流形表示保持不变的事实，<span class="math inline">\(\mathbf{m}\)</span>和<span class="math inline">\(\mathbf{m}(t_{k+1})\)</span>的关系如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/29/20210729094813.png"></p>
+<p>因此，在状态预测和雅可比计算过程中，我们可以简单应用<span class="math inline">\(\mathbf{m}=\left(\prod_{i=0}^{k} \mathbf{\Lambda}\left(t_{i}\right)\right)^{-1} \mathbf{m}\left(t_{k}\right)\)</span>，这允许明确考虑<span class="math inline">\(\mathbf{m}(t_{k+1})\)</span>的不确定性，而不产生额外的计算成本和复杂的软件设计</p>
+<p>通过定义流形的重新参数化过程，我们重新讨论了运动流形的运动动力学特征问题。由于地面机器人所在的表面上导航的流形实际会随着时间的推移而变化，为了保证准确性，必须明确地建模这一事实，具体地说，我们建议在重新参数化过程中考虑这一点：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/29/20210729095318.png"></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\mathcal{N}\left(0, \sigma_{i, w m}^{2}\right)\)</span>表示零均值且方差为<span class="math inline">\(\sigma_{i, w m}^{2}\)</span>的高斯分布。</li>
+<li>特别的，标准差<span class="math inline">\(\sigma_{i, w m}\)</span>可以定义如下：</li>
+</ul>
+<p><img src="http://s1.nsloop.com:59080/images/2021/07/29/20210729095444.png"></p>
+<p>其中，<span class="math inline">\(\alpha_{i,p},\alpha_{i,q}\)</span>是控制参数。需要指出的是，在我们提出的公式中，流形不确定性(如<span class="math inline">\(\sigma_{i, w m}\)</span>)是空间位移的函数(见Eq. 54)。<strong>这与VIO文献[12]、[30]中的标准噪声传播方程不同，在这些方程中，噪声的特征是时间函数</strong>。因为运动流形是一个空间概念而不是时间概念，所以我们的设计选择更适合我们的定位问题。</p>
 
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">
-            <time datetime="2020-11-20T00:36:46.000Z" itemprop="datePublished">2020-11-20</time>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+    
+        <a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">MSCKF论文阅读</div>
         </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
     </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a>
-        </h1>
+ </section>
     
 
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">
-            <time datetime="2020-11-16T14:36:46.000Z" itemprop="datePublished">2020-11-16</time>
-        </a>
-    </div>
 
 
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
 
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">
-            <time datetime="2020-11-16T14:36:46.000Z" itemprop="datePublished">2020-11-16</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">
-            <time datetime="2020-11-14T04:36:46.000Z" itemprop="datePublished">2020-11-14</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">
-            <time datetime="2020-11-12T01:36:46.000Z" itemprop="datePublished">2020-11-12</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
-            <time datetime="2020-11-03T00:20:46.000Z" itemprop="datePublished">2020-11-03</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/">文献阅读</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">
-            <time datetime="2020-11-02T12:36:46.000Z" itemprop="datePublished">2020-11-02</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-        <div class="timeline-row">
-            <span class="node"></span>
-            <div class="content">
-                
-    
-        <h1 itemprop="name">
-            <a class="timeline-article-title" href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">第三章-(2)-惯性导航解算原理</a>
-        </h1>
-    
-
-                
-                <div class="article-meta">
-                    
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">
-            <time datetime="2020-11-02T12:36:46.000Z" itemprop="datePublished">2020-11-02</time>
-        </a>
-    </div>
-
-
-                    
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/">多传感器融合定位</a>
-    </div>
-
-                    
-                </div>
-                
-            </div>
-        </div>
-    
-</div>
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
 </section>
         </div>
         <footer id="footer">
@@ -916,11 +902,13 @@
     <script>
     var disqus_config = function () {
         
-        this.page.identifier = '';
+            this.page.url = 'http://yoursite.com/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/';
+        
+        this.page.identifier = 'Localization_for_Ground_Robots论文阅读';
     };
     (function() { 
         var d = document, s = d.createElement('script');  
-        s.src = '//' + 'EpsilonJohn' + '.disqus.com/count.js';
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
         s.setAttribute('data-timestamp', +new Date());
         (d.head || d.body).appendChild(s);
     })();
