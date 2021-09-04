@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://yoursite.com/2021/09/04/RGBD%E4%B8%8E%E5%8D%95%E7%BA%BF%E6%BF%80%E5%85%89%E6%A0%87%E5%AE%9A/</loc>
+    <lastmod>2021-09-04</lastmod>
+  </url>
+  <url>
     <loc>http://yoursite.com/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/</loc>
     <lastmod>2021-08-08</lastmod>
   </url>
