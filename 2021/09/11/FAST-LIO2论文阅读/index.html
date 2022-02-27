@@ -3,30 +3,27 @@
 <head>
     <meta charset="utf-8">
     
-    <title>LiDAR-Camera 标定-4 | EpsilonJohn&#39;s Blog</title>
+    <title>FAST-LIO2论文阅读 | EpsilonJohn&#39;s Blog</title>
     
     
-        <meta name="keywords" content="LiDAR-Camera 标定-4" />
+        <meta name="keywords" content="SLAM" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="Spatiotemporal Calibration of Camera and 3D Laser Scanner  摘要 我们提出了一种用于相机和3D激光扫描仪的开源时空校准框架。我们的解决方案基于常用的棋盘标记，需要在操作前进行一分钟校准，以提供准确和可重复的结果。该框架基于点对平面约束的批量优化，并且可以通过新颖的最小化来实现时间偏移校准，李代数中平面方程的连续表示以及B样条的使用。在仿真中">
+    <meta name="description" content="FAST-LIO2: Fast Direct LiDAR-inertial Odometry  摘要 在高效的紧密耦合迭代卡尔曼滤波器上，FAST-LiO2有两个关键的新科技，可允许快速，强大，准确的LIDAR导航（和建图）。  直接将原始点注册到地图（随后更新地图）而不提取特征点。这使得能够利用环境中的微妙特征，因此提高了准确性。取消手工设计的特征提取模块也使其自然适应不同扫描模式的新兴 LiD">
 <meta property="og:type" content="article">
-<meta property="og:title" content="LiDAR-Camera 标定-4">
-<meta property="og:url" content="http://yoursite.com/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/index.html">
+<meta property="og:title" content="FAST-LIO2论文阅读">
+<meta property="og:url" content="http://yoursite.com/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/index.html">
 <meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
-<meta property="og:description" content="Spatiotemporal Calibration of Camera and 3D Laser Scanner  摘要 我们提出了一种用于相机和3D激光扫描仪的开源时空校准框架。我们的解决方案基于常用的棋盘标记，需要在操作前进行一分钟校准，以提供准确和可重复的结果。该框架基于点对平面约束的批量优化，并且可以通过新颖的最小化来实现时间偏移校准，李代数中平面方程的连续表示以及B样条的使用。在仿真中">
+<meta property="og:description" content="FAST-LIO2: Fast Direct LiDAR-inertial Odometry  摘要 在高效的紧密耦合迭代卡尔曼滤波器上，FAST-LiO2有两个关键的新科技，可允许快速，强大，准确的LIDAR导航（和建图）。  直接将原始点注册到地图（随后更新地图）而不提取特征点。这使得能够利用环境中的微妙特征，因此提高了准确性。取消手工设计的特征提取模块也使其自然适应不同扫描模式的新兴 LiD">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/14/20210414165501.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/14/20210414171512.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/15/20210415101745.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/15/20210415161745.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/15/20210415163816.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/04/15/20210415204817.png">
-<meta property="article:published_time" content="2021-04-13T20:55:30.000Z">
-<meta property="article:modified_time" content="2021-06-03T16:14:27.000Z">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/09/12/20210912151410.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/09/12/20210912200058.png">
+<meta property="article:published_time" content="2021-09-11T06:03:53.000Z">
+<meta property="article:modified_time" content="2022-02-27T04:38:31.000Z">
 <meta property="article:author" content="EpsilonJohn">
+<meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/04/14/20210414165501.png">
+<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/09/12/20210912151410.png">
     
 
     
@@ -254,7 +251,7 @@
                             &nbsp;
                             First_Principles_of_CV
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E6%8F%90%E5%8F%96%E5%86%85%E5%A4%96%E5%8F%82%E7%9F%A9%E9%98%B5.md/">相机标定|内参和外参矩阵提取</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A%E8%BF%87%E7%A8%8B.md/">相机标定|相机标定过程</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%BA%BF%E6%80%A7%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B.md/">相机标定|线性相机模型</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%AE%80%E5%8D%95%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA.md/">相机标定|简单立体相机</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/">外参未知的立体相机|对极几何</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E6%A6%82%E8%BF%B0.md/">外参未知的立体相机|概述</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E6%8F%90%E5%8F%96%E5%86%85%E5%A4%96%E5%8F%82%E7%9F%A9%E9%98%B5.md/">相机标定|内参和外参矩阵提取</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A%E8%BF%87%E7%A8%8B.md/">相机标定|相机标定过程</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%AE%80%E5%8D%95%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA.md/">相机标定|简单立体相机</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%BA%BF%E6%80%A7%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B.md/">相机标定|线性相机模型</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/">外参未知的立体相机|对极几何</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E6%A6%82%E8%BF%B0.md/">外参未知的立体相机|概述</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -414,6 +411,15 @@
                         <a href="#" data-role="directory">
                             <i class="fa fa-folder"></i>
                             &nbsp;
+                            传感器标定
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file"><a href="/2021/04/14/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/27/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/09/04/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/Camera%E4%B8%8E%E5%8D%95%E7%BA%BF%E6%BF%80%E5%85%89%E6%A0%87%E5%AE%9A/">Camera与单线激光标定</a></li>  <li class="file"><a href="/2022/02/01/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_6/"></a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
                             四元数的状态误差卡尔曼
                         </a>
                          <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  </ul> 
@@ -425,7 +431,7 @@
                             &nbsp;
                             多传感器融合定位
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -499,7 +505,7 @@
                         </a>
                          <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  </ul> 
                     </li> 
-                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/03/01/%E7%BB%8F%E7%BA%AC%E5%BA%A6%E8%BD%AC%E5%B1%80%E9%83%A8ENU/">WGS-84转局部ENU坐标</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file active"><a href="/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/04/27/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  <li class="file"><a href="/2021/09/04/RGBD%E4%B8%8E%E5%8D%95%E7%BA%BF%E6%BF%80%E5%85%89%E6%A0%87%E5%AE%9A/">RGBD与单线激光标定</a></li>  </ul> 
+                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  <li class="file active"><a href="/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO2论文阅读</a></li>  <li class="file"><a href="/2021/10/13/FAST-LIO%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO论文阅读</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E5%8D%8F%E7%A8%8BCroutine/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2022/02/01/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"></a></li>  </ul> 
     </div>
     <script>
         $(document).ready(function() {
@@ -570,7 +576,7 @@
     <div id="toTop" class="fa fa-angle-up"></div>
 </aside>
             
-            <section id="main"><article id="post-LIDAR_CAMERA标定_4" class="article article-type-post" itemscope itemprop="blogPost">
+            <section id="main"><article id="post-FAST-LIO2论文阅读" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
         
@@ -579,11 +585,16 @@
                     <div class="article-meta">
                         
                         
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/SLAM/" rel="tag">SLAM</a>
+    </div>
+
                         
     <div class="article-date">
         <i class="fa fa-calendar"></i>
-        <a href="/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">
-            <time datetime="2021-04-13T20:55:30.000Z" itemprop="datePublished">2021-04-14</time>
+        <a href="/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
+            <time datetime="2021-09-11T06:03:53.000Z" itemprop="datePublished">2021-09-11</time>
         </a>
     </div>
 
@@ -594,13 +605,13 @@
                         
                         
                             <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/LIDAR_CAMERA标定_4.md' target="_blank" rel="noopener"> Source </a>
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/FAST-LIO2论文阅读.md' target="_blank" rel="noopener"> Source </a>
                             </div>
                             <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/LIDAR_CAMERA标定_4.md' target="_blank" rel="noopener"> Edit </a>
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/FAST-LIO2论文阅读.md' target="_blank" rel="noopener"> Edit </a>
                             </div>
                             <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/LIDAR_CAMERA标定_4.md' target="_blank" rel="noopener"> History </a>
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/FAST-LIO2论文阅读.md' target="_blank" rel="noopener"> History </a>
                             </div>
                         
                     </div>
@@ -608,7 +619,7 @@
                 
     
         <h1 class="article-title" itemprop="name">
-            LiDAR-Camera 标定-4
+            FAST-LIO2论文阅读
         </h1>
     
 
@@ -621,162 +632,119 @@
             
                 <div id="toc" class="toc-article">
                 <strong class="toc-title">Catalogue</strong>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spatiotemporal-calibration-of-camera-and-3d-laser-scanner"><span class="toc-number">1.</span> <span class="toc-text">Spatiotemporal Calibration of Camera and 3D Laser Scanner</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#方法"><span class="toc-number">4.</span> <span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#d激光雷达时间偏移"><span class="toc-number">4.1.</span> <span class="toc-text">3D激光雷达时间偏移</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vlp16"><span class="toc-number">4.1.1.</span> <span class="toc-text">vlp16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sick-mrs6124"><span class="toc-number">4.1.2.</span> <span class="toc-text">sick-mrs6124</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连续时间平面表示"><span class="toc-number">4.2.</span> <span class="toc-text">连续时间平面表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平面方程插值"><span class="toc-number">4.3.</span> <span class="toc-text">平面方程插值</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#fast-lio2-fast-direct-lidar-inertial-odometry"><span class="toc-number">1.</span> <span class="toc-text">FAST-LIO2: Fast Direct LiDAR-inertial Odometry</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#摘要"><span class="toc-number">2.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">3.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#系统概述"><span class="toc-number">4.</span> <span class="toc-text">系统概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#状态估计"><span class="toc-number">5.</span> <span class="toc-text">状态估计</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#系统模型"><span class="toc-number">5.1.</span> <span class="toc-text">系统模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#状态转移模型"><span class="toc-number">5.1.1.</span> <span class="toc-text">状态转移模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#量测模型"><span class="toc-number">5.1.2.</span> <span class="toc-text">量测模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代卡尔曼滤波器"><span class="toc-number">5.2.</span> <span class="toc-text">迭代卡尔曼滤波器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#传播"><span class="toc-number">5.2.1.</span> <span class="toc-text">1）传播</span></a></li></ol></li></ol></li></ol>
                 </div>
             
         
         
-            <h1 id="spatiotemporal-calibration-of-camera-and-3d-laser-scanner">Spatiotemporal Calibration of Camera and 3D Laser Scanner</h1>
-<p><img src="http://s1.nsloop.com:59080/images/2021/04/14/20210414165501.png"></p>
+            <h1 id="fast-lio2-fast-direct-lidar-inertial-odometry">FAST-LIO2: Fast Direct LiDAR-inertial Odometry</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/09/12/20210912151410.png"></p>
 <h1 id="摘要">摘要</h1>
-<p>我们提出了一种用于相机和3D激光扫描仪的开源时空校准框架。我们的解决方案基于常用的棋盘标记，需要在操作前进行一分钟校准，以提供准确和可重复的结果。该框架基于点对平面约束的批量优化，并且可以通过新颖的最小化来实现时间偏移校准，李代数中平面方程的连续表示以及B样条的使用。在仿真中评估了框架的属性，同时使用Velodyne VLP-16和SICK MRS6124 3D激光扫描仪通过两种不同的感官设置验证了性能。</p>
+<p>在高效的紧密耦合迭代卡尔曼滤波器上，FAST-LiO2有两个关键的新科技，可允许快速，强大，准确的LIDAR导航（和建图）。</p>
+<ul>
+<li>直接将原始点注册到地图（随后更新地图）而不提取特征点。这使得能够利用环境中的微妙特征，因此提高了准确性。取消手工设计的特征提取模块也使其自然适应不同扫描模式的新兴 LiDAR。</li>
+<li>第二个主要新颖性是通过增量K-D树数据结构，来维护地图，该映射可以增量更新（即点插入，删除）和动态重新平衡。与现有的动态数据结构相比（Octree，R * -tree，Nanoflann K-D树），IKD-Tree实现了卓越的整体性能，同时支持基于数的降采样</li>
+</ul>
+<p>我们在来自各种开放式LIDAR数据集中的19个序列中进行详尽的基准比较，与其他最先进的 LiDAR 惯性导航系统相比，FAST-LIO2 以更低的计算负载持续实现更高的精度，还进行了关于具有小FOV的固态激光雷达的各种真实实验。</p>
+<p>总的来说，FAST-LiO 2是计算上有效的（例如，高达100 Hz的里程计和大型环境中的建图），鲁棒（例如，杂乱的室内环境中具有旋转的杂乱的室内环境的可靠姿态估计，多功能（即， 适用于多线和固态LIDARS，UAV和手持平台，英特尔和基于ARM的处理器），同时仍然比现有方法实现更高的准确性。</p>
 <h1 id="介绍">介绍</h1>
-<p>提出的标定方法基于棋盘格的运动，以及一系列的来自相机和激光雷达的观测。然后执行批量优化来估计6dof刚体变换矩阵以及时间偏差。</p>
-<p>该优化基于独立的激光雷达指向相机的平面约束，该平面约束由连续时间平面表示扩展，使得时间偏差可以得到优化。本文贡献在：</p>
-<ul>
-<li>使用通用的棋盘格标记来估计lidar、camera的外参和时间偏移</li>
-<li>新颖的李代数形式的连续时间最小化平面表示，使用B样条</li>
-<li>对初值不敏感，可以收敛到预期结果</li>
-</ul>
-<h1 id="方法">方法</h1>
-<p>提出的框架专用于刚体连接的具有全局快门相机和3D Lidar，并且假设相机内参已知且已经校正了。此外，假设传感器之间的时间偏移未知，且较小近似于常值。</p>
-<p>标定过程需要包含标定板与传感器之间的相对运动，因此应该被激光雷达和相机连续观测得到。录制数据之后，按照下图的过程进行处理：</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/04/14/20210414171512.png"></p>
-<p>其中，对于相机，则使用opencv传统检测算法进行检测；对于激光雷达，首先将点投影成range-image，然后通过手动标记或半自动跟踪的方法来提取标定板对应的平面点。</p>
-<p>如果不考虑时间偏移，标定可以描述为基于待求解位姿的点-面优化问题：</p>
-<p><span class="math display">\[
-T^{*} = \arg \min \sum_{i} \sum_{j} \pi(t_i)^{T}Tp_{i}
-\]</span></p>
-<p>其中，</p>
-<ul>
-<li><span class="math inline">\(T^{*}\)</span>是期望得到的从激光雷达坐标系到相机坐标系的变换矩阵</li>
-<li><span class="math inline">\(p_i\)</span>表示标定板上第i个3D点的齐次坐标表示</li>
-<li><span class="math inline">\(\pi(t_i)\)</span>表示由相机在<span class="math inline">\((t_i+\Delta t)\)</span>时刻估计得到的标定板平面等式。</li>
-</ul>
-<p>提出的方法还注意到时间的校准，即考虑到点云中的每个点都对应一个时间戳，则目标函数变为：</p>
-<p><span class="math display">\[
-T^{*},\Delta t^{*} = \arg \min \sum_{i} \sum_{j} \pi(t_i+\Delta t)^{T}Tp_{i}
-\]</span></p>
-<p>其中，</p>
-<ul>
-<li><span class="math inline">\(\Delta t^{*}\)</span>是待估计的时间差</li>
-<li>要形成上式，需要知道每个3d激光点对应的时间戳以及对应任意时间的平面表示</li>
-<li>本文使用LM以及g2o来求解</li>
-</ul>
-<h2 id="d激光雷达时间偏移">3D激光雷达时间偏移</h2>
-<p>对于机械旋转式激光雷达，都有一定的扫描周期，根据扫描起始和扫描结束，可以推断出对应点的时间：</p>
-<h3 id="vlp16">vlp16</h3>
-<p><span class="math display">\[
-t_{i}=t_{\text {cloud }}+\frac{\phi_{i}-\phi_{s}}{f\left(\phi_{e}-\phi_{s}\right)}
-\]</span></p>
-<p>其中，</p>
-<ul>
-<li><span class="math inline">\(t_{cloud}\)</span>表示扫描起始时间</li>
-</ul>
-<h3 id="sick-mrs6124">sick-mrs6124</h3>
-<p><img src="http://s1.nsloop.com:59080/images/2021/04/15/20210415101745.png"></p>
-<h2 id="连续时间平面表示">连续时间平面表示</h2>
-<p>标定板在每一帧图像中都能检测到，由于相机内参、以及标定板物理参数已知，所以可以确定标定板坐标系到相机坐标系的变换。</p>
-<p>因此，标定板的平面可以使用4维向量<span class="math inline">\((\bm{n},d)\)</span>来表示，其中<span class="math inline">\(\bm{n}\)</span>是平面法向量，<span class="math inline">\(d\)</span>是到坐标系原点的距离。对于所有的图像，可以获取到离散时间下的一组平面方程集合。</p>
-<p>为了确定各个时间戳的平面方程，需要对这些方程进行插值，因为4维的平面表示形式并非最小的表示方式，因此可能还需要做归一化处理。为了避免这个问题，提出一种使用类似于SO(3)以及对应的李代数so(3)的思想来表示平面法向量</p>
-<p>该思想只需要使用两个参数就可以表示归一化法向量，因此，提出的方法几乎与[21]提出的球面插值法相同。</p>
-<p>因此，平面的超参数化是因为法向量<span class="math inline">\(\bm{n}\)</span>，如果使用两个成分来表示，那么平面可以表示为：<span class="math inline">\((\bm{n},d) \rightarrow (\omega_x,\omega_y,d)_{3\times 1}\)</span>:</p>
+<p>我们开发一个增量K-D树数据结构，IKD树，有效地表示大规模稠密点云地图。 除了有效的最近邻搜索之外，新的数据结构还支持增量地图更新（即，点插入，基于数的降采样，点删除）和最小计算成本的动态重新平衡。</p>
+<p>这些功能使IKD树非常适合基于激光雷达的里程计和建图应用，在计算限制平台上实现100 Hz 里程计和建图，如微型UAV板载计算机（英特尔I7）甚至基于ARM的处理器。</p>
+<p>通过增加IKD树的计算效率允许，我们直接将原始点注册到地图，即使具有激进的运动和非常杂乱的环境，也能够更准确和可靠的扫描配准。我们将此使用原始点的配准称为类似于Visual Slam的直接方法[21]。消除手工工程特征提取使得系统自然适用于不同的激光雷达传感器。</p>
+<p>我们将以上两个改进整合到先前的工作<code>FAST-LIO</code>中，该系统使用IMU通过严格的反向传播步骤来遵从每个点的运动，并通过迭代扩展卡尔曼滤波器估计系统的完整状态。为了进一步加速计算，使用新的和数学上等同的计算卡尔曼增益的公式用于<strong>将计算复杂性降低到状态的维度（而不是观测的维度）</strong>。</p>
+<p>新的系统称为<code>FAST-LIO2</code>，关于各种尺寸的18个序列的实验表明，IKD树在应用激光雷达测量和测绘时实现了相比于现有动态数据结构（Octree，R * -Tree，Nanoflann K-D树）的卓越性能</p>
+<h1 id="系统概述">系统概述</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/09/12/20210912200058.png"></p>
+<p><code>FAST-LIO2</code>的数据流如图所示，为了执行状态估计，新扫描中的点被通过紧密耦合的迭代卡尔曼滤波器框架（有红色的大虚线块）注册到大型局部地图中。大型局部地图中的全局地图点由增量K-D树结构IKD-Tree组织（蓝色虚线块）。如果当前LIDAR的FOV范围交叉地图边界，则将删除IKD树中，从LIDAR位置到最远地图区域中的历史点。</p>
+<p>结果，IDK-TREE跟踪在一个大范围立方体区域（<code>map size</code>）中的所有地图点，并用于计算状态估计模块中的残差。优化后的位姿最后将新扫描中的点注册到全局坐标系，并通过以里程计频率插入到IKD树，来将它们合并到地图中。</p>
+<h1 id="状态估计">状态估计</h1>
+<p><code>FAST-LIO2</code>的状态估计是从<code>FAST-LIO</code>[22]继承的，且进一步整合了Lidar-IMU的外参在线标定。在这里，我们简要解释滤波器的基本配方和工作流程，并参考[22]了解更多细节。</p>
+<h2 id="系统模型">系统模型</h2>
+<p>我们首先导出系统模型，由状态转换模型和测量模型组成</p>
+<h3 id="状态转移模型">状态转移模型</h3>
+<p>取第一个 IMU 帧（记为 I）作为全局帧（记为 G），记<span class="math inline">\({ }^{I} \mathbf{T}_{L}=\left({ }^{I} \mathbf{R}_{L},{ }^{I} \mathbf{p}_{L}\right)\)</span>为激光雷达到IMU的外参（未知），那么模型如下：</p>
 <p><span class="math display">\[
 \begin{aligned}
-\theta = acos(\bm{n}[2]) \\
-\omega_{x}=-\bm{n}[1]*\frac{\theta}{\sin \theta} \\
-\omega_{y}=\bm{n}[0]*\frac{\theta}{\sin \theta}
-\end{aligned}
-\]</span></p>
-<blockquote>
-<p>这个思想来源于 [20]A. Bartoli, “On the non-linear optimization of projective motion using minimal parameters“ European Conference on Computer Vision (ECCV), Copenhagen, 2002, 340–354. <img src="http://s1.nsloop.com:59080/images/2021/04/15/20210415161745.png"></p>
-</blockquote>
-<p>就是说，在3维欧氏空间中，以点(0,0,1)作为原点，以平行于x轴、y轴的方向作为坐标轴，展开一个超平面，那么3维欧氏空间中的矢量可以通过对数变换投影到该超平面上的一个点。</p>
-<p><strong>二维情况</strong></p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/04/15/20210415163816.png"></p>
-<p><strong>三维情况</strong></p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/04/15/20210415204817.png"></p>
-<p>因此，选取3维欧氏空间中的单位向量<span class="math inline">\(q=[0,0,1]^{T}\)</span>，然后根据<span class="math inline">\(\cos \theta = q^{T} n\)</span>，那么可以得到<span class="math inline">\(\theta = \arccos (q^{T}n)=\arccos(\bm{n}[2])\)</span>，表示两个向量之间的夹角，特别的又因为球面半径是单位向量，因此，<span class="math inline">\(\theta\)</span>也表示两个向量之间的球面距离。</p>
-<p>特别的，根据下式可构成超平面上的点<span class="math inline">\(p=(\omega_x,\omega_y)\)</span>：</p>
-<p><span class="math display">\[
-\begin{aligned}
-\theta = \arccos(\bm{n}[2]) \\
-\omega_{x}=-\bm{n}[1]*\frac{\theta}{\sin \theta} \\
-\omega_{y}=\bm{n}[0]*\frac{\theta}{\sin \theta}
+{ }^{G} \dot{\mathbf{R}}_{I} &amp;={ }^{G} \mathbf{R}_{I}\left\lfloor\boldsymbol{\omega}_{m}-\mathbf{b}_{\boldsymbol{\omega}}-\mathbf{n}_{\boldsymbol{\omega}}\right\rfloor_{\wedge}\\ { }^{G} \dot{\mathbf{p}}_{I} &amp;={ }^{G} \mathbf{v}_{I} \\
+{ }^{G} \dot{\mathbf{v}}_{I} &amp;={ }^{G} \mathbf{R}_{I}\left(\mathbf{a}_{m}-\mathbf{b}_{\mathbf{a}}-\mathbf{n}_{\mathbf{a}}\right)+{ }^{G} \mathbf{g} \\
+\dot{\mathbf{b}}_{\boldsymbol{\omega}} &amp;=\mathbf{n}_{\mathbf{b} \omega}, \dot{\mathbf{b}}_{\mathbf{a}}=\mathbf{n}_{\mathbf{b a}} \\
+{ }^{G} \dot{\mathbf{g}} &amp;=\mathbf{0},{ }^{I} \dot{\mathbf{R}}_{L}=\mathbf{0},{ }^{I} \dot{\mathbf{p}}_{L}=\mathbf{0}
 \end{aligned}
 \]</span></p>
 <p>其中，</p>
+<ul>
+<li><span class="math inline">\({ }^{G} \mathbf{p}_{I},{ }^{G} \mathbf{R}_{I}\)</span>分别为全局坐标系下的IMU的位置和姿态</li>
+<li><span class="math inline">\({ }^{G} \mathbf{g}\)</span>是全局坐标系下的重力向量</li>
+<li><span class="math inline">\(\mathbf{a}_{m}\)</span>，<span class="math inline">\(\omega_{m}\)</span>是IMU测量</li>
+<li><span class="math inline">\(\mathbf{b}_{\mathbf{a}}\)</span>，<span class="math inline">\(\mathbf{b}_{\boldsymbol{\omega}}\)</span>是由噪声<span class="math inline">\(\mathbf{n}_{\mathbf{b a}},\mathbf{n}_{\mathbf{b \omega}}\)</span>驱动的随机游走过程建模的IMU偏置</li>
+<li><span class="math inline">\(\lfloor\mathbf{a}\rfloor_{\wedge}\)</span>表示由向量<span class="math inline">\(\mathbf{a}\)</span>构成的反对称矩阵</li>
+</ul>
+<p>记<span class="math inline">\(i\)</span>为IMU测量的索引，基于[22]中定义的<span class="math inline">\(\boxplus\)</span> 操作符，连续时间下的动态模型可以根据IMU采样周期<span class="math inline">\(\Delta t\)</span>进行离散化，如下：</p>
 <p><span class="math display">\[
-\begin{aligned}
-    \sqrt{\omega_x^2 + \omega_y^2} 
-    &amp;= 
-    \sqrt{
-        \frac{\arccos^{2} (n[2])}{\sin^{2}( \arccos(n[2])) }
-        (n[0]^{2}+n[1]^{2})
-    }
-    \\
-    &amp;=
-    \sqrt{
-        \frac{\arccos^{2} (n[2])}{1- \cos^{2}(\arccos(n[2])) }
-        (1-n[2]^{2})
-    }
-    \\
-    &amp;= \arccos (n[2]) = \theta
-\end{aligned}
+\mathbf{x}_{i+1}=\mathbf{x}_{i} \boxplus \left(\Delta t \mathbf{f}\left(\mathbf{x}_{i}, \mathbf{u}_{i}, \mathbf{w}_{i}\right)\right)
 \]</span></p>
-<p>可以发现，在超平面上，点q和点p的距离等于球面上向量q和另一个向量之间的球面距离。</p>
-<p>因此，实现了使用两个参数来表示欧氏空间中的向量，需要注意的是，<span class="math inline">\(\theta==0\)</span>时，取<span class="math inline">\(\frac{\theta}{\sin \theta}=1\)</span>，特别的，仅适用于<span class="math inline">\(\theta &lt; \pi\)</span>的情况下。</p>
-<h2 id="平面方程插值">平面方程插值</h2>
-<p>使用最小化的平面表示使得可以进行插值，然后返回到所需时间戳对应的4维的平面方程表示形式。</p>
-<p>对于此任务，我们尝试了参数的线性插值，由于缺乏连续的微分导致优化陷入局部最小值。因此，提出了使用三次样条插值，确保最小平面表示具有一阶和二阶的连续微分。如下：</p>
+<p>其中，函数<span class="math inline">\(\mathbf{f}\)</span>，状态<span class="math inline">\(\mathbf{x}\)</span>，输入<span class="math inline">\(\mathbf{u}\)</span>和噪声<span class="math inline">\(\mathbf{w}\)</span>定义如下：</p>
 <p><span class="math display">\[
-\mathbf{s}(t)=\mathbf{s}_{0} B_{0}(t)+\sum_{i=1}^{n}\left(\mathbf{s}_{i}-\mathbf{s}_{i-1}\right) B_{i}(t)
+\mathcal{M} \triangleq S O(3) \times \mathbb{R}^{15} \times S O(3) \times \mathbb{R}^{3} ; \operatorname{dim}(\mathcal{M})=24
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{x} \triangleq\left[\begin{array}{llllllll}
+{ }^{G} \mathbf{R}_{I}^{T} &amp; { }^{G} \mathbf{p}_{I}^{T} &amp; { }^{G} \mathbf{v}_{I}^{T} &amp; \mathbf{b}_{\boldsymbol{\omega}}^{T} &amp; \mathbf{b}_{\mathbf{a}}^{T} &amp; { }^{G} \mathbf{g}^{T} &amp; { }^{I} \mathbf{R}_{L}^{T} &amp; { }^{I} \mathbf{p}_{L}^{T}
+\end{array}\right]^{T} \in \mathcal{M}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{u} \triangleq\left[\begin{array}{ll}
+\boldsymbol{\omega}_{m}^{T} &amp; \mathbf{a}_{m}^{T}
+\end{array}\right]^{T}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{w} \triangleq\left[\begin{array}{llll}
+\mathbf{n}_{\boldsymbol{\omega}}^{T} &amp; \mathbf{n}_{\mathbf{a}}^{T} &amp; \mathbf{n}_{\mathbf{b} \boldsymbol{\omega}}^{T} &amp; \mathbf{n}_{\mathbf{b a}}^{T}
+\end{array}\right]^{T}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{f}(\mathbf{x}, \mathbf{u}, \mathbf{w})=\left[\begin{array}{c}
+\boldsymbol{\omega}_{m}-\mathbf{b}_{\boldsymbol{\omega}}-\mathbf{n}_{\boldsymbol{\omega}} \\
+{ }^{G} \mathbf{v}_{I}+\frac{1}{2}\left({ }^{G} \mathbf{R}_{I}\left(\mathbf{a}_{m}-\mathbf{b}_{\mathbf{a}}-\mathbf{n}_{\mathbf{a}}\right)+{ }^{G} \mathbf{g}\right) \Delta t \\
+{ }^{G} \mathbf{R}_{I}\left(\mathbf{a}_{m}-\mathbf{b}_{\mathbf{a}}-\mathbf{n}_{\mathbf{a}}\right)+{ }^{G} \mathbf{g} \\
+\mathbf{n}_{\mathbf{b} \omega} \\
+\mathbf{n}_{\mathbf{b a}} \\
+\mathbf{0}_{3 \times 1} \\
+\mathbf{0}_{3 \times 1} \\
+\mathbf{0}_{3 \times 1}
+\end{array}\right] \in \mathbb{R}^{24}
+\]</span></p>
+<h3 id="量测模型">量测模型</h3>
+<p>LIDAR通常是一个接一个地点的样品。 因此，当激光雷达经历连续运动时，所得到的点在不同的姿势处采样，为了纠正这种扫描运动，我们采用[22]中提出的反向传播，<strong>其估计每个激光点时刻下的激光雷达位姿相对于该帧激光扫描最后时刻的激光雷达位姿</strong>。估计的相对姿势使我们能够基于扫描中每个单独点的精确采样时间将所有点投影到扫描结束时间，以实现校正。</p>
+<p>记<span class="math inline">\(k\)</span>为激光扫描的索引，<span class="math inline">\(\{ { }^{L} \mathbf{p}_{j}, j = 1,\dots,m\}\)</span>是第<span class="math inline">\(k\)</span>帧激光坐标系下的激光点（扫描结束时刻），由于激光测量存在噪声，每一个点<span class="math inline">\(\mathbf{p}_{j}\)</span>都会受到由测距和方向组合的噪声项<span class="math inline">\({ }^{L} \mathbf{n}_{j}\)</span>影响。因此，真正的激光点与测量值之间存在如下关系：</p>
+<p><span class="math display">\[
+{ }^{L} \mathbf{p}_{j}^{\mathrm{gt}}={ }^{L} \mathbf{p}_{j}+{ }^{L} \mathbf{n}_{j}
+\]</span></p>
+<p>真正的激光点<span class="math inline">\({ }^{L} \mathbf{p}_{j}^{\mathrm{gt}}\)</span>，根据对应的激光雷达位姿<span class="math inline">\({ }^{\mathbf{G}}\mathbf{T}_{I_{k}}=\left({ }^{G} \mathbf{R}_{I_{k}},{ }^{G} \mathbf{p}_{I_{k}}\right)\)</span>以及外参<span class="math inline">\({ }^{I} \mathbf{T}_{L}\)</span>进行坐标转换，其应该准确的位于地图中的局部的平面上，满足：</p>
+<p><span class="math display">\[
+\mathbf{0}={ }^{G} \mathbf{u}_{j}^{T}\left({ }^{G} \mathbf{T}_{I_{k}}{ }^{I} \mathbf{T}_{L}\left({ }^{L} \mathbf{p}_{j}+{ }^{L} \mathbf{n}_{j}\right)-{ }^{G} \mathbf{q}_{j}\right)
 \]</span></p>
 <p>其中，</p>
 <ul>
-<li><span class="math inline">\(s(t)\)</span>是在时间t插值得到的结果</li>
-<li><span class="math inline">\(s_i\)</span>是根据测量得到的第i个控制点的值</li>
-<li><span class="math inline">\(B_i(t)\)</span>是cumulative basis function的第i个成分</li>
-<li><span class="math inline">\(n\)</span>是B样条的阶数</li>
+<li><span class="math inline">\({ }^{G} \mathbf{u}_{j}\)</span>是对应关联平面的法向量</li>
+<li><span class="math inline">\({ }^{G} \mathbf{q}_{j}\)</span>是平面上的点</li>
+<li>值得注意的是，<span class="math inline">\({ }^{G} \mathbf{T}_{I_{k}},{ }^{I} \mathbf{T}_{L}\)</span>都包含在状态向量<span class="math inline">\(\mathbf{x}_k\)</span>中</li>
 </ul>
-<p>对于李代数，则有插值方程如下：</p>
+<p>因此，第<span class="math inline">\(j\)</span>个点的测量<span class="math inline">\({ }^{L} \mathbf{p}_{j}\)</span>，可以写成统一紧凑形式如下：</p>
 <p><span class="math display">\[
-\mathbf{r}(t)=\log \left\{\exp \left(\mathbf{r}_{0} B_{0}(t)\right) \prod_{i=1}^{n} \exp \left(\boldsymbol{\Omega}_{i} B_{i}(t)\right)\right\}
+\mathbf{0}=\mathbf{h}_{j}\left(\mathbf{x}_{k},{ }^{L} \mathbf{p}_{j}+{ }^{L} \mathbf{n}_{j}\right)
 \]</span></p>
-<p>其中，</p>
+<p>这定义了状态矢量<span class="math inline">\(\mathbf{x}_k\)</span>的隐式测量模型</p>
+<h2 id="迭代卡尔曼滤波器">迭代卡尔曼滤波器</h2>
+<p>基于上面的状态模型和基于流形<span class="math inline">\(\mathcal{M} \triangleq S O(3) \times \mathbb{R}^{15} \times S O(3) \times \mathbb{R}^{3}\)</span>的量测模型，我们使用迭代卡尔曼滤波器直接在流形<span class="math inline">\(\mathcal{M}\)</span>上进行操作，遵循文献[55][22]。</p>
+<p>其包含两个关键步骤：</p>
 <ul>
-<li><span class="math inline">\(r(t)\)</span>表示t时刻的李代数插值结果</li>
-<li><span class="math inline">\(r_i\)</span>表示李代数表示的第i个控制点</li>
-<li><span class="math inline">\(\Omega_i=\log(\exp(r_{i-1})^{T}\exp(r_i))\)</span>表示两个李代数之间的差值</li>
+<li>在每个IMU测量上传播</li>
+<li>在每一帧激光扫描上进行迭代</li>
 </ul>
-<blockquote>
-<p>来源于文献[23]：A. Patron-Perez, S. Lovegrove, and G. Sibley, “A spline-based trajec- tory representation for sensor fusion and rolling shutter cameras“, in International Journal of Computer Vision, vol. 113, no. 3, 208–219, 2015.</p>
-</blockquote>
-<p>使用4阶B样条插值，cumulative basis function 如下：</p>
-<p><span class="math display">\[
-\mathbf{B}(u)
-=
-\frac{1}{6}
-\left[
-    \begin{array}{cccc}
-    6 &amp; 0 &amp; 0 &amp; 0 \\ 
-    5 &amp; 3 &amp; -3 &amp; 1 \\ 
-    1 &amp; 3 &amp; 3 &amp; -2 \\ 
-    0 &amp; 0 &amp; 0 &amp; 1\end{array}
-    \right]
-    \left[\begin{array}{c}
-    1 \\ u \\ u^{2} \\ u^{3}
-    \end{array}
-    \right]
-\]</span></p>
-<p>其中，</p>
-<ul>
-<li><span class="math inline">\(u\)</span>是从t2到t3之间的归一化时间(0~1)，在实践中，我们还检查了检测到的棋盘的时间戳（T1，T2，T3，T4）是否均匀地分布在时间内，如果不满足这种情况，则不会执行插值</li>
-</ul>
-<p>重要的是，可以使用[23]的已知方程来导出B样条曲线的jacobians，特别的，本系统使用了[24]所述的更有效的雅可比表示。</p>
-<blockquote>
-<p>[24]C. Sommer, V. Usenko, D. Schubert, N. Demmel, and D. Cremers, “Efficient derivative computation for cumulative B-splines on Lie groups“, arXiv preprint, 1911.08860v1, 2019.</p>
-</blockquote>
+<p>这两个步骤都自然地估计流形<span class="math inline">\(\mathcal{M}\)</span>上的状态，从而避免了<code>renormalization</code>。</p>
+<h3 id="传播">1）传播</h3>
+<p>假设最优状态估计在融合完最后一帧（如<span class="math inline">\(k-1\)</span>帧）激光扫描后的状态为<span class="math inline">\(\overline{\mathbf{x}}_{k-1}\)</span>，且协方差矩阵为<span class="math inline">\(\overline{\mathbf{P}}_{k-1}\)</span>，前向传播是在IMU测量到达时进行的，更具体地说，通过将过程噪声<span class="math inline">\(\mathbf{w}_i\)</span>设置为零，状态和协方差将按照状态转移模型进行传播：</p>
 
             </div>
         
@@ -789,19 +757,19 @@ t_{i}=t_{\text {cloud }}+\frac{\phi_{i}-\phi_{s}}{f\left(\phi_{e}-\phi_{s}\right
     
 <nav id="article-nav">
     
-        <a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/" id="article-nav-newer" class="article-nav-link-wrap">
+        <a href="/2021/10/13/FAST-LIO%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Newer</strong>
             <div class="article-nav-title">
                 
-                    UTC Time and GPS Time Conversion
+                    FAST-LIO论文阅读
                 
             </div>
         </a>
     
     
-        <a href="/2021/04/12/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2021/09/04/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/Camera%E4%B8%8E%E5%8D%95%E7%BA%BF%E6%BF%80%E5%85%89%E6%A0%87%E5%AE%9A/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title">LiDAR-Camera 标定-2</div>
+            <div class="article-nav-title">Camera与单线激光标定</div>
         </a>
     
 </nav>
@@ -831,7 +799,7 @@ t_{i}=t_{\text {cloud }}+\frac{\phi_{i}-\phi_{s}}{f\left(\phi_{e}-\phi_{s}\right
         <footer id="footer">
     <div class="outer">
         <div id="footer-info" class="inner">
-            EpsilonJohn &copy; 2021 
+            EpsilonJohn &copy; 2022 
             <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
             <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
             
@@ -849,9 +817,9 @@ t_{i}=t_{\text {cloud }}+\frac{\phi_{i}-\phi_{s}}{f\left(\phi_{e}-\phi_{s}\right
     <script>
     var disqus_config = function () {
         
-            this.page.url = 'http://yoursite.com/2021/04/14/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/';
+            this.page.url = 'http://yoursite.com/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/';
         
-        this.page.identifier = 'LIDAR_CAMERA标定_4';
+        this.page.identifier = 'FAST-LIO2论文阅读';
     };
     (function() { 
         var d = document, s = d.createElement('script');  

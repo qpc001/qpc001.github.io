@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="utf-8">
+    
+    <title>Cyber-RT系列之中枢调度Scheduler | EpsilonJohn&#39;s Blog</title>
+    
+    
+        <meta name="keywords" content="Cyber_RT" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言 Scheduler是Cyber-RT的调度核心，是协程的调度载体。特别的，对于自动驾驶任务而言，任务调度的实时性发挥至关重要的作用，因此有必要对各种任务的优先级进行分类排序，如对于控制任务而言，需要单独分配CPU以供实时运行，Cyber-RT通过Scheduler来实现这种功能。 Cyber&#x2F;Scheduler目录 12345678910111213141516171819202122232">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cyber-RT系列之中枢调度Scheduler">
+<meta property="og:url" content="http://yoursite.com/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/index.html">
+<meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
+<meta property="og:description" content="前言 Scheduler是Cyber-RT的调度核心，是协程的调度载体。特别的，对于自动驾驶任务而言，任务调度的实时性发挥至关重要的作用，因此有必要对各种任务的优先级进行分类排序，如对于控制任务而言，需要单独分配CPU以供实时运行，Cyber-RT通过Scheduler来实现这种功能。 Cyber&#x2F;Scheduler目录 12345678910111213141516171819202122232">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/11/29/Scheduler.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/11/29/20211129002744.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/11/29/20211129005008.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/11/29/20211129005901.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/11/29/processorContext.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/01/cr_group_.drawio.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/04/rq_locks_.drawio.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/04/rq_locak_and_cr_group.drawio1f9420f739656693.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/multi_pri_rq.drawio.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/multi_pri_rq.drawiofeae01cd4a05a6ac.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerClassicSchedulerClassic.jpg">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerClassicCreateProcessor.jpg">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerCreateTaskbdbced6bb306a41f.jpg">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/05/ProcessorRun.jpg">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/12/07/SchedulerClassicNotifyProcessor.jpg">
+<meta property="article:published_time" content="2021-11-28T15:10:29.000Z">
+<meta property="article:modified_time" content="2021-12-27T14:19:23.000Z">
+<meta property="article:author" content="EpsilonJohn">
+<meta property="article:tag" content="Cyber_RT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/11/29/Scheduler.png">
+    
+
+    
+        <link rel="alternate" href="/atom.xml" title="EpsilonJohn&#39;s Blog" type="application/atom+xml" />
+    
+
+    
+        <link rel="icon" href="/css/images/bikabika.png" />
+    
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/libs/open-sans/styles.css">
+
+    
+<link rel="stylesheet" href="/libs/source-code-pro/styles.css">
+
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<script src="/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    
+<script src="/libs/jquery/plugins/cookie/1.4.1/jquery.cookie.js"></script>
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/lightgallery/css/lightgallery.min.css">
+
+    
+    
+        
+<link rel="stylesheet" href="/libs/justified-gallery/justifiedGallery.min.css">
+
+    
+    
+    
+    
+
+
+    
+        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="container">
+        <header id="header">
+    <div id="header-main" class="header-inner">
+        <div class="outer">
+            <a href="/" id="logo">
+                <i class="logo"></i>
+                <span class="site-title">EpsilonJohn&#39;s Blog</span>
+            </a>
+            <nav id="main-nav">
+                
+                    <a class="main-nav-link" href="/">首页</a>
+                
+                    <a class="main-nav-link" href="/archives">归档</a>
+                
+                    <a class="main-nav-link" href="/categories">分类</a>
+                
+                    <a class="main-nav-link" href="/tags">标签</a>
+                
+                    <a class="main-nav-link" href="/about">关于</a>
+                
+            </nav>
+            
+            <div id="search-form-wrap">
+
+    <form class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+        <button type="submit" class="search-form-submit"></button>
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="Type something..." />
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+</div>
+        </div>
+    </div>
+    <div id="main-nav-mobile" class="header-sub header-inner">
+        <table class="menu outer">
+            <tr>
+                
+                    <td><a class="main-nav-link" href="/">首页</a></td>
+                
+                    <td><a class="main-nav-link" href="/archives">归档</a></td>
+                
+                    <td><a class="main-nav-link" href="/categories">分类</a></td>
+                
+                    <td><a class="main-nav-link" href="/tags">标签</a></td>
+                
+                    <td><a class="main-nav-link" href="/about">关于</a></td>
+                
+                <td>
+                    
+    <div class="search-form">
+        <input type="text" class="ins-search-input search-form-input" placeholder="Search" />
+    </div>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+</header>
+
+        <div class="outer">
+            
+            
+                <aside id="sidebar">
+   
+        
+    <div class="widget-wrap widget-list">
+        <h3 class="widget-title"><span>links</span></h3>
+        <div class="widget">
+            <ul>
+                
+                    <li>
+                        <a href="https://myledeopenwrt.ddnsto.com" target="_blank" rel="noopener">OpenWrt</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:55000" target="_blank" rel="noopener">Synology</a>
+                    </li>
+                
+                    <li>
+                        <a href="https://s1.nsloop.com:59443" target="_blank" rel="noopener">Chevereto</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:59900" target="_blank" rel="noopener">PicUpload</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:58443" target="_blank" rel="noopener">BlogEdit</a>
+                    </li>
+                
+                    <li>
+                        <a href="http://s1.nsloop.com:53000" target="_blank" rel="noopener">Gitlab</a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+
+
+    
+        
+    <div class="widget-wrap" id='categories'>
+        <h3 class="widget-title">
+            <span>categories</span>
+            &nbsp;
+            <a id='allExpand' href="#">
+                <i class="fa fa-angle-double-down fa-2x"></i>
+            </a>
+        </h3>
+        
+        
+        
+         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Autoware.ai
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/29/Autoware.ai/2D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">2D-NDT-匹配算法</a></li>  <li class="file"><a href="/2020/03/02/Autoware.ai/Autoware-ai%E4%BB%A3%E7%A0%81%E8%A7%A3%E8%AF%BB-NDT%E6%A8%A1%E5%9D%97-1/">Autoware.ai代码解读::NDT模块-1</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Overview(%E6%A6%82%E8%BF%B0)/">Autoware.ai-Overview(概述)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/Design-Rules(%E8%AE%BE%E8%AE%A1%E8%A7%84%E8%8C%83)/">Design-Rules(设计规范)</a></li>  <li class="file"><a href="/2020/03/05/Autoware.ai/QuestionAbout-Localization/">Question-About-Localization(定位相关问题)</a></li>  <li class="file"><a href="/2020/03/06/Autoware.ai/3D-NDT-%E5%8C%B9%E9%85%8D%E7%AE%97%E6%B3%95/">3D-NDT-匹配算法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            C++
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/08/C++/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88-unique-ptr-shared-ptr-make-unique/">智能指针-unique_ptr-shared_ptr-make_unique</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Cartographer-Google相关
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/22/Cartographer-Google%E7%9B%B8%E5%85%B3/%E4%BD%BF%E7%94%A8QT-Creator-Ros%E9%98%85%E8%AF%BBGoogle-Cartographer%E4%BB%A3%E7%A0%81-%E8%A7%A3%E5%86%B3%E4%BE%9D%E8%B5%96-%E8%B7%B3%E8%BD%AC%E9%97%AE%E9%A2%98-%E5%85%A8%E7%BB%BF/">使用QT-Creator-Ros阅读Google-Cartographer代码_解决依赖-跳转问题-全绿_</a></li>  <li class="file"><a href="/2020/02/23/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cartographer论文阅读</a></li>  <li class="file"><a href="/2020/03/07/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-1-%E6%A6%82%E8%BF%B0/">Cartographer-[1]概述</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-2-%E7%B3%BB%E7%BB%9F%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E/">Cartographer-[2]-系统参数配置说明</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-3-ROS%E5%B0%81%E8%A3%85API/">Cartographer-[3]-ROS封装API</a></li>  <li class="file"><a href="/2020/03/08/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-4-%E4%BB%8Enode-main-cc%E5%BC%80%E5%A7%8B/">Cartographer-[4]-从node_main.cc开始</a></li>  <li class="file"><a href="/2020/03/15/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E9%A1%B6%E5%B1%82%E6%8E%A5%E5%8F%A3%E7%BB%93%E6%9E%84%E5%9B%BE/">Cartographer-[X]-顶层接口结构图</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E5%88%9D%E5%A7%8B%E5%8C%96/">Cartographer-[X]-初始化</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-X-%E4%BC%A0%E6%84%9F%E5%99%A8%E6%B6%88%E6%81%AF%E5%9B%9E%E8%B0%83/">Cartographer-[X]-传感器消息回调</a></li>  <li class="file"><a href="/2020/03/16/Cartographer-Google%E7%9B%B8%E5%85%B3/Cartographer-0-%E8%BF%90%E8%A1%8CDemo%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8CMIT%E6%95%B0%E6%8D%AE%E9%9B%86/">Cartographer-[0]-运行Demo数据集和MIT数据集</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            First_Principles_of_CV
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E6%8F%90%E5%8F%96%E5%86%85%E5%A4%96%E5%8F%82%E7%9F%A9%E9%98%B5.md/">相机标定|内参和外参矩阵提取</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A%E8%BF%87%E7%A8%8B.md/">相机标定|相机标定过程</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%AE%80%E5%8D%95%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA.md/">相机标定|简单立体相机</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E7%9B%B8%E6%9C%BA%E6%A0%87%E5%AE%9A_%E7%BA%BF%E6%80%A7%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B.md/">相机标定|线性相机模型</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/">外参未知的立体相机|对极几何</a></li>  <li class="file"><a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E6%A6%82%E8%BF%B0.md/">外参未知的立体相机|概述</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            IMU相关
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/30/IMU%E7%9B%B8%E5%85%B3/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  <li class="file"><a href="/2020/10/31/IMU%E7%9B%B8%E5%85%B3/imu_tk%E6%A0%87%E5%AE%9A%E8%AE%BA%E6%96%87/">imu_tk标定论文阅读</a></li>  <li class="file"><a href="/2020/11/27/IMU%E7%9B%B8%E5%85%B3/IMU%E5%99%AA%E5%A3%B0%E6%A8%A1%E5%9E%8B/">IMU噪声模型</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            Marker_SLAM
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a></li>  <li class="file"><a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/">Aruco-2-增强型aruco---aruco板</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ROS2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/25/ROS2/ROS2-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8-1/">ROS2_快速入门_1</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-2-turtlesim/">ROS2-2-turtlesim</a></li>  <li class="file"><a href="/2020/02/28/ROS2/ROS2-3-%E5%8A%A8%E4%BD%9C/">ROS2-3-动作</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-4-Launch%E6%96%87%E4%BB%B6/">ROS2-4-Launch文件</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-5-ROS2bag%E5%8C%85/">ROS2-5-ROS2bag包</a></li>  <li class="file"><a href="/2020/02/29/ROS2/ROS2-6-%E5%88%9B%E5%BB%BAPackage/">ROS2-6-创建Package</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            SLAM代码课程
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            BASALT
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/BASALT/BASALT-2-3D%E7%82%B9%E7%9A%84%E5%8F%82%E6%95%B0%E5%8C%96%E8%A1%A8%E8%BE%BE/">BASALT-2-3D点的参数化表达</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            DSO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/16/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-1-%E7%B3%BB%E7%BB%9F%E6%A1%86%E6%9E%B6%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96/">DSO-1-系统框架与初始化</a></li>  <li class="file"><a href="/2020/03/23/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-2-%E8%B7%9F%E8%B8%AA%E4%B8%8E%E5%BB%BA%E5%9B%BE/">DSO-2-跟踪与建图</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">DSO-资料集合</a></li>  <li class="file"><a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            MSCKF
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/06/15/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/MSCKF/MSCKF-1-%E5%89%8D%E7%AB%AF/">MSCKF-1-前端</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            ORB_SLAM2
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-1/">第一讲-ORB_SLAM2_预备知识_1</a></li>  <li class="file"><a href="/2020/02/17/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E8%AF%8D%E8%A2%8B%E6%A8%A1%E5%9E%8B/">第一讲-ORB-SLAM2-词袋模型</a></li>  <li class="file"><a href="/2020/02/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%80%E8%AE%B2-ORB-SLAM2-%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86-2-ORB%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96&%E5%A4%96%E7%82%B9%E5%89%94%E9%99%A4/">第一讲-ORB-SLAM2-预备知识-2-ORB特征提取&外点剔除</a></li>  <li class="file"><a href="/2020/02/25/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%BA%8C%E8%AE%B2-ORB-SLAM2-%E8%A7%86%E8%A7%89%E8%B7%9F%E8%B8%AA%E4%B8%8E%E9%87%8D%E5%AE%9A%E4%BD%8D/">第二讲-ORB_SLAM2-视觉跟踪与重定位</a></li>  <li class="file"><a href="/2020/02/28/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/ORB_SLAM2-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">ORB_SLAM2-资料集合</a></li>  <li class="file"><a href="/2020/03/02/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E4%B8%89%E8%AE%B2-ORB-SLAM2-%E5%B1%80%E9%83%A8%E4%BC%98%E5%8C%96/">第三讲-ORB_SLAM2-局部优化</a></li>  <li class="file"><a href="/2020/03/03/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/ORB_SLAM2/%E7%AC%AC%E5%9B%9B%E8%AE%B2-ORB-SLAM2-%E5%85%A8%E5%B1%80%E9%97%AD%E7%8E%AF/">第四讲-ORB-SLAM2-全局闭环</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VINS-MONO
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/13/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/Vins-Mono%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Vins-Mono论文阅读</a></li>  <li class="file"><a href="/2020/04/18/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-1-%E5%89%8D%E7%AB%AF/">VINS-Mono-1-前端</a></li>  <li class="file"><a href="/2020/04/20/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-2-%E5%90%8E%E7%AB%AF/">VINS-Mono-2-后端</a></li>  <li class="file"><a href="/2020/04/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VINS-MONO/VINS-Mono-3-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%92%8C%E9%97%AD%E7%8E%AF/">VINS-Mono-3-初始化和闭环</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/26/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/PnP%E6%B1%82%E8%A7%A3-EPnP/">PnP求解--EPnP</a></li>  <li class="file"><a href="/2020/04/06/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/VI%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E8%87%AA%E7%94%B1%E5%BA%A6%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">VI中的几种自由度处理方法的性能对比</a></li>  <li class="file"><a href="/2020/04/07/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/Gauges-and-Gauge-Transformations/">Gauges-and-Gauge-Transformations</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            VIO
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第一讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E4%B8%80%E8%AE%B2/%E7%AC%AC%E4%B8%80%E8%AE%B2_%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86/">第一讲_预备知识</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第三讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E7%9A%84IMU%E4%B8%8E%E8%A7%86%E8%A7%89%E4%BF%A1%E6%81%AF%E8%9E%8D%E5%90%88/">第三讲(上)_基于优化的IMU与视觉信息融合(上)</a></li>  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%B8%89%E8%AE%B2/%E7%AC%AC%E4%B8%89%E8%AE%B2(%E4%B8%8B)_VIO%E6%AE%8B%E5%B7%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%9E%84%E5%BB%BA/">第三讲(下)[未完成]_VIO残差函数的构建及雅克比推导</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第二讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/13/VIO/%E7%AC%AC%E4%BA%8C%E8%AE%B2/%E7%AC%AC%E4%BA%8C%E8%AE%B2_IMU%E4%BC%A0%E6%84%9F%E5%99%A8%E7%9B%B8%E5%85%B3/">第二讲_IMU相关内容</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第五讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/16/VIO/%E7%AC%AC%E4%BA%94%E8%AE%B2/%E7%AC%AC%E4%BA%94%E8%AE%B2_%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B1%82%E8%A7%A3%E5%99%A8Solver%E6%B5%81%E7%A8%8B&%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3&%E4%BB%A3%E7%A0%81/">第五讲(上)_最小二乘求解器Solver流程&代码</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第六讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E8%A7%86%E8%A7%89%E5%89%8D%E7%AB%AF/">第六讲_视觉前端</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%85%AD%E8%AE%B2/%E7%AC%AC%E5%85%AD%E8%AE%B2-%E4%B8%89%E8%A7%92%E5%8C%96/">第六讲_三角化</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            第四讲
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8B)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(下)_基于滑动窗口算法的VIO系统</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E4%B8%8A)_%E5%9F%BA%E4%BA%8E%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%E7%9A%84VIO/">第四讲(上)_基于滑动窗口算法的VIO系统原理</a></li>  <li class="file"><a href="/2020/02/14/VIO/%E7%AC%AC%E5%9B%9B%E8%AE%B2/%E7%AC%AC%E5%9B%9B%E8%AE%B2(%E6%8B%93%E5%B1%95)_%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B(%E8%BE%B9%E7%BC%98%E5%8C%96%E4%B8%8E%E6%9D%A1%E4%BB%B6%E4%BD%9C%E7%94%A8)/">第四讲(拓展)_高斯过程(边缘化与条件作用)</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/02/14/VIO/%E6%89%8B%E5%86%99VIO%E8%AF%BE%E7%A8%8B-%E8%B5%84%E6%96%99%E9%9B%86%E5%90%88/">VIO-资料集合</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            utils
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/14/utils/%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84%E6%B1%82%E8%A7%A3/">线性方程组求解</a></li>  <li class="file"><a href="/2020/02/23/utils/protobuf-1/">protobuf_1</a></li>  <li class="file"><a href="/2020/02/24/utils/SVD%E5%88%86%E8%A7%A3/">SVD分解</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            传感器标定
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_1/">LiDAR-Camera 标定-1</a></li>  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_2/">LiDAR-Camera 标定-2</a></li>  <li class="file"><a href="/2021/04/12/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_3/">LiDAR-Camera 标定-3</a></li>  <li class="file"><a href="/2021/04/14/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_4/">LiDAR-Camera 标定-4</a></li>  <li class="file"><a href="/2021/04/27/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_5/">LiDAR-Camera 标定-5</a></li>  <li class="file"><a href="/2021/09/04/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/Camera%E4%B8%8E%E5%8D%95%E7%BA%BF%E6%BF%80%E5%85%89%E6%A0%87%E5%AE%9A/">Camera与单线激光标定</a></li>  <li class="file"><a href="/2022/02/01/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_6/"></a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            四元数的状态误差卡尔曼
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-Quaternion-kinematics-for-the-error-state-KF/">四元数的状态误差卡尔曼-Quaternion-kinematics-for-the-error-state-KF</a></li>  <li class="file"><a href="/2020/03/21/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E9%99%84%E5%BD%95-%E5%87%A0%E7%A7%8D%E7%A7%AF%E5%88%86%E6%96%B9%E6%B3%95/">四元数的状态误差卡尔曼-[附录]-几种积分方法</a></li>  <li class="file"><a href="/2020/03/30/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC/%E5%9B%9B%E5%85%83%E6%95%B0%E7%9A%84%E7%8A%B6%E6%80%81%E8%AF%AF%E5%B7%AE%E5%8D%A1%E5%B0%94%E6%9B%BC-%E5%AF%B9%E9%9A%8F%E6%9C%BA%E5%99%AA%E5%A3%B0%E5%92%8C%E5%B9%B2%E6%89%B0%E7%9A%84%E7%A7%AF%E5%88%86/">四元数的状态误差卡尔曼-对随机噪声和干扰的积分</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            多传感器融合定位
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/10/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%80%E7%AB%A0_3D%E6%BF%80%E5%85%89%E9%87%8C%E7%A8%8B%E8%AE%A1/">第一章_3D激光里程计</a></li>  <li class="file"><a href="/2020/10/17/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%82%B9%E4%BA%91%E5%9C%B0%E5%9B%BE%E6%9E%84%E5%BB%BA%E5%8F%8A%E5%9F%BA%E4%BA%8E%E5%9C%B0%E5%9B%BE%E7%9A%84%E5%AE%9A%E4%BD%8D/">第二章_点云地图构建及基于地图的定位</a></li>  <li class="file"><a href="/2020/10/25/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90_1/">第三章-(1)-惯性器件误差分析及内参标定</a></li>  <li class="file"><a href="/2020/10/29/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/GNSS-IMU%E6%95%B0%E6%8D%AE%E4%BB%BF%E7%9C%9F%E5%99%A8%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/">GNSS-IMU数据仿真器使用说明</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-2/">第三章-(2)-惯性导航解算原理</a></li>  <li class="file"><a href="/2020/11/02/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E6%83%AF%E6%80%A7%E5%AF%BC%E8%88%AA%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90-3%E8%A1%A5%E5%85%85/">第三章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/11/12/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-1/">第四章-(1)-概率基础及滤波器原理</a></li>  <li class="file"><a href="/2020/11/14/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-2/">第四章-(2)-基于滤波器的融合算法及可观测性分析</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA%E7%8E%B0%E8%B1%A1%E8%A7%A3%E9%87%8A/">第五章-(2)-组合导航常见现象解释</a></li>  <li class="file"><a href="/2020/11/16/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第五章-(1)-基于滤波器的融合算法-进阶</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_1_%E6%83%AF%E5%AF%BC%E8%A7%A3%E7%AE%97%E5%8E%9F%E7%90%86/">滤波器融合_1_惯导解算原理——捷联惯导更新算法及误差分析</a></li>  <li class="file"><a href="/2020/11/20/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88_2_%E6%BB%A4%E6%B3%A2%E5%99%A8%E5%88%86%E6%9E%90/">滤波器分析——状态方程和观测方程</a></li>  <li class="file"><a href="/2020/12/07/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E6%BB%A4%E6%B3%A2%E5%99%A8%E8%9E%8D%E5%90%88-3/">第四章-(3)-补充内容</a></li>  <li class="file"><a href="/2020/12/21/%E5%A4%9A%E4%BC%A0%E6%84%9F%E5%99%A8%E8%9E%8D%E5%90%88%E5%AE%9A%E4%BD%8D/%E7%AC%AC%E5%85%AD%E7%AB%A0-%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%8C%96%E6%96%B9%E6%B3%95%E8%9E%8D%E5%90%88_%E8%BF%9B%E9%98%B6/">第六章-(1)-基于预积分的建图方法</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            平台对比
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/03/%E5%B9%B3%E5%8F%B0%E5%AF%B9%E6%AF%94/Apollo-or-ROS/">Apollo_or_ROS</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            控制相关
+                        </a>
+                         <ul class="unstyled" id="tree" > 
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            线性系统理论
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/05/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E7%8A%B6%E6%80%81%E7%A9%BA%E9%97%B4%E6%8F%8F%E8%BF%B0/">第二章-状态空间描述</a></li>  <li class="file"><a href="/2020/03/23/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%B8%89%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%90%E5%8A%A8%E5%88%86%E6%9E%90/">第三章-线性系统的运动分析</a></li>  <li class="file"><a href="/2020/03/30/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E5%9B%9B%E7%AB%A0-%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9D%8E%E9%9B%85%E6%99%AE%E8%AF%BA%E5%A4%AB%E7%A8%B3%E5%AE%9A%E6%80%A7%E5%88%86%E6%9E%90/">第四章-控制系统的李雅普诺夫稳定性分析</a></li>  <li class="file"><a href="/2020/04/29/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%90%86%E8%AE%BA/%E7%AC%AC%E4%BA%94%E7%AB%A0-%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%83%BD%E6%8E%A7%E6%80%A7%E5%92%8C%E8%83%BD%E8%A7%82%E6%80%A7/">第五章-线性系统的能控性和能观性</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/03/02/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E8%BD%A6%E8%BE%86%E5%8A%A8%E5%8A%9B%E5%AD%A6%E6%A8%A1%E5%9E%8B/">车辆动力学模型</a></li>  <li class="file"><a href="/2020/03/26/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E8%BF%91%E4%BC%BC%E7%BA%BF%E6%80%A7%E5%8C%96/">线性系统的近似线性化</a></li>  <li class="file"><a href="/2020/04/22/%E6%8E%A7%E5%88%B6%E7%9B%B8%E5%85%B3/%E5%80%92%E7%AB%8B%E6%91%86%E5%88%86%E6%9E%90/">倒立摆分析</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            数学基础
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/31/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9A%84%E5%88%97%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%9B%B6%E7%A9%BA%E9%97%B4/">矩阵的列空间与零空间</a></li>  <li class="file"><a href="/2020/04/07/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/%E7%9F%A9%E9%98%B5%E7%9B%B8%E5%85%B3/">矩阵相关</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            数据集整理
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/05/26/%E6%95%B0%E6%8D%AE%E9%9B%86%E6%95%B4%E7%90%86/KAIST-Urban-%E6%95%B0%E6%8D%AE%E9%9B%86-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">KAIST-Urban-数据集-论文阅读</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            文献阅读
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/02/15/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/SLAM%E7%BB%BC%E8%BF%B0_2020_Baichuan_Huang/">SLAM综述_2020_Baichuan_Huang</a></li>  <li class="file"><a href="/2020/03/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/CVPR2020-D3VO-%E5%9F%BA%E4%BA%8E%E8%87%AA%E7%9B%91%E7%9D%A3%E7%9A%84%E5%8D%95%E7%9B%AEVO%E7%BD%91%E7%BB%9C/">CVPR2020-D3VO-基于自监督的单目VO网络</a></li>  <li class="file"><a href="/2020/03/31/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/FEJ-%E9%BB%84%E5%9B%BD%E6%9D%83/">FEJ-黄国权</a></li>  <li class="file"><a href="/2020/07/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LIO-SAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LIO-SAM论文阅读</a></li>  <li class="file"><a href="/2020/10/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Scan-Context%20%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Scan-Context论文阅读</a></li>  <li class="file"><a href="/2020/11/03/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BALM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BALM论文阅读</a></li>  <li class="file"><a href="/2020/12/07/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/LINS%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LINS论文阅读</a></li>  <li class="file"><a href="/2020/12/09/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/Lili-om%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiLi-om论文阅读</a></li>  <li class="file"><a href="/2021/01/20/%E6%96%87%E7%8C%AE%E9%98%85%E8%AF%BB/BaiDu_LIO_ICRA2020%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">BaiDu-考虑lio的定位</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            深度学习
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/03/19/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-%E5%9F%BA%E7%A1%80/">强化学习-基础</a></li>  </ul> 
+                    </li> 
+                    
+                    <li class="directory">
+                        <a href="#" data-role="directory">
+                            <i class="fa fa-folder"></i>
+                            &nbsp;
+                            激光SLAM
+                        </a>
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  </ul> 
+                    </li> 
+                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  <li class="file"><a href="/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO2论文阅读</a></li>  <li class="file"><a href="/2021/10/13/FAST-LIO%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO论文阅读</a></li>  <li class="file active"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E5%8D%8F%E7%A8%8BCroutine/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2022/02/01/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"></a></li>  </ul> 
+    </div>
+    <script>
+        $(document).ready(function() {
+            var iconFolderOpenClass  = 'fa-folder-open';
+            var iconFolderCloseClass = 'fa-folder';
+            var iconAllExpandClass = 'fa-angle-double-down';
+            var iconAllPackClass = 'fa-angle-double-up';
+            // Handle directory-tree expansion:
+            // 左键单独展开目录
+            $(document).on('click', '#categories a[data-role="directory"]', function (event) {
+                event.preventDefault();
+
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var subtree = $(this).siblings('ul');
+                icon.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if (expanded) {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideUp({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderCloseClass);
+                } else {
+                    if (typeof subtree != 'undefined') {
+                        subtree.slideDown({ duration: 100 });
+                    }
+                    icon.addClass(iconFolderOpenClass);
+                }
+            });
+            // 右键展开下属所有目录
+            $('#categories a[data-role="directory"]').bind("contextmenu", function(event){
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconFolderOpenClass);
+                var listNode = $(this).siblings('ul');
+                var subtrees = $.merge(listNode.find('li ul'), listNode);
+                var icons = $.merge(listNode.find('.fa'), icon);
+                icons.removeClass(iconFolderOpenClass).removeClass(iconFolderCloseClass);
+                if(expanded) {
+                    subtrees.slideUp({ duration: 100 });
+                    icons.addClass(iconFolderCloseClass);
+                } else {
+                    subtrees.slideDown({ duration: 100 });
+                    icons.addClass(iconFolderOpenClass);
+                }
+            })
+            // 展开关闭所有目录按钮
+            $(document).on('click', '#allExpand', function (event) {
+                event.preventDefault();
+                
+                var icon = $(this).children('.fa');
+                var expanded = icon.hasClass(iconAllExpandClass);
+                icon.removeClass(iconAllExpandClass).removeClass(iconAllPackClass);
+                if(expanded) {
+                    $('#sidebar .fa.fa-folder').removeClass('fa-folder').addClass('fa-folder-open')
+                    $('#categories li ul').slideDown({ duration: 100 });
+                    icon.addClass(iconAllPackClass);
+                } else {
+                    $('#sidebar .fa.fa-folder-open').removeClass('fa-folder-open').addClass('fa-folder')
+                    $('#categories li ul').slideUp({ duration: 100 });
+                    icon.addClass(iconAllExpandClass);
+                }
+            });  
+        });
+    </script>
+
+    
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+            
+            <section id="main"><article id="post-Cyber-RT系列之中枢调度Scheduler" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/Cyber-RT/" rel="tag">Cyber_RT</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/">
+            <time datetime="2021-11-28T15:10:29.000Z" itemprop="datePublished">2021-11-28</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Cyber-RT系列之中枢调度Scheduler.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Cyber-RT系列之中枢调度Scheduler.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Cyber-RT系列之中枢调度Scheduler.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 class="article-title" itemprop="name">
+            Cyber-RT系列之中枢调度Scheduler
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                <div id="toc" class="toc-article">
+                <strong class="toc-title">Catalogue</strong>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#cyberscheduler目录"><span class="toc-number">2.</span> <span class="toc-text">Cyber&#x2F;Scheduler目录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#scheduler类图"><span class="toc-number">3.</span> <span class="toc-text">Scheduler类图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#两种策略"><span class="toc-number">4.</span> <span class="toc-text">两种策略</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一个scheduler实例"><span class="toc-number">5.</span> <span class="toc-text">一个Scheduler实例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实例化"><span class="toc-number">5.1.</span> <span class="toc-text">实例化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#processorcontext"><span class="toc-number">6.</span> <span class="toc-text">ProcessorContext</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#processorcontext实例化"><span class="toc-number">6.1.</span> <span class="toc-text">ProcessorContext实例化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#classiccontext的静态容器"><span class="toc-number">6.2.</span> <span class="toc-text">ClassicContext的静态容器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#classiccontextcr_group数据结构"><span class="toc-number">6.2.1.</span> <span class="toc-text">ClassicContext::cr_group数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#classiccontextrq_locks数据结构"><span class="toc-number">6.2.2.</span> <span class="toc-text">ClassicContext::rq_locks数据结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#classiccontext的动态容器"><span class="toc-number">6.3.</span> <span class="toc-text">ClassicContext的动态容器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#classiccontextmulti_pri_rq队列"><span class="toc-number">6.3.1.</span> <span class="toc-text">ClassicContext::multi_pri_rq队列</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#重要过程时序流图"><span class="toc-number">7.</span> <span class="toc-text">重要过程时序流图</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建schedulerclassic实例"><span class="toc-number">7.1.</span> <span class="toc-text">创建SchedulerClassic实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建processor并绑定上下文"><span class="toc-number">7.2.</span> <span class="toc-text">创建Processor并绑定上下文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建task并分配给processor"><span class="toc-number">7.3.</span> <span class="toc-text">创建Task并分配给Processor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运转核心processorrun"><span class="toc-number">7.4.</span> <span class="toc-text">运转核心Processor::Run</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#唤醒机制schedulerclassicnotifyprocessor"><span class="toc-number">7.5.</span> <span class="toc-text">唤醒机制SchedulerClassic::NotifyProcessor</span></a></li></ol></li></ol>
+                </div>
+            
+        
+        
+            <h1 id="前言">前言</h1>
+<p>Scheduler是Cyber-RT的调度核心，是协程的调度载体。特别的，对于自动驾驶任务而言，任务调度的实时性发挥至关重要的作用，因此有必要对各种任务的优先级进行分类排序，如对于控制任务而言，需要单独分配CPU以供实时运行，Cyber-RT通过Scheduler来实现这种功能。</p>
+<h1 id="cyberscheduler目录">Cyber/Scheduler目录</h1>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">├── BUILD</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── common</span><br><span class="line">│   ├── cv_wrapper.h</span><br><span class="line">│   ├── mutex_wrapper.h</span><br><span class="line">│   ├── pin_thread.cc</span><br><span class="line">│   ├── pin_thread.h</span><br><span class="line">├── policy</span><br><span class="line">│   ├── choreography_context.cc</span><br><span class="line">│   ├── choreography_context.h</span><br><span class="line">│   ├── classic_context.cc</span><br><span class="line">│   ├── classic_context.h</span><br><span class="line">│   ├── scheduler_choreography.cc</span><br><span class="line">│   ├── scheduler_choreography.h</span><br><span class="line">│   ├── scheduler_classic.cc</span><br><span class="line">│   └── scheduler_classic.h</span><br><span class="line">├── processor.cc</span><br><span class="line">├── processor_context.cc</span><br><span class="line">├── processor_context.h</span><br><span class="line">├── processor.h</span><br><span class="line">├── processor_test.cc</span><br><span class="line">├── scheduler.cc</span><br><span class="line">├── scheduler_factory.cc</span><br><span class="line">├── scheduler_factory.h</span><br><span class="line">├── scheduler.h</span><br><span class="line">└── scheduler_test.cc</span><br></pre></td></tr></table></figure>
+<h1 id="scheduler类图">Scheduler类图</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/11/29/Scheduler.png"></p>
+<h1 id="两种策略">两种策略</h1>
+<p>通过阅读上面的类图可以发现，Scheduler类是基类，其拥有两个子类，分别为<code>SchedulerClassic</code>和<code>SchedulerChoreography</code>，分别对应两种策略，Classic(经典)策略与Choreophgray(编排)策略。两者并不是互斥关系，后者可看作对前者的扩展。它们的介绍和示例可参考官方文档 <a href="https://github.com/ApolloAuto/apollo/blob/master/docs/cyber/CyberRT_Scheduler_cn.md" target="_blank" rel="noopener">Cyber RT Scheduler</a>，这里暂不详细展开，下面的叙述以<code>SchedulerClassic</code>策略为主。</p>
+<p>调度策略配置文件用protobuf定义，协议格式文件在cyber/proto目录下：<code>scheduler_conf.proto</code>，<code>classic_conf.proto</code>和<code>choreography_conf.proto</code>。调度策略配置文件在cyber/conf目录下。对于上面mkz_close_loop.pb.txt中的两个process group：compute_sched和control_sched，根据调度策略不同分别有两个版本</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/11/29/20211129002744.png"></p>
+<h1 id="一个scheduler实例">一个Scheduler实例</h1>
+<p><code>Scheduler</code>是个单例，因此在程序启动时就被初始化了，尽管它不是程序的入口，但是从它却是系统子模块Component调度的管理者。</p>
+<h2 id="实例化">实例化</h2>
+<p><code>Scheduler</code>的实例化过程由<code>scheduler_factory.cc</code>提供，其调用函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">Scheduler</span>* <span class="title">Instance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// instance是原子模板的</span></span><br><span class="line">  <span class="built_in">Scheduler</span>* obj = instance.load(<span class="built_in">std</span>::memory_order_acquire);</span><br><span class="line">  <span class="comment">// 如果obj为空</span></span><br><span class="line">  <span class="keyword">if</span> (obj == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="comment">// 加锁</span></span><br><span class="line">    <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(mutex)</span></span>;</span><br><span class="line">    obj = instance.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">    <span class="comment">// 双检查</span></span><br><span class="line">    <span class="keyword">if</span> (obj == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">      <span class="comment">// 默认策略</span></span><br><span class="line">      <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">policy</span><span class="params">(<span class="string">"classic"</span>)</span></span>;</span><br><span class="line">      <span class="function"><span class="built_in">std</span>::<span class="built_in">string</span> <span class="title">conf</span><span class="params">(<span class="string">"conf/"</span>)</span></span>;</span><br><span class="line">      <span class="comment">// conf = conf/xxxxx.conf</span></span><br><span class="line">      conf.append(GlobalData::Instance()-&gt;ProcessGroup()).append(<span class="string">".conf"</span>);</span><br><span class="line">      <span class="comment">// cfg_file = CYBER_PATH + 相对路径</span></span><br><span class="line">      <span class="keyword">auto</span> cfg_file = GetAbsolutePath(WorkRoot(), conf);</span><br><span class="line">      <span class="comment">// 检查配置文件是否存在，并读取配置到proto类型</span></span><br><span class="line">      apollo::cyber::proto::CyberConfig cfg;</span><br><span class="line">      <span class="keyword">if</span> (PathExists(cfg_file) &amp;&amp; GetProtoFromFile(cfg_file, &amp;cfg)) &#123;</span><br><span class="line">        <span class="comment">// 从配置文件读取策略</span></span><br><span class="line">        policy = cfg.scheduler_conf().policy();</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        AWARN &lt;&lt; <span class="string">"No sched conf found, use default conf."</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 根据策略，实例化不同的调度器</span></span><br><span class="line">      <span class="keyword">if</span> (!policy.compare(<span class="string">"classic"</span>)) &#123;</span><br><span class="line">        obj = <span class="keyword">new</span> SchedulerClassic();</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!policy.compare(<span class="string">"choreography"</span>)) &#123;</span><br><span class="line">        obj = <span class="keyword">new</span> SchedulerChoreography();</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        AWARN &lt;&lt; <span class="string">"Invalid scheduler policy: "</span> &lt;&lt; policy;</span><br><span class="line">        obj = <span class="keyword">new</span> SchedulerClassic();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 保存到instance单例</span></span><br><span class="line">      instance.store(obj, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实例化主要做了几个事情：</p>
+<ol type="1">
+<li>获取配置文件<code>conf/xxxx.conf</code></li>
+<li>读取策略配置项<code>policy</code></li>
+<li>根据<code>policy</code>配置项来选择实例化<code>SchedulerClassic()</code>还是<code>SchedulerChoreography()</code>，如果没有提供，则默认选择实例化<code>SchedulerClassic()</code></li>
+<li>这个实现确保了线程安全，即<code>Scheduler</code>单例只能被创建一个</li>
+</ol>
+<p>以<code>SchedulerClassic()</code>为例，接下来看其实例化过程（构造函数）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SchedulerClassic::SchedulerClassic()&#123;</span><br><span class="line">    <span class="comment">// 由于函数篇幅较长，下面用文字描述</span></span><br><span class="line">    <span class="number">1.</span> 再次获取配置文件<span class="string">"conf/xxxxx.conf"</span></span><br><span class="line">    <span class="number">2.</span> 解析proto配置文件</span><br><span class="line">    <span class="number">3.</span> 读取threads字段的配置 ===&gt; 这个暂时还不知道用来干嘛</span><br><span class="line">    <span class="number">4.</span> 读取cpu编号配置[process_level_cpuset_]，根据这个配置项来设置当前调度线程的CPU亲和性,这样就指定了该进程中的所有任务都只能在限定的CPU核上运行</span><br><span class="line">    <span class="number">5.</span> 读取[classic_conf]配置项，遍历配置项中的每一个[group]配置，而每个[group]内又包含若干个[task]，目的是把所有[task]的配置都保存下来，记录到成员变量cr_confs_内。需要注意的点是，在这个过程中，会根据每个[task]所在的[group]填充group_name，后面会用到。</span><br><span class="line">    <span class="number">6.</span> 最后为每个group创建对应数量的Processor，并设置相关策略</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实例化过程中，有很多部分都与配置文件直接相关，这里我们以<code>conf/example_sched_classic.conf</code>为例展开：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/11/29/20211129005008.png"></p>
+<p>我们从第4点开始看，首先是读取配置项<code>process_level_cpuset_</code>,根据配置文件，这个字符串一般填<code>"0-7,16-23"</code>形式的内容，表示当前调度线程可以由0-7,16-23号CPU核心来执行。最终实现这个功能的函数是<code>Scheduler::ProcessLevelResourceControl()</code>，其内部是通过glibc提供的接口<code>pthread_setaffinity_np(pthread_self(), sizeof(set), &amp;set);</code>来实现对线程设置CPU亲和性。</p>
+<p><strong>注意配置文件中有两个优先级：</strong></p>
+<ul>
+<li>一个是<code>processor_prio</code>，对应系统Linux中线程的优先级，即nice值，范围从-20到19，值越低优先级越高，默认值为0；</li>
+<li>另一个是task的<code>prio</code>，它是Cyber RT中的协程调度的优先级，共20级，值越高优先越高</li>
+</ul>
+<p>接下来第5点，简单来说就是读取每个[task]字段的配置项，并保存下来，其代码如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">classic_conf_ = cfg.scheduler_conf().classic_conf();</span><br><span class="line"><span class="comment">// 遍历每一个group</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span>&amp; group : classic_conf_.groups()) &#123;</span><br><span class="line">  <span class="keyword">auto</span>&amp; group_name = group.name();</span><br><span class="line">  <span class="comment">// 遍历group内的task配置项</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span> task : group.tasks()) &#123;</span><br><span class="line">    <span class="comment">// 对task反过来设置group_name</span></span><br><span class="line">    task.set_group_name(group_name);</span><br><span class="line">    <span class="comment">// 保存起来</span></span><br><span class="line">    cr_confs_[task.name()] = task;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应配置文件举例如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/11/29/20211129005901.png"></p>
+<p>这里有一点需要注意的是，由于配置文件中每个[task]内部没有写明其所在的[group]名称，因此在读取配置的时候，通过<code>task.set_group_name(group_name);</code>进行了设置，这个<code>group_name</code>相当的重要，接下来会用到。</p>
+<p>最后看第6点，为每个group创建对应数量的Processor，并设置相关策略，这是由函数<code>SchedulerClassic::CreateProcessor()</code>来实现的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SchedulerClassic::CreateProcessor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 遍历每一个group</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; group : classic_conf_.groups()) &#123;</span><br><span class="line">    <span class="number">1.</span> 获取该group的group_name、proc_num配置参数</span><br><span class="line">    <span class="number">2.</span> 获取该group的affinity、processor_policy、processor_prio配置参数</span><br><span class="line">    <span class="number">3.</span> 内部再进行一次遍历，为每个组创建对应数量的processor,部分代码如下：</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">uint32_t</span> i = <span class="number">0</span>; i &lt; proc_num; i++) &#123;</span><br><span class="line">      <span class="number">3.1</span> 先创建执行器的上下文ClassicContext，并放入全局的pctxs_队列中</span><br><span class="line">      <span class="keyword">auto</span> ctx = <span class="built_in">std</span>::make_shared&lt;ClassicContext&gt;(group_name);</span><br><span class="line">      pctxs_.emplace_back(ctx);</span><br><span class="line">      <span class="number">3.2</span> 创建执行器Processor，并将上面创建的上下文与之绑定</span><br><span class="line">      <span class="keyword">auto</span> proc = <span class="built_in">std</span>::make_shared&lt;Processor&gt;();</span><br><span class="line">      <span class="number">3.3</span> 关键：</span><br><span class="line">      proc-&gt;BindContext(ctx);</span><br><span class="line">      <span class="number">3.4</span> 设置该Processor的CPU亲和性，根据affinity = <span class="string">"range"</span> <span class="keyword">or</span> <span class="string">"1to1"</span>来决定该Processor在多个CPU上进行还是单个CPU上进行</span><br><span class="line">      SetSchedAffinity(proc-&gt;Thread(), cpuset, affinity, i);</span><br><span class="line">      <span class="number">3.5</span> 设置调度策略</span><br><span class="line">      SetSchedPolicy(proc-&gt;Thread(), processor_policy, processor_prio,</span><br><span class="line">                     proc-&gt;Tid());</span><br><span class="line">      <span class="number">3.6</span> 将这个新创建的Processor保存到容器</span><br><span class="line">      processors_.emplace_back(proc);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，通过<code>SetSchedAffinity()</code>函数对新创建的某个Processor对象内部的thread进行CPU亲和性设置，以实现CPU的分配，特别的，根据该<code>group</code>的<code>affinity</code>配置项，有两种CPU分配策略：</p>
+<ul>
+<li>range: 采用range策略，即每个Processor对象内部的thread都可以由<code>cpuset</code>字段给定的范围内自由调度，即范围内的CPU都可以处理</li>
+<li>1to1: 即每个Processor对象内部的thread只能对应一个CPU核心，<code>cpuset</code>字段提供的是有多少个CPU可分配，但是个Processor对象内部的thread只能对应<code>cpuset</code>字段的第i个核心</li>
+</ul>
+<p>以上是关于线程的CPU亲和性设置，接下来的一个关键问题是，创建这么多Processor，如何真正处理我们的任务?</p>
+<p>代码片段中的<code>3.3</code>是关键，<code>proc-&gt;BindContext(ctx)</code>将新创建的ProcessorContext上下文保存到成员变量<code>Processor::context_</code>，然后开启线程来执行<code>Processor::Run</code>，该函数代码不长，就两句：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Processor::BindContext</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;ProcessorContext&gt;&amp; context)</span> </span>&#123;</span><br><span class="line">  context_ = context;</span><br><span class="line">  <span class="built_in">std</span>::call_once(thread_flag_,</span><br><span class="line">                 [<span class="keyword">this</span>]() &#123; thread_ = <span class="built_in">std</span>::thread(&amp;Processor::Run, <span class="keyword">this</span>); &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该函数首先保存传进来的<code>ProcessorContext</code>对象指针，然后启动了一个线程，看来<code>Processor::Run</code>这个线程就是实际执行任务的线程了，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Processor::Run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 暂时先忽略snap_shot_这个对象的内容</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 这是一个循环，只要Processor的running_状态weitrue</span></span><br><span class="line">  <span class="keyword">while</span> (cyber_likely(running_.load())) &#123;</span><br><span class="line">    <span class="comment">// 检查context_不为空</span></span><br><span class="line">    <span class="keyword">if</span> (cyber_likely(context_ != <span class="literal">nullptr</span>)) &#123;</span><br><span class="line">      <span class="comment">// 尝试从cr_group_获取下一个协程</span></span><br><span class="line">      <span class="keyword">auto</span> croutine = context_-&gt;NextRoutine();</span><br><span class="line">      <span class="comment">// 如果获取成功</span></span><br><span class="line">      <span class="keyword">if</span> (croutine) &#123;</span><br><span class="line">        <span class="comment">// 恢复协程运行</span></span><br><span class="line">        croutine-&gt;Resume();</span><br><span class="line">        <span class="comment">// 释放协程锁( 上面获取协程context_-&gt;NextRoutine()时，调用了croutine-&gt;Aquire() )</span></span><br><span class="line">        croutine-&gt;Release();</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 阻塞等待，超时自动解除阻塞</span></span><br><span class="line">        context_-&gt;Wait();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 如果context_为空，阻塞10毫秒，超时后结束阻塞，下一次循环</span></span><br><span class="line">      <span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; lk(mtx_ctx_);</span><br><span class="line">      cv_ctx_.wait_for(lk, <span class="built_in">std</span>::chrono::milliseconds(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Processor::Run</code>这个线程不断的尝试从<code>context_</code>成员变量中获取协程，并恢复协程运行，一个协程的任务处理完后，继续从上下文获取下一个协程<code>context_-&gt;NextRoutine();</code>。至于这个协程的切入和切出，到后面协程篇章的时候再详细讨论。接下来，就要看看这个上下文成员变量<code>context_</code>是啥。</p>
+<p><code>processor.h</code>头文件内可知，成员变量<code>context_</code>声明如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ProcessorContext只是基类，实际保存下来的是 ClassicContext 或 ChoreographyContext</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;ProcessorContext&gt; context_;</span><br></pre></td></tr></table></figure>
+<p>即每个<code>Processor</code>对象内维护着一个<code>ProcessorContext</code>。</p>
+<h1 id="processorcontext">ProcessorContext</h1>
+<p>实际上，<code>ProcessorContext</code>只是基类，根据Scheduler的两种策略，分别对应着两种<code>ProcessorContext</code>，分别是:</p>
+<ul>
+<li>ClassicContext</li>
+<li>ChoreographyContext</li>
+</ul>
+<p>uml类图如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/11/29/processorContext.png"></p>
+<p>接下来，以<code>ClassicContext</code>为主进行展开：</p>
+<h2 id="processorcontext实例化">ProcessorContext实例化</h2>
+<p>ProcessorContext实例化不是在<code>Processor</code>内部进行，而是在上面提到的<code>SchedulerClassic::CreateProcessor()</code>函数中进行，具体代码片段为:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> ctx = <span class="built_in">std</span>::make_shared&lt;ClassicContext&gt;(group_name);</span><br></pre></td></tr></table></figure>
+<p>接下来，看<code>ClassicContext</code>的构造函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ClassicContext::ClassicContext()</span><br><span class="line">&#123;</span><br><span class="line">  InitGroup(DEFAULT_GROUP_NAME);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ClassicContext::ClassicContext(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; group_name) &#123;</span><br><span class="line">  InitGroup(group_name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ClassicContext</code>类有两个构造函数，其中一个需要传参[group_name],另外一个不需传参。两个构造函数内部都调用了<code>ClassicContext::InitGroup</code>函数，<strong>该函数从全局静态容器中取对应<code>[group_name]</code>的引用并保存到<code>ClassicContext</code>类的成员变量中，目的是，当其他地方向全局静态容器添加元素时，直接调用<code>ClassicContext</code>类的成员变量即可访问到新增加的元素</strong>。该函数代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ClassicContext::InitGroup</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; group_name)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// cr_group_是ClassicContext类静态成员变量</span></span><br><span class="line">  <span class="comment">// cr_group_包含了多个组，每个组有分为多个优先级，每个优先级对应着多个协程</span></span><br><span class="line">  multi_pri_rq_ = &amp;cr_group_[group_name]; <span class="comment">// 取cr_group_中对应group_name的组，保存到multi_pri_rq_</span></span><br><span class="line">  lq_ = &amp;rq_locks_[group_name];           <span class="comment">// 取rq_locks_中对应group_name的组，保存到lq_</span></span><br><span class="line">  mtx_wrapper_ = &amp;mtx_wq_[group_name];    <span class="comment">// 取mtx_wrapper_中对应group_name的组，保存到mtx_wrapper_</span></span><br><span class="line">  cw_ = &amp;cv_wq_[group_name];              <span class="comment">// 取cv_wq_中对应group_name的组，保存到cw_</span></span><br><span class="line">  notify_grp_[group_name] = <span class="number">0</span>;</span><br><span class="line">  current_grp = group_name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="classiccontext的静态容器">ClassicContext的静态容器</h2>
+<p>上面提到<code>ClassicContext</code>类里面有几个全局静态容器，其在<code>classic_context.h</code>中声明如下:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Class ClassicContext&#123;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="comment">// CR_GROUP: 容器[组名] = std::array&lt;std::vector&lt;std::shared_ptr&lt;CRoutine&gt;&gt;, MAX_PRIO&gt;&gt;</span></span><br><span class="line">  <span class="keyword">alignas</span>(CACHELINE_SIZE) <span class="keyword">static</span> CR_GROUP cr_group_;  <span class="comment">///&lt; cr_group_包含了多个组，每个组有分为多个优先级，每个优先级对应着多个协程</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// RQ_LOCK_GROUP: 容器[组名] = std::array&lt;base::AtomicRWLock, MAX_PRIO&gt;;</span></span><br><span class="line">  <span class="keyword">alignas</span>(CACHELINE_SIZE) <span class="keyword">static</span> RQ_LOCK_GROUP rq_locks_; <span class="comment">///&lt; rq_locks_包含多个组，每组分为多个优先级，每个优先级对应一个base::AtomicRWLock，关于cr_group_变量的锁</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">// GRP_WQ_CV: 容器[组名] = CvWrapper</span></span><br><span class="line">  <span class="keyword">alignas</span>(CACHELINE_SIZE) <span class="keyword">static</span> GRP_WQ_CV cv_wq_;  <span class="comment">///&lt; cv_wq_包含多个组，每组对应一个CvWrapper</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// GRP_WQ_MUTEX: 容器[组名] = MutexWrapper</span></span><br><span class="line">  <span class="keyword">alignas</span>(CACHELINE_SIZE) <span class="keyword">static</span> GRP_WQ_MUTEX mtx_wq_;  <span class="comment">///&lt; mtx_wq_包含多个组，每组对应一个MutexWrapper，是关于notify_grp_[group_name]的锁</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// NOTIFY_GRP: 容器[组名] = int</span></span><br><span class="line">  <span class="keyword">alignas</span>(CACHELINE_SIZE) <span class="keyword">static</span> NOTIFY_GRP notify_grp_;  <span class="comment">///&lt; notify_grp_包含多个组，每组对应一个int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这几个容器都是<code>Public</code>的且静态的，所以其他地方可以直接往里面读写数据，而线程问题则通过<code>rq_locks_</code>容器和<code>mtx_wq_</code>容器进行加锁控制。</p>
+<p>实际上，<code>Scheduler</code>要调度的任务，都保存到了这几个静态容器内部，如何存进去，以及存了什么进去，<code>SchedulerClassic::DispatchTask</code>函数给出了答案，该函数以一个协程指针作为参数，做了以下几个工作:</p>
+<ol type="1">
+<li>首先把这个新协程放入<code>Scheduler::id_cr_</code>中，</li>
+<li>然后根据[协程名]查找保存的构造Scheduler单例时，产生的<code>cr_confs_</code>中是否有该task对应的策略，如果有就根据策略设置该协程的[优先级]和[group_name]</li>
+<li>最后往<code>ClassicContext</code>中的全局静态变量<code>ClassicContext::cr_group_</code>中对应该协程的[group_name]和优先级的队列中加入该协程</li>
+<li>最后调用<code>ClassicContext::Notify(</code>来通知该协程所属的组，让<code>Processor::Run()</code>结束阻塞，马上运行一次</li>
+</ol>
+<p>这个函数，着重看以下代码块:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">SchedulerClassic::DispatchTask</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;CRoutine&gt;&amp; cr)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 根据协程名进行查表，cr_confs_在实例化SchedulerClassic对象时，就根据配置文件读取配置进去了，对应的是sched_classic.conf配置文件中的"tasks:"项</span></span><br><span class="line">  <span class="keyword">if</span> (cr_confs_.<span class="built_in">find</span>(cr-&gt;name()) != cr_confs_.<span class="built_in">end</span>()) &#123;</span><br><span class="line">    <span class="comment">// 找到配置项，则取对应的value</span></span><br><span class="line">    ClassicTask task = cr_confs_[cr-&gt;name()];</span><br><span class="line">    <span class="comment">// 协程设置属性（从ClassicTask获取）</span></span><br><span class="line">    cr-&gt;set_priority(task.prio());    <span class="comment">// 设置优先级?</span></span><br><span class="line">    cr-&gt;set_group_name(task.group_name());  <span class="comment">// 设置分组名? 如果没有给这个值呢？ ==&gt; 在SchedulerClassic::SchedulerClassic()构造时，会设置值的</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 如果cr_confs_没有这个协程名的条目，直接设置分组名为默认的 classic_conf_.groups(0).name()</span></span><br><span class="line">    <span class="comment">// croutine that not exist in conf</span></span><br><span class="line">    cr-&gt;set_group_name(classic_conf_.groups(<span class="number">0</span>).name());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Enqueue task.</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 取ClassicContext::cr_group_对应该组该优先级的写锁</span></span><br><span class="line">    <span class="function">WriteLockGuard&lt;AtomicRWLock&gt; <span class="title">lk</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        ClassicContext::rq_locks_[cr-&gt;group_name()].at(cr-&gt;priority()))</span></span>;</span><br><span class="line">    <span class="comment">// 将输入参数中的协程添加到ClassicContext::cr_group_，等待被调度</span></span><br><span class="line">    ClassicContext::cr_group_[cr-&gt;group_name()]</span><br><span class="line">        .at(cr-&gt;priority())</span><br><span class="line">        .emplace_back(cr);</span><br><span class="line">  &#125;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以说，需要调度的协程，都通过这个函数，根据协程所在的组，把协程指针保存到<code>ClassicContext::cr_group_</code>静态变量中。</p>
+<h3 id="classiccontextcr_group数据结构">ClassicContext::cr_group数据结构</h3>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/01/cr_group_.drawio.png"></p>
+<p><code>ClassicContext::cr_group_</code>是一张大的表格，分为多个[group]，每个[group]又分多个优先级，每个优先级对应着一个<code>std::vector</code>，<code>vector</code>内部存放着多个协程。</p>
+<p>一个需要注意的点是，由于<code>ClassicContext::cr_group_</code>是静态变量，多个线程访问时会有<code>data race</code>的问题，因此cyber-rt增加了对应的锁<code>ClassicContext::rq_locks_</code>来解决。</p>
+<h3 id="classiccontextrq_locks数据结构">ClassicContext::rq_locks数据结构</h3>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/04/rq_locks_.drawio.png"></p>
+<p>显然，<code>ClassicContext::rq_locks_</code>内按<code>group_name</code>进行分组，每个组内又按优先级进行划分，因此，这里一个锁对应<code>ClassicContext::cr_group_</code>中的一个<code>std::vector&lt;CRoutine&gt;</code>，其对应关系如下图所示：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/04/rq_locak_and_cr_group.drawio1f9420f739656693.png"></p>
+<h2 id="classiccontext的动态容器">ClassicContext的动态容器</h2>
+<p>前面讨论了<code>ClassicContext</code>的静态成员变量，接下来我们看其类内动态成员变量。代码片段如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassicContext</span> :</span> <span class="keyword">public</span> ProcessorContext &#123;</span><br><span class="line">	...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="comment">// std::array&lt;std::vector&lt;std::shared_ptr&lt;CRoutine&gt;&gt;, MAX_PRIO&gt;</span></span><br><span class="line">	MULTI_PRIO_QUEUE *multi_pri_rq_ = <span class="literal">nullptr</span>; <span class="comment">///&lt; 优先队列，每个优先级有一个协程列表</span></span><br><span class="line">	LOCK_QUEUE *lq_ = <span class="literal">nullptr</span>;</span><br><span class="line">	MutexWrapper *mtx_wrapper_ = <span class="literal">nullptr</span>; <span class="comment">///&lt; 这个是对成员notify_grp_[current_grp]的锁</span></span><br><span class="line">	CvWrapper *cw_ = <span class="literal">nullptr</span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> current_grp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="classiccontextmulti_pri_rq队列">ClassicContext::multi_pri_rq队列</h3>
+<p>在函数<code>ClassicContext::InitGroup</code>中，将<code>ClassicContext::cr_group_</code>的某个组的引用赋值给了成员变量<code>ClassicContext::multi_pri_rq_</code>，因此，<code>ClassicContext::multi_pri_rq_</code>的数据结构如下:</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/multi_pri_rq.drawio.png"></p>
+<p><code>ClassicContext::multi_pri_rq_</code>与<code>ClassicContext::cr_group_</code>的映射关系如下:</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/multi_pri_rq.drawiofeae01cd4a05a6ac.png"></p>
+<p>所以，通过向全局静态表<code>ClassicContext::cr_group_</code>写入协程后，可以通过<code>ClassicContext::multi_pri_rq_</code>来读取对应的协程，最后通过<code>Processor::Run</code>来完成协程的调用。</p>
+<h1 id="重要过程时序流图">重要过程时序流图</h1>
+<h2 id="创建schedulerclassic实例">创建SchedulerClassic实例</h2>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerClassicSchedulerClassic.jpg"></p>
+<h2 id="创建processor并绑定上下文">创建Processor并绑定上下文</h2>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerClassicCreateProcessor.jpg"></p>
+<h2 id="创建task并分配给processor">创建Task并分配给Processor</h2>
+<p><code>Scheduler::CreateTask</code>这个函数是<code>Scheduler</code>基类的函数，其内部会调用子类<code>SchedulerClassic</code>或<code>SchedulerChoreography</code>的<code>DispatchTask()</code>函数，最后将子类的<code>NotifyProcessor</code>函数注册给<code>DataVistor</code>对象，其详细的时序流程如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/SchedulerCreateTaskbdbced6bb306a41f.jpg"></p>
+<h2 id="运转核心processorrun">运转核心Processor::Run</h2>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/05/ProcessorRun.jpg"></p>
+<h2 id="唤醒机制schedulerclassicnotifyprocessor">唤醒机制SchedulerClassic::NotifyProcessor</h2>
+<p><img src="http://s1.nsloop.com:59080/images/2021/12/07/SchedulerClassicNotifyProcessor.jpg"></p>
+
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+    
+<nav id="article-nav">
+    
+        <a href="/2022/02/01/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_6/" id="article-nav-newer" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Newer</strong>
+            <div class="article-nav-title">
+                
+                    (no title)
+                
+            </div>
+        </a>
+    
+    
+        <a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E5%8D%8F%E7%A8%8BCroutine/" id="article-nav-older" class="article-nav-link-wrap">
+            <strong class="article-nav-caption">Older</strong>
+            <div class="article-nav-title">Cyber-RT系列之中枢调度Scheduler</div>
+        </a>
+    
+</nav>
+
+
+
+
+
+    
+    
+        <section id="comments"> 
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a></noscript>
+    </div>
+ </section>
+    
+
+
+
+
+<!-- baidu url auto push script -->
+<script type="text/javascript">
+    !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=window.location.href,o=document.referrer;if(!e.test(r)){var n="//api.share.baidu.com/s.gif";o?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var t=new Image;t.src=n}}(window);
+</script>     
+</section>
+        </div>
+        <footer id="footer">
+    <div class="outer">
+        <div id="footer-info" class="inner">
+            EpsilonJohn &copy; 2022 
+            <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" /></a>
+            <br> Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme - <a href="https://github.com/zthxxx/hexo-theme-Wikitten" target="_blank" rel="noopener">wikitten</a>
+            
+                <br>
+                <span id="busuanzi_container_site_pv"><i class="fa fa-eye"></i> <span id="busuanzi_value_site_pv"></span></span>
+                &nbsp;|&nbsp;
+                <span id="busuanzi_container_site_pv"><i class="fa fa-user"></i> <span id="busuanzi_value_site_uv"></span></span>
+            
+        </div>
+    </div>
+</footer>
+
+        
+    
+    <script>
+    var disqus_config = function () {
+        
+            this.page.url = 'http://yoursite.com/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/';
+        
+        this.page.identifier = 'Cyber-RT系列之中枢调度Scheduler';
+    };
+    (function() { 
+        var d = document, s = d.createElement('script');  
+        s.src = '//' + 'EpsilonJohn' + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+
+
+
+    
+        
+<script src="/libs/lightgallery/js/lightgallery.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-thumbnail.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-pager.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-autoplay.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-fullscreen.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-zoom.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-hash.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-share.min.js"></script>
+
+        
+<script src="/libs/lightgallery/js/lg-video.min.js"></script>
+
+    
+    
+        
+<script src="/libs/justified-gallery/jquery.justifiedGallery.min.js"></script>
+
+    
+    
+        <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true,
+            TeX: {
+                equationNumbers: {
+                  autoNumber: 'AMS'
+                }
+            }
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+
+
+<!-- Custom Scripts -->
+
+<script src="/js/main.js"></script>
+
+
+    </div>
+</body>
+</html>
