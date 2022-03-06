@@ -243,7 +243,7 @@
                             &nbsp;
                             Fast-LIO系列
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2022/02/27/Fast-LIO%E7%B3%BB%E5%88%97/IKFOM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">IKFOM论文阅读</a></li>  <li class="file"><a href="/2022/02/28/Fast-LIO%E7%B3%BB%E5%88%97/IEKF%E8%BF%AD%E4%BB%A3%E6%89%A9%E5%B1%95%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%99%A8/">IEKF迭代扩展卡尔曼滤波器</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2022/02/27/Fast-LIO%E7%B3%BB%E5%88%97/IKFOM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">IKFOM论文阅读</a></li>  <li class="file"><a href="/2022/02/28/Fast-LIO%E7%B3%BB%E5%88%97/IEKF%E8%BF%AD%E4%BB%A3%E6%89%A9%E5%B1%95%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%99%A8/">IEKF迭代扩展卡尔曼滤波器</a></li>  <li class="file"><a href="/2022/03/06/Fast-LIO%E7%B3%BB%E5%88%97/ROLI%E6%BF%80%E5%85%89%E9%9B%B7%E8%BE%BEIMU%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%8A%E6%A0%87%E5%AE%9A/">ROLI激光雷达IMU初始化及标定</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -578,6 +578,105 @@
 </aside>
             
             <section id="main">
+        <article id="post-SLAM代码课程/DSO/DSO-3-滑窗优化" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/">SLAM代码课程</a><i class="fa fa-angle-right"></i><a class="article-category-link" href="/categories/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/">DSO</a>
+    </div>
+
+                        
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">
+            <time datetime="2020-03-30T01:20:20.000Z" itemprop="datePublished">2020-03-30</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/SLAM代码课程/DSO/DSO-3-滑窗优化.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/SLAM代码课程/DSO/DSO-3-滑窗优化.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/SLAM代码课程/DSO/DSO-3-滑窗优化.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/">DSO-3-滑窗优化</a>
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                
+                    
+                    <p><h1 id="滑窗优化">1. 滑窗优化</h1>
+<p><img src="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/2020-03-30-09-22-02.png"></p>
+<p><img src="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/2020-03-30-09-22-19.png"></p>
+<h2 id="一些状态估计方法">1.1. 一些状态估计方法</h2>
+<p><img src="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/2020-03-30-09-23-01.png"></p>
+<p>
+                
+            
+        
+        
+            </div>   
+            <div class="article-more-link">
+                <a href="/2020/03/30/SLAM%E4%BB%A3%E7%A0%81%E8%AF%BE%E7%A8%8B/DSO/DSO-3-%E6%BB%91%E7%AA%97%E4%BC%98%E5%8C%96/#more">Read More</a>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+
+
+
+
+    
         <article id="post-SLAM代码课程/DSO/DSO-资料集合" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -1445,105 +1544,6 @@
             </div>   
             <div class="article-more-link">
                 <a href="/2020/03/20/Marker_SLAM/Aruco-2-%E5%A2%9E%E5%BC%BA%E5%9E%8Baruco-aruco%E6%9D%BF/#more">Read More</a>
-            </div>
-        
-        <footer class="article-footer">
-        </footer>
-    </div>
-</article>
-
-
-
-
-
-
-    
-        <article id="post-Marker_SLAM/Aruco-1-基本介绍" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-                    <div class="article-meta">
-                        
-    <div class="article-category">
-    	<i class="fa fa-folder"></i>
-        <a class="article-category-link" href="/categories/Marker-SLAM/">Marker_SLAM</a>
-    </div>
-
-                        
-                        
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">
-            <time datetime="2020-03-20T01:02:57.000Z" itemprop="datePublished">2020-03-20</time>
-        </a>
-    </div>
-
-
-                        
-                            <i class="fa fa-bar-chart"></i>
-                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
-                        
-                        
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Marker_SLAM/Aruco-1-基本介绍.md' target="_blank" rel="noopener"> Source </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Marker_SLAM/Aruco-1-基本介绍.md' target="_blank" rel="noopener"> Edit </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Marker_SLAM/Aruco-1-基本介绍.md' target="_blank" rel="noopener"> History </a>
-                            </div>
-                        
-                    </div>
-                
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/">Aruco-1-基本介绍</a>
-        </h1>
-    
-
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-        
-            
-                
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                
-                    
-                    <p><h1 id="aruco">1. Aruco</h1>
-<p>Aruco是一个开源的相机姿态估计库，已经嵌入到Opencv的Contribute包中。</p>
-<p>简单来说，这是类似于二维码的Marker，长这样:</p>
-<p><img src="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/2020-03-20-09-06-03.png"></p>
-<p>结构:</p>
-<p>
-                
-            
-        
-        
-            </div>   
-            <div class="article-more-link">
-                <a href="/2020/03/20/Marker_SLAM/Aruco-1-%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/#more">Read More</a>
             </div>
         
         <footer class="article-footer">

@@ -243,7 +243,7 @@
                             &nbsp;
                             Fast-LIO系列
                         </a>
-                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2022/02/27/Fast-LIO%E7%B3%BB%E5%88%97/IKFOM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">IKFOM论文阅读</a></li>  <li class="file"><a href="/2022/02/28/Fast-LIO%E7%B3%BB%E5%88%97/IEKF%E8%BF%AD%E4%BB%A3%E6%89%A9%E5%B1%95%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%99%A8/">IEKF迭代扩展卡尔曼滤波器</a></li>  </ul> 
+                         <ul class="unstyled" id="tree" >  <li class="file"><a href="/2022/02/27/Fast-LIO%E7%B3%BB%E5%88%97/IKFOM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">IKFOM论文阅读</a></li>  <li class="file"><a href="/2022/02/28/Fast-LIO%E7%B3%BB%E5%88%97/IEKF%E8%BF%AD%E4%BB%A3%E6%89%A9%E5%B1%95%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E5%99%A8/">IEKF迭代扩展卡尔曼滤波器</a></li>  <li class="file"><a href="/2022/03/06/Fast-LIO%E7%B3%BB%E5%88%97/ROLI%E6%BF%80%E5%85%89%E9%9B%B7%E8%BE%BEIMU%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%8A%E6%A0%87%E5%AE%9A/">ROLI激光雷达IMU初始化及标定</a></li>  </ul> 
                     </li> 
                     
                     <li class="directory">
@@ -578,6 +578,110 @@
 </aside>
             
             <section id="main">
+        <article id="post-First_Principles_of_CV/外参未知的立体相机_对极几何.md" class="article article-type-post" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+        
+            <header class="article-header">
+                
+                    <div class="article-meta">
+                        
+    <div class="article-category">
+    	<i class="fa fa-folder"></i>
+        <a class="article-category-link" href="/categories/First-Principles-of-CV/">First_Principles_of_CV</a>
+    </div>
+
+                        
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/SLAM/" rel="tag">SLAM</a>
+    </div>
+
+                        
+    <div class="article-date">
+        <i class="fa fa-calendar"></i>
+        <a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/">
+            <time datetime="2021-08-08T14:42:16.000Z" itemprop="datePublished">2021-08-08</time>
+        </a>
+    </div>
+
+
+                        
+                            <i class="fa fa-bar-chart"></i>
+                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
+                        
+                        
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/First_Principles_of_CV/外参未知的立体相机_对极几何.md.md' target="_blank" rel="noopener"> Source </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/First_Principles_of_CV/外参未知的立体相机_对极几何.md.md' target="_blank" rel="noopener"> Edit </a>
+                            </div>
+                            <div class="article-meta-button">
+                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/First_Principles_of_CV/外参未知的立体相机_对极几何.md.md' target="_blank" rel="noopener"> History </a>
+                            </div>
+                        
+                    </div>
+                
+                
+    
+        <h1 itemprop="name">
+            <a class="article-title" href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/">外参未知的立体相机|对极几何</a>
+        </h1>
+    
+
+            </header>
+        
+        
+        <div class="article-entry" itemprop="articleBody">
+        
+        
+            
+                
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                    
+                    
+                
+                
+                    
+                    <p><h1 id="回顾">回顾</h1>
+<p><img src="http://s1.nsloop.com:59080/images/2021/08/08/20210808224355.png"></p>
+<h1 id="问题描述">问题描述</h1>
+<p>所谓的未标定立体相机问题，就是不知道相机外参而进行3D空间点恢复，其中包含以下几个议题：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2021/08/08/20210808224743.png"></p>
+<p>
+                
+            
+        
+        
+            </div>   
+            <div class="article-more-link">
+                <a href="/2021/08/08/First_Principles_of_CV/%E5%A4%96%E5%8F%82%E6%9C%AA%E7%9F%A5%E7%9A%84%E7%AB%8B%E4%BD%93%E7%9B%B8%E6%9C%BA_%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95.md/#more">Read More</a>
+            </div>
+        
+        <footer class="article-footer">
+        </footer>
+    </div>
+</article>
+
+
+
+
+
+
+    
         <article id="post-First_Principles_of_CV/外参未知的立体相机_概述.md" class="article article-type-post" itemscope itemprop="blogPost">
     <div class="article-inner">
         
@@ -1481,105 +1585,6 @@
             </div>   
             <div class="article-more-link">
                 <a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/#more">Read More</a>
-            </div>
-        
-        <footer class="article-footer">
-        </footer>
-    </div>
-</article>
-
-
-
-
-
-
-    
-        <article id="post-Hector-SLAM论文阅读" class="article article-type-post" itemscope itemprop="blogPost">
-    <div class="article-inner">
-        
-        
-            <header class="article-header">
-                
-                    <div class="article-meta">
-                        
-                        
-    <div class="article-tag">
-        <i class="fa fa-tag"></i>
-        <a class="tag-link" href="/tags/SLAM/" rel="tag">SLAM</a>
-    </div>
-
-                        
-    <div class="article-date">
-        <i class="fa fa-calendar"></i>
-        <a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">
-            <time datetime="2021-07-11T06:03:53.000Z" itemprop="datePublished">2021-07-11</time>
-        </a>
-    </div>
-
-
-                        
-                            <i class="fa fa-bar-chart"></i>
-                            <span id="busuanzi_container_site_pv"><span id="busuanzi_value_page_pv"></span></span>    
-                        
-                        
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/raw/master/source/_posts/Hector-SLAM论文阅读.md' target="_blank" rel="noopener"> Source </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/edit/master/source/_posts/Hector-SLAM论文阅读.md' target="_blank" rel="noopener"> Edit </a>
-                            </div>
-                            <div class="article-meta-button">
-                                <a href='https://github.com/qpc001/qpc001.github.io/commits/master/source/_posts/Hector-SLAM论文阅读.md' target="_blank" rel="noopener"> History </a>
-                            </div>
-                        
-                    </div>
-                
-                
-    
-        <h1 itemprop="name">
-            <a class="article-title" href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a>
-        </h1>
-    
-
-            </header>
-        
-        
-        <div class="article-entry" itemprop="articleBody">
-        
-        
-            
-                
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                    
-                    
-                
-                
-                    
-                    <p><h1 id="a-flexible-and-scalable-slam-system-with-full-3d-motion-estimation">A Flexible and Scalable SLAM System with Full 3D Motion Estimation</h1>
-<p><img src="http://s1.nsloop.com:59080/images/2021/07/11/20210711214658.png"></p>
-<h1 id="摘要">摘要</h1>
-<p>在许多应用场景中，比如城市搜救和搜索（USAR）机器人，需要去获取未知环境的地图。我们提出了一个快速在线学习占用栅格地图、占用较少计算资源的系统。它利用激光雷达系统与基于惯性传感器的3D位姿估计系统进行融合，实现了一种鲁棒的扫描匹配方法。通过地图变化的快速近似和多分辨率栅格地图，在各种有挑战性的环境中实现了可靠的定位与建图。提供了多种数据集以适应嵌入式手持建图系统。我们表明，该系统是足够准确的，在我们考虑的应用场景中，不需要显式闭环检测技术。该软件可作为ROS的开源代码包。</p>
-<h1 id="介绍">介绍</h1>
-<p>
-                
-            
-        
-        
-            </div>   
-            <div class="article-more-link">
-                <a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/#more">Read More</a>
             </div>
         
         <footer class="article-footer">
