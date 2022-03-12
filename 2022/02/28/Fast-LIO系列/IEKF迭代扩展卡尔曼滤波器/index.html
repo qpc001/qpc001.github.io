@@ -29,8 +29,12 @@
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/02/28/20220228202535.png">
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/02/28/20220228202910.png">
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/02/28/20220228202946.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/12/20220312105428.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/12/20220312105720.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/12/20220312174507.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/12/20220312173821.png">
 <meta property="article:published_time" content="2022-02-28T14:02:22.000Z">
-<meta property="article:modified_time" content="2022-02-28T16:01:45.000Z">
+<meta property="article:modified_time" content="2022-03-12T12:56:18.000Z">
 <meta property="article:author" content="EpsilonJohn">
 <meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
@@ -657,7 +661,7 @@
             
                 <div id="toc" class="toc-article">
                 <strong class="toc-title">Catalogue</strong>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#performance-evaluation-of-iterated-extended-kalman-filterwith-variable-step-length"><span class="toc-number">1.</span> <span class="toc-text">Performance evaluation of iterated extended Kalman filterwith variable step-length</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">2.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#nonlinear-state-estimation-by-ekf-and-iekf"><span class="toc-number">3.</span> <span class="toc-text">Nonlinear state estimation by EKF and IEKF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#系统描述"><span class="toc-number">3.1.</span> <span class="toc-text">系统描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展卡尔曼"><span class="toc-number">3.2.</span> <span class="toc-text">扩展卡尔曼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代扩展卡尔曼"><span class="toc-number">3.3.</span> <span class="toc-text">迭代扩展卡尔曼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对迭代扩展卡尔曼过滤算法的改进"><span class="toc-number">3.4.</span> <span class="toc-text">对迭代扩展卡尔曼过滤算法的改进</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#map-criterion"><span class="toc-number">3.4.1.</span> <span class="toc-text">MAP criterion</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#performance-evaluation-of-iterated-extended-kalman-filterwith-variable-step-length"><span class="toc-number">1.</span> <span class="toc-text">Performance evaluation of iterated extended Kalman filterwith variable step-length</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-number">2.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#nonlinear-state-estimation-by-ekf-and-iekf"><span class="toc-number">3.</span> <span class="toc-text">Nonlinear state estimation by EKF and IEKF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#系统描述"><span class="toc-number">3.1.</span> <span class="toc-text">系统描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展卡尔曼"><span class="toc-number">3.2.</span> <span class="toc-text">扩展卡尔曼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代扩展卡尔曼"><span class="toc-number">3.3.</span> <span class="toc-text">迭代扩展卡尔曼</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对迭代扩展卡尔曼过滤算法的改进"><span class="toc-number">3.4.</span> <span class="toc-text">对迭代扩展卡尔曼过滤算法的改进</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#map-criterion"><span class="toc-number">3.4.1.</span> <span class="toc-text">MAP criterion</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iekf在fast-lio系列的应用"><span class="toc-number">4.</span> <span class="toc-text">IEKF在Fast-LIO系列的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#先验项"><span class="toc-number">4.1.</span> <span class="toc-text">先验项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#观测项"><span class="toc-number">4.2.</span> <span class="toc-text">观测项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#推导"><span class="toc-number">4.3.</span> <span class="toc-text">推导</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
                 </div>
             
         
@@ -843,6 +847,198 @@ r(\mathbf{X})=\left[\begin{array}{c}
 \]</span></p>
 <p>定睛一看，这货不就是公式（20）由IEKF的增量吗？</p>
 <p>所以，<strong>IEKF实际上是高斯牛顿的一种应用</strong>，如果多个观测放在一起来求解，就是最小二乘，如果迭代的求解，就成了IEKF。</p>
+<h1 id="iekf在fast-lio系列的应用">IEKF在Fast-LIO系列的应用</h1>
+<p>回顾Fast-LIO1论文，公式(17)，要优化的目标函数是：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/12/20220312105428.png"></p>
+<p>其中，包含了先验项和观测项</p>
+<h2 id="先验项">先验项</h2>
+<ol type="1">
+<li>第一项<span class="math inline">\(\left\|\mathbf{x}_{k} \boxminus \widehat{\mathbf{x}}_{k}\right\|_{\widehat{\mathbf{P}}_{k}^{-1}}^{2}\)</span>是先验项，其表述有点奇怪</li>
+</ol>
+<hr>
+<p>原文描述如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/12/20220312105720.png"></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\mathbf{X}_{k}\)</span>表示状态真值</li>
+<li><span class="math inline">\(\widehat{\mathbf{x}}_{k}\)</span>表示k时刻预测值</li>
+<li><span class="math inline">\(\mathbf{J}^{\kappa}\)</span>表示<span class="math inline">\(\left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxplus \widetilde{\mathbf{x}}_{k}^{\kappa}\right) \boxminus \widehat{\mathbf{x}}_{k}\)</span>关于误差状态<span class="math inline">\(\tilde{\mathbf{x}}_{k}^{\kappa}\)</span>的雅克比</li>
+</ul>
+<p>按照原文的意思是，<span class="math inline">\(\left\|\mathbf{x}_{k} \boxminus \widehat{\mathbf{x}}_{k}\right\|_{\widehat{\mathbf{P}}_{k}^{-1}}^{2}\)</span>用于约束预测值<span class="math inline">\(\widehat{\mathbf{x}}_{k}\)</span>不应该离状态真值太远，即误差状态应尽可能小（这个先验看起来跟平时的形式不一样，<strong>难以理解</strong>）。</p>
+<hr>
+<p>下面，按照我们通用的理解去描述：</p>
+<p>先验一般约束着迭代状态值<span class="math inline">\(\widehat{\mathbf{x}}_{k}^{\kappa}\)</span>不应该离预测值<span class="math inline">\(\widehat{\mathbf{x}}_{k}\)</span>太远，因此，先验对应的残差项可以写为：</p>
+<p><span class="math display">\[
+\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}
+\]</span></p>
+<blockquote>
+<p>因此，个人认为，原文公式（17）第一项不应该为<span class="math inline">\(\mathbf{x}_{k} \boxminus \widehat{\mathbf{x}}_{k}\)</span>，替换为<span class="math inline">\(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\)</span>更合理</p>
+</blockquote>
+<h2 id="观测项">观测项</h2>
+<ol start="2" type="1">
+<li>第二项<span class="math inline">\(\left\|\mathbf{z}_{j}^{\kappa}+\mathbf{H}_{j}^{\kappa} \widetilde{\mathbf{x}}_{k}^{\kappa}\right\|_{\mathbf{R}_{j}^{-1}}^{2}\)</span>在原文中的表述比较牵强：</li>
+</ol>
+<hr>
+<p>原文公式如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/12/20220312174507.png"> <img src="http://s1.nsloop.com:59080/images/2022/03/12/20220312173821.png"></p>
+<p>上面<span class="math inline">\(\mathbf{h}_{j}\left(\mathbf{x}_{k},{ }^{L_{j}} \mathbf{n}_{f_{j}}\right)\)</span>的意思是，给定状态真值<span class="math inline">\(\mathbf{x}_{k}\)</span>和测量噪声<span class="math inline">\({ }^{L_{j}} \mathbf{n}_{f_{j}}\)</span>，那么理论上得到的观测值（即点到平面的距离）为0。</p>
+<p>然而，由于无法得知状态真值，因此使用一阶近似得到的公式（14）。此处使用的<span class="math inline">\(\mathbf{z}_{j}^{\kappa}+\mathbf{H}_{j}^{\kappa} \widetilde{\mathbf{x}}_{k}^{\kappa}\)</span>让人容易混淆，还是看下文的另外一种描述。</p>
+<hr>
+<p>前面提到，实际的观测值其实不用去观测，因为点就在平面上，所以实际的观测值为0，即<span class="math inline">\(\mathbf{z_{true}} = 0\)</span>。</p>
+<p>为了衡量当前估计的状态是否足够接近真值，我们利用迭代的状态去计算点-面距离，<strong>这一个操作称为观测预测</strong>，<span class="math inline">\(\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right)\)</span>为观测预测模型，即通过给定状态来计算在该状态下得到的观测值，此处为计算得到的点-面距离。</p>
+<p>因此，残差项可以写为：</p>
+<p><span class="math display">\[
+    \mathbf{z_{true}} -\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right)
+\]</span></p>
+<p>其中，已知<span class="math inline">\(\mathbf{z_{true}} = 0\)</span>，因此，残差项就是利用迭代的状态计算得到的点-面距离<span class="math inline">\(\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}\right)\)</span>。</p>
+<blockquote>
+<p>因此，个人认为，原文描述的第二项不应该为<span class="math inline">\(\left\|\mathbf{z}_{j}^{\kappa}+\mathbf{H}_{j}^{\kappa} \widetilde{\mathbf{x}}_{k}^{\kappa}\right\|_{\mathbf{R}_{j}^{-1}}^{2}\)</span>，替换为<span class="math inline">\(\left\| \mathbf{z_{true}} -\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right)\right\|_{\mathbf{R}_{j}^{-1}}^{2} = \left\|\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right)\right\|_{\mathbf{R}_{j}^{-1}}^{2}\)</span>更为合适。</p>
+</blockquote>
+<h2 id="推导">推导</h2>
+<p>综上，我们继续使用上面的方法再一次推导：</p>
+<p>假设目标函数<span class="math inline">\(r(\mathbf{X})\)</span>如下:</p>
+<p><span class="math display">\[
+r(\mathbf{X})=\left[\begin{array}{c}
+\left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}\left ( \mathbf{z_{true}} -\mathbf{h}_{j}(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}) \right) \\
+\mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\mathbf{x}_{k} \boxminus \widehat{\mathbf{x}}_{k} \right)
+\end{array}\right] = 
+\left[\begin{array}{c}
+\left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}\left ( \mathbf{h}_{j}(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}) \right) \\
+\mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\mathbf{x}_{k} \boxminus \widehat{\mathbf{x}}_{k} \right)
+\end{array}\right]
+\]</span></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\(\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right)\)</span>是观测模型，对其进行泰勒一阶展开，可得：<span class="math inline">\(\mathbf{h}_{j}\left(\widehat{\mathbf{x}}_{k}^{\kappa}\boxplus\tilde{\mathbf{x}}_{k}^{\kappa}, \mathbf{0}\right) \approx \mathbf{z}_{j}^{\kappa}+\mathbf{H}_{j}^{\kappa} \tilde{\mathbf{x}}_{k}^{\kappa}\)</span>，其中<span class="math inline">\(\mathbf{z}_{j}^{\kappa}\)</span>就是利用状态<span class="math inline">\(\widehat{\mathbf{X}}_{k}^{\kappa}\)</span>计算得到的点到平面距离</li>
+<li><span class="math inline">\(j\)</span>表示第j个激光点</li>
+</ul>
+<p>根据高斯牛顿的思想，对残差函数进行一阶泰勒展开如下：</p>
+<p><span class="math display">\[
+\begin{aligned}
+r(\mathbf{X^{\kappa} +\Delta \mathbf{x}}) 
+= 
+r(\mathbf{X^{\kappa} +\tilde{\mathbf{x}}_{k}^{\kappa}}) 
+&amp;=
+r(\mathbf{X^{\kappa}})+ J(\mathbf{X}^{\kappa})\tilde{\mathbf{x}}_{k}^{\kappa}
+\\
+&amp;=
+\left[\begin{array}{c}
+\left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}(\mathbf{z}_{j}^{\kappa}+\mathbf{H}_{j}^{\kappa} \tilde{\mathbf{x}}_{k}^{\kappa}) \\
+\mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}+\mathbf{J}^{\kappa} \widetilde{\mathbf{x}}_{k}^{\kappa}\right)
+\end{array}\right]
+\\
+&amp;=
+\left[\begin{array}{c}
+\left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}(\mathbf{z}_{j}^{\kappa}) \\
+\mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+\end{array}\right]
++
+\left[\begin{array}{c}
+\left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}(\mathbf{H}_{j}^{\kappa}) \\
+\mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\mathbf{J}^{\kappa} \right)
+\end{array}\right]
+\widetilde{\mathbf{x}}_{k}^{\kappa}
+\end{aligned}
+\]</span></p>
+<p>其中</p>
+<ul>
+<li><span class="math inline">\(\mathbf{H}^{\kappa}_{j}\)</span>是激光投影点到地图上最近的平面的距离关于误差状态的雅克比，其推导可从<a href="https://readpaper.com/paper/3131967444" target="_blank" rel="noopener">R2LIVE</a>中找到。</li>
+<li><span class="math inline">\(\mathbf{J}^{\kappa}\)</span>表示<span class="math inline">\(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\)</span>关于误差状态<span class="math inline">\(\tilde{\mathbf{x}}_{k}^{\kappa}\)</span>的雅克比</li>
+</ul>
+<p>雅克比<span class="math inline">\(J(\mathbf{X}^{\kappa})\)</span>如下：</p>
+<p><span class="math display">\[
+\mathbf{J}_{k}^{\kappa} =\left[\begin{array}{c}
+\mathbf{R}_{k}^{-1 / 2} \mathbf{H}_{k}^{\kappa} \\
+\mathbf{P}_{k \mid k-1}^{-1 / 2} \mathbf{J}^{\kappa} 
+\end{array}\right]
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{H}_{k}^{\kappa} =\left.\frac{\partial h(s)}{\partial s}\right|_{s=\mathbf{x}_{k}^{\kappa} }
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{J}^{\kappa}=\left[\begin{array}{cc}
+\mathbf{A}\left({ }^{G} \widehat{\mathbf{R}}_{I_{k}}^{\kappa} \boxminus^{G} \widehat{\mathbf{R}}_{I_{k}}\right)^{-T} &amp; \mathbf{0}_{3 \times 15} \\
+\mathbf{0}_{15 \times 3} &amp; \mathbf{I}_{15 \times 15}
+\end{array}\right]
+\]</span></p>
+<p>这里注意区分<span class="math inline">\(\mathbf{J}_{k}\)</span>和<span class="math inline">\(\mathbf{J}^{\kappa}\)</span>。</p>
+<p>将<span class="math inline">\(r(\mathbf{X^{\kappa}})\)</span>以及雅克比<span class="math inline">\(J(\mathbf{X}^{\kappa})\)</span>回代到高斯牛顿正规方程，可以得到增量<span class="math inline">\(\Delta{\mathbf{x}}\)</span>如下：</p>
+<p><span class="math display">\[
+\begin{aligned}
+    \Delta{\mathbf{x}} &amp;= - \left (\mathbf{J}(\mathbf{x})^{T}\mathbf{J}(\mathbf{x})\right)^{-1} \mathbf{J}(\mathbf{x})^{T} f(\mathbf{x}) 
+    \\
+    &amp;= -
+    \left(
+        \left[\begin{array}{c}
+        \mathbf{R}_{k}^{-1 / 2} \mathbf{H}_{k}^{\kappa} \\
+        \mathbf{P}_{k \mid k-1}^{-1 / 2} \mathbf{J}^{\kappa} 
+        \end{array}\right]^{T}
+        \left[\begin{array}{c}
+        \mathbf{R}_{k}^{-1 / 2} \mathbf{H}_{k}^{\kappa} \\
+        \mathbf{P}_{k \mid k-1}^{-1 / 2} \mathbf{J}^{\kappa} 
+        \end{array}\right]
+    \right)^{-1}
+        \left[\begin{array}{c}
+        \mathbf{R}_{k}^{-1 / 2} \mathbf{H}_{k}^{\kappa} \\
+        \mathbf{P}_{k \mid k-1}^{-1 / 2} \mathbf{J}^{\kappa} 
+        \end{array}\right]^{T}
+    \left[\begin{array}{c}
+    \left(\mathbf{R}_{k}\right)^{-\frac{1}{2}}(\mathbf{z}_{j}^{\kappa}) \\
+    \mathbf{P}_{k \mid k-1}^{-\frac{1}{2}}\left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \end{array}\right]
+    \\
+    &amp;= -
+    \left(
+        \mathbf{H}_k^{T} \mathbf{R}_k^{-1} \mathbf{H}_k +  (\mathbf{J}^{\kappa})^{T}\mathbf{P}_k^{-1}(\mathbf{J}^{\kappa})
+    \right)^{-1}
+    \left \{
+        \mathbf{H}_k^{T} \mathbf{R}_k^{-1}
+        \mathbf{z}_k^{\kappa} +
+        (\mathbf{J}^{\kappa})^{T}\mathbf{P}_k^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \right \}
+    \\
+    &amp;= -
+    \left(
+        \mathbf{H}_k^{T} \mathbf{R}_k^{-1} \mathbf{H}_k +  (\mathbf{J}^{\kappa})^{T}\mathbf{P}_k^{-1}(\mathbf{J}^{\kappa})
+    \right)^{-1}
+    \{
+        \mathbf{H}_k^{T} \mathbf{R}_k^{-1}
+        \mathbf{z}_k^{\kappa} +
+        (\mathbf{J}^{\kappa})^{T}\mathbf{P}_k^{-1}(\mathbf{J}^{\kappa})(\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \\
+    &amp;+ \mathbf{H}_k^{T} \mathbf{R}_k^{-1} \mathbf{H}_k (\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right) - \mathbf{H}_k^{T} \mathbf{R}_k^{-1} \mathbf{H}_k (\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \}
+    \\
+    &amp;= -(\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right) - 
+    \left(
+        \mathbf{H}_k^{T} \mathbf{R}_k^{-1} \mathbf{H}_k +  (\mathbf{J}^{\kappa})^{T}\mathbf{P}_k^{-1}(\mathbf{J}^{\kappa})
+    \right)^{-1}
+    (\mathbf{H}_k^{T} \mathbf{R}_k^{-1})
+    \left (
+        \mathbf{z}_k^{\kappa} +
+        \mathbf{H}_k(\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \right )
+    \\
+    &amp;= -(\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right) - 
+     \mathbf{K}_{k}^{\kappa}
+    \left (
+        \mathbf{z}_k^{\kappa} +
+        \mathbf{H}_k(\mathbf{J}^{\kappa})^{-1}
+        \left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+    \right )
+    \\
+    &amp;=
+    -\mathbf{K} \mathbf{z}_{k}^{\kappa}-(\mathbf{I}-\mathbf{K} \mathbf{H})\left(\mathbf{J}^{\kappa}\right)^{-1}\left(\widehat{\mathbf{x}}_{k}^{\kappa} \boxminus \widehat{\mathbf{x}}_{k}\right)
+\end{aligned}
+\]</span></p>
+<p>按照上述推导，即可得到与论文公式（18）一致的结果。</p>
 <h1 id="参考">参考</h1>
 <p><a href="https://zhuanlan.zhihu.com/p/141018958" target="_blank" rel="noopener">知乎：迭代扩展卡尔曼滤波(IEKF)</a></p>
 <p><a href="https://readpaper.com/pdf-annotate/note?noteId=658232918830911488&amp;pdfId=658232843626635264" target="_blank" rel="noopener">论文：Performance evaluation of iterated extended Kalman filter with variable step-length</a></p>

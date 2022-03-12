@@ -31,8 +31,19 @@
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/06/20220306234448.png">
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/06/20220306234533.png">
 <meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/06/20220306235549.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/08/20220308094706.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/08/20220308094924.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/08/20220308095413.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/08/20220308095500.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/08/20220308095721.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/09/20220309230908.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/09/20220309231105.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/09/20220309231254.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/09/20220309232853.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/09/20220309233109.png">
+<meta property="og:image" content="http://s1.nsloop.com:59080/images/2022/03/10/20220310094624.png">
 <meta property="article:published_time" content="2022-03-06T04:02:22.000Z">
-<meta property="article:modified_time" content="2022-03-06T16:10:04.000Z">
+<meta property="article:modified_time" content="2022-03-10T01:52:57.299Z">
 <meta property="article:author" content="EpsilonJohn">
 <meta property="article:tag" content="SLAM">
 <meta name="twitter:card" content="summary">
@@ -761,6 +772,61 @@
 <blockquote>
 <p>这里是通过对IMU数据逐个前挪来实现对齐，所以<span class="math inline">\(d\)</span>的理解是：IMU前移1个数据，即前移了<span class="math inline">\(\Delta t\)</span>时间，所以<span class="math inline">\({ }^{I} t_{L}= d * \Delta t\)</span></p>
 </blockquote>
+<ol start="3" type="1">
+<li>统一的旋转外参和时间校准</li>
+</ol>
+<p>(2)中的互相关法对噪声和小尺度陀螺偏差具有较强的鲁棒性。但其的一个明显缺陷是，时间偏移的校准分辨率只能达到激光雷达里程计的一个采样间隔<span class="math inline">\(\Delta t\)</span>，不能识别任何小于<span class="math inline">\(\Delta t\)</span>的剩余偏移δt。</p>
+<p>设<span class="math inline">\({ }^{I} t_{L}\)</span>为激光雷达里程计ωL与IMU数据ωi之间的总偏移量，则<span class="math inline">\({ }^{I_{t}} t_{L}=d^{*} \Delta t+\delta t\)</span>。与公式(12)类似，如果IMU测量<span class="math inline">\(\boldsymbol{\omega}_{I}\)</span>提前时间<span class="math inline">\({ }^{I} t_{L}\)</span>，则通过下式将与激光雷达里程计<span class="math inline">\(\omega_{L}\)</span>对齐：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/08/20220308094706.png"></p>
+<p>由于公式(9)中的实际激光雷达里程计<span class="math inline">\(\boldsymbol{\omega}_{L}\)</span>仅在时间戳<span class="math inline">\(t_{k}\)</span>处可用，用<span class="math inline">\(t=t_{k}\)</span>和<span class="math inline">\({ }^{I} t_{L}=d^{*} \Delta t+\delta t\)</span>代入到公式(14)，并注意到<span class="math inline">\(\boldsymbol{\omega}_{L}\left(t_{k}\right)=\boldsymbol{\omega}_{L_{k}}\)</span>，我们有：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/08/20220308094924.png"></p>
+<p>注意到，<span class="math inline">\(\boldsymbol{\omega}_{I}\left(t_{k}+d^{*} \Delta t+\delta t\right)\)</span>是在时间戳为<span class="math inline">\(t_{k}+d^{*} \Delta t\)</span>之后紧跟的IMU角速度，而时间戳为<span class="math inline">\(t_{k}+d^{*} \Delta t\)</span>对应的角速度和角加速度分别为<span class="math inline">\(\omega_{I}\left(t_{k}+d^{*} \Delta t\right)=\omega_{I_{k}}\)</span>和<span class="math inline">\(\boldsymbol{\Omega}_{I}\left(t_{k}+d^{*} \Delta t\right)=\boldsymbol{\Omega}_{I_{k^{\prime}}}\)</span>，假设角加速度在小量<span class="math inline">\(\delta t\)</span>上恒定，我们可以插值得到<span class="math inline">\(\boldsymbol{\omega}_{I}\left(t_{k}+d^{*} \Delta t+\delta t\right)\)</span>：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/08/20220308095413.png"></p>
+<p>将上式（16）代入公式（16），可以获得：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/08/20220308095500.png"></p>
+<p>最后，基于公式(17)中的约束，统一的时空优化问题可以表述为：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/08/20220308095721.png"></p>
+<p>上述问题可通过<code>Ceres</code>迭代求解(由于非线性约束<span class="math inline">\({ }^{I} \mathbf{R}_{L} \in S O(3)\)</span>)，并且给定初始值为<span class="math inline">\(\left({ }^{I} \mathbf{R}_{L}, \mathbf{b}_{\omega}, \delta t\right)=\left(\mathbf{I}_{3 \times 3}, \mathbf{0}_{3 \times 1}, 0\right)\)</span></p>
+<ol start="4" type="1">
+<li>平移外参与重力向量初始化</li>
+</ol>
+<p>在第III-C3节中，我们得到了外旋转<span class="math inline">\({ }^{I} \mathbf{R}_{L}\)</span>、陀螺偏置<span class="math inline">\(\mathbf{b}_{\omega}\)</span>和时间偏移量<span class="math inline">\({ }^{I} t_{L}\)</span>。在这一部分中，我们将固定这些值，然后进行平移外参、重力矢量和加速度偏差的校准。</p>
+<p>首先，我们使用之前得到的偏移<span class="math inline">\(d^{*}\)</span>和<span class="math inline">\(\delta t\)</span>来对齐IMU数据<span class="math inline">\(\mathcal{I}_{k}\)</span>和雷达数据<span class="math inline">\(\mathcal{L}_{k}\)</span>。对齐的IMU数据表示为̄<span class="math inline">\(\overline{\mathcal{I}}_{k}\)</span>，现在认为它与<span class="math inline">\(\mathcal{L}_{k}\)</span>完全对齐，没有时间偏移。</p>
+<p>具体地，在时间<span class="math inline">\(t_{k}\)</span>对应于LiDAR角速度̄<span class="math inline">\(\boldsymbol{\omega}_{L_{k}}\)</span>的IMU角速度<span class="math inline">\(\bar{\omega}_{I_{k}}\)</span>为（其实就是公式（15））：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/09/20220309230908.png"></p>
+<p>相似的，与时刻<span class="math inline">\(t_{k}\)</span>的LiDAR加速度<span class="math inline">\({ }^{G} \mathbf{a}_{L_{k}}\)</span>对应的IMU加速度̄<span class="math inline">\(\overline{\mathbf{a}}_{I_{k}}\)</span>为：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/09/20220309231105.png"></p>
+<p>与公式（14）类似，我们可以找到IMU和LiDAR之间的加速度约束。如文献[26]所述，具有固定外参的两个坐标系A、B的加速度具有以下关系：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/09/20220309231254.png"></p>
+<p>其中，</p>
+<ul>
+<li><span class="math inline">\({ }^{A} \mathbf{R}_{B},{ }^{A} \mathbf{p}_{B}\)</span>表示从B系到A系的外参变换</li>
+<li><span class="math inline">\(\mathbf{a}_{A}, \mathbf{a}_{B}\)</span>分别是加速度在两个坐标系的表示</li>
+</ul>
+<blockquote>
+<p>上面公式（21）怎么来的，为啥不是 <span class="math inline">\({ }^{A} \mathbf{R}_{B} \mathbf{a}_{B}=\mathbf{a}_{A}\)</span></p>
+</blockquote>
+<p>对于LiDAR-惯性系统，我们有两种选择：A用于IMU，B用于LiDAR，或者相反的情况。值得注意的是，在第一种情况下，<span class="math inline">\(\boldsymbol{\omega}_{A}=\overline{\boldsymbol{\omega}}_{I_{k}}-\mathbf{b}_{\omega}\)</span>的精度受到陀螺仪偏差估计的影响，并且<span class="math inline">\(\boldsymbol{\Omega}_{A}\)</span>的误差会因角速度测量中的噪声而被放大。</p>
+<p>为了避免这一问题，增加外源平移校准的鲁棒性，我们将LiDAR设置为A，将IMU设置为B，由于LiDAR的加速度<span class="math inline">\({ }^{G} \mathbf{a}_{L_{k}}\)</span>是在全局坐标系中（即第0帧激光坐标系）描述的，所以我们需要将这个加速度转换到激光雷达坐标系下，记为<span class="math inline">\(\mathbf{a}_{L_{k}}\)</span>：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/09/20220309232853.png"></p>
+<p>其中，<span class="math inline">\({ }^{G} \mathbf{R}_{L}\)</span>是LiDAR在激光里程计全局坐标系的姿态，由第III-B节中的LiDAR里程计获得。</p>
+<p>最后，平移外参、加速度计偏置和重力矢量可以从以下优化问题中联合估计：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/09/20220309233109.png"></p>
+<p>上述问题可以由<code>ceres</code>求解器迭代求解(由于约束<span class="math inline">\({ }^{G} \mathbf{g} \in \mathrm{S}_{2}\)</span>)，并且指定初始值<span class="math inline">\(\left({ }^{I} \mathbf{p}_{L}, \mathbf{b}_{\mathbf{a}},{ }^{G} \mathbf{g}\right)= \left(\mathbf{0}_{3 \times 1}, \mathbf{0}_{3 \times 1}, 9.81 \mathbf{e}_{3}\right)\)</span>。</p>
+<p>在估计<span class="math inline">\({ }^{L} \mathbf{p}_{I}\)</span>之后，从激光雷达到IMU的转换计算如下：<span class="math inline">\({ }^{I} \mathbf{p}_{L}=-{ }^{I} \mathbf{R}_{L}^{L} \mathbf{p}_{I}\)</span></p>
+<ol start="5" type="1">
+<li>数据累积评估</li>
+</ol>
+<p>提出的初始化方法依赖于LiDAR惯性器件的充分激励(充分运动)。因此，系统应该能够自行评估激励是否足以执行初始化。</p>
+<p>理想情况下，可以通过公式（18）关于<span class="math inline">\(\left({ }^{I} \mathbf{R}_{L}, \mathbf{b}_{\omega}, \delta t\right)\)</span>和公式（23）关于<span class="math inline">\(\left({ }^{I} \mathbf{p}_{L}, \mathbf{b}_{\mathbf{a}},{ }^{G} \mathbf{g}\right)\)</span>的的全雅可比矩阵的秩来评估激励。</p>
+<p>在实际中，我们发现，使用关于外参<span class="math inline">\({ }^{I} \mathbf{R}_{L}\)</span>和<span class="math inline">\({ }^{I} \mathbf{p}_{L}\)</span>的雅可比来评估运动就足够了，因为对外参的激发通常需要复杂的运动，这也会激发其他状态。因此，记<span class="math inline">\(\mathbf{J}_{r}\)</span>为公式（18）对旋转外参<span class="math inline">\({ }^{I} \mathbf{R}_{L}\)</span>的雅可比，<span class="math inline">\(\mathbf{J}_{t}\)</span>为公式（23）对平移外参<span class="math inline">\({ }^{I} \mathbf{p}_{L}\)</span>的雅可比，如下：</p>
+<p><img src="http://s1.nsloop.com:59080/images/2022/03/10/20220310094624.png"></p>
+<p>那么，激励可以通过对以下矩阵的秩来进行评估：</p>
+<ul>
+<li><span class="math inline">\(\mathbf{J}_{r}^{T} \mathbf{J}_{r}=\sum\left\lfloor\boldsymbol{\omega}_{L_{k}}\right\rfloor{ }_{\wedge}^{T}\left\lfloor\boldsymbol{\omega}_{L_{k}}\right\rfloor \wedge\)</span></li>
+<li><span class="math inline">\(\mathbf{J}_{t}^{T} \mathbf{J}_{t}=\sum\left(\left\lfloor\boldsymbol{\omega}_{L_{k}}\right\rfloor_{\wedge}^{2}+ \left\lfloor\boldsymbol{\Omega}_{\left.L_{k}\right\rfloor}\right\rfloor_{\wedge}\right)^{T}\left(\left\lfloor\boldsymbol{\omega}_{L_{k}}\right\rfloor_{\Lambda}^{2}+\left\lfloor\boldsymbol{\Omega}_{L_{k}}\right\rfloor \wedge\right)\)</span></li>
+</ul>
+<p>更定量地，用<span class="math inline">\(\mathbf{J}_{r}^{T} \mathbf{J}_{r}\)</span>和<span class="math inline">\(\mathbf{J}_{t}^{T} \mathbf{J}_{t}\)</span>的奇异值来表示激发的程度。<strong>根据这一原理，我们开发了一个评估程序，可以指导用户如何移动他们的设备以获得足够的激励</strong>。我们根据雅可比矩阵的奇异值来量化激励，并用来评估激励是否充分。</p>
 <h1 id="参考">参考</h1>
 
             </div>
