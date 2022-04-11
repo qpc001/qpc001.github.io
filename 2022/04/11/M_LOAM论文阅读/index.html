@@ -12,25 +12,25 @@
     <meta name="description" content="Robust Odometry and Mapping for Multi-LiDAR Systems with Online Extrinsic Calibration  摘要 组合多个LIDARS使机器人能够最大化其对环境的感知意识，并获得足够的测量。本文提出了一种实现鲁棒和同步的外参标定，里程计和多个LIDAR的建图系统。 我们的方法从测量预处理开始，从原始测量中提取边缘和平面特征，在运动和">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EpsilonJohn&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/2022/02/01/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:url" content="http://yoursite.com/2022/04/11/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/index.html">
 <meta property="og:site_name" content="EpsilonJohn&#39;s Blog">
 <meta property="og:description" content="Robust Odometry and Mapping for Multi-LiDAR Systems with Online Extrinsic Calibration  摘要 组合多个LIDARS使机器人能够最大化其对环境的感知意识，并获得足够的测量。本文提出了一种实现鲁棒和同步的外参标定，里程计和多个LIDAR的建图系统。 我们的方法从测量预处理开始，从原始测量中提取边缘和平面特征，在运动和">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002092755.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002095249.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002103027.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002114842.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002114918.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002195854.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/03/20211003174638.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/04/20211004171829.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/04/20211004233254.png">
-<meta property="og:image" content="http://s1.nsloop.com:59080/images/2021/10/05/20211005104501.png">
-<meta property="article:published_time" content="2022-02-01T12:41:23.436Z">
-<meta property="article:modified_time" content="2021-10-05T09:51:42.000Z">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002092755.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002095249.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002103027.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002114842.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002114918.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002195854.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/03/20211003174638.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/04/20211004171829.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/04/20211004233254.png">
+<meta property="og:image" content="https://s1.nsloop.com:58443/images/2021/10/05/20211005104501.png">
+<meta property="article:published_time" content="2022-04-11T15:57:06.316Z">
+<meta property="article:modified_time" content="2022-04-11T15:57:06.316Z">
 <meta property="article:author" content="EpsilonJohn">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://s1.nsloop.com:59080/images/2021/10/02/20211002092755.png">
+<meta name="twitter:image" content="https://s1.nsloop.com:58443/images/2021/10/02/20211002092755.png">
     
 
     
@@ -521,7 +521,7 @@
                         </a>
                          <ul class="unstyled" id="tree" >  <li class="file"><a href="/2020/04/21/%E6%BF%80%E5%85%89SLAM/Lego-Loam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Lego-Loam论文阅读</a></li>  <li class="file"><a href="/2020/06/02/%E6%BF%80%E5%85%89SLAM/Review-3D-Lidar-Localization/">Review-3D-Lidar-Localization</a></li>  <li class="file"><a href="/2020/06/08/%E6%BF%80%E5%85%89SLAM/LOAM-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LOAM-论文阅读</a></li>  <li class="file"><a href="/2020/06/10/%E6%BF%80%E5%85%89SLAM/VLP-16-%E8%AF%B4%E6%98%8E%E4%B9%A6%E6%91%98%E8%A6%81/">VLP-16-说明书摘要</a></li>  </ul> 
                     </li> 
-                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  <li class="file"><a href="/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO2论文阅读</a></li>  <li class="file"><a href="/2021/10/13/FAST-LIO%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO论文阅读</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E5%8D%8F%E7%A8%8BCroutine/">Cyber-RT系列之协程Croutine</a></li>  <li class="file active"><a href="/2022/02/01/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"></a></li>  </ul> 
+                     <li class="file"><a href="/2020/05/18/%E9%A9%B1%E5%8A%A8-%E7%BB%84%E5%90%88%E5%AF%BC%E8%88%AA-%E6%98%9F%E7%BD%91%E5%AE%87%E8%BE%BEM2/">驱动-组合导航-星网宇达M2</a></li>  <li class="file"><a href="/2020/09/06/SLAM%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E7%82%B9/">SLAM基础知识点</a></li>  <li class="file"><a href="/2020/09/10/%E4%B8%A4%E8%BD%AE%E5%B7%AE%E9%80%9F%E5%BA%95%E7%9B%98%E7%9A%84%E4%B8%89%E7%A7%8D%E8%88%AA%E8%BF%B9%E6%8E%A8%E7%AE%97%E6%A8%A1%E5%9E%8B/">两轮差速底盘的三种航迹推算模型</a></li>  <li class="file"><a href="/2020/10/20/Cplusplus%E6%95%B4%E7%90%86/">C/C++整理</a></li>  <li class="file"><a href="/2020/10/31/%E6%B5%8B%E8%AF%95%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">测试工程师基础知识</a></li>  <li class="file"><a href="/2020/12/24/CUDA%E7%BC%96%E7%A8%8B/">CUDA编程</a></li>  <li class="file"><a href="/2021/01/24/%E7%AC%AC%E4%BA%8C%E7%AB%A0_%E7%9B%B8%E6%9C%BA%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%AF%B9%E6%9E%81%E5%87%A0%E4%BD%95/">第二章-相机模型与对极几何</a></li>  <li class="file"><a href="/2021/01/29/ICRA2020_dynamic_object_removing/">ICRA2020_dynamic_object_removing</a></li>  <li class="file"><a href="/2021/01/29/LiTAMIN%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LiTAMIN</a></li>  <li class="file"><a href="/2021/01/30/%E5%8D%A0%E7%94%A8%E6%A0%85%E6%A0%BC%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B/">占用栅格更新过程</a></li>  <li class="file"><a href="/2021/02/01/Eigen%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/">Eigen-Operation</a></li>  <li class="file"><a href="/2021/02/11/Zotero%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">Zotero导入CNKI文献</a></li>  <li class="file"><a href="/2021/02/19/IMU%E9%A2%84%E7%A7%AF%E5%88%86%E6%A8%A1%E5%9E%8B%E6%8E%A8%E5%AF%BC/">IMU预积分模型</a></li>  <li class="file"><a href="/2021/04/21/utc%E6%97%B6%E9%97%B4%E4%B8%8Egps%E6%97%B6%E9%97%B4/">UTC Time and GPS Time Conversion</a></li>  <li class="file"><a href="/2021/05/09/Incremental_Segmental_localization/">Incremental-Segment-Based Localization in 3-D Point Clouds</a></li>  <li class="file"><a href="/2021/05/09/SE3%E4%BC%B4%E9%9A%8F/">Adjoints and Covariances（伴随与协方差）</a></li>  <li class="file"><a href="/2021/06/05/Cross_view_slam%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Cross_view_slam论文阅读</a></li>  <li class="file"><a href="/2021/06/08/UPSLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">UPSLAM论文阅读</a></li>  <li class="file"><a href="/2021/06/09/LION%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LION论文阅读</a></li>  <li class="file"><a href="/2021/06/11/T-LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">T-LOAM论文阅读</a></li>  <li class="file"><a href="/2021/07/11/Hector-SLAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Hector-SLAM论文阅读</a></li>  <li class="file"><a href="/2021/07/19/TEB%E5%B1%80%E9%83%A8%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">TEB局部路径规划论文阅读</a></li>  <li class="file"><a href="/2021/07/20/LT-mapper%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">LT-mapper论文阅读</a></li>  <li class="file"><a href="/2021/07/20/MSCKF%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">MSCKF论文阅读</a></li>  <li class="file"><a href="/2021/07/25/Localization_for_Ground_Robots%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">Localization_for_Ground_Robots论文阅读</a></li>  <li class="file"><a href="/2021/09/11/FAST-LIO2%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO2论文阅读</a></li>  <li class="file"><a href="/2021/10/13/FAST-LIO%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">FAST-LIO论文阅读</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E4%B8%AD%E6%9E%A2%E8%B0%83%E5%BA%A6Scheduler/">Cyber-RT系列之中枢调度Scheduler</a></li>  <li class="file"><a href="/2021/11/28/Cyber-RT%E7%B3%BB%E5%88%97%E4%B9%8B%E5%8D%8F%E7%A8%8BCroutine/">Cyber-RT系列之协程Croutine</a></li>  <li class="file active"><a href="/2022/04/11/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/"></a></li>  </ul> 
     </div>
     <script>
         $(document).ready(function() {
@@ -604,7 +604,7 @@
         
         
             <h1 id="robust-odometry-and-mapping-for-multi-lidar-systems-with-online-extrinsic-calibration">Robust Odometry and Mapping for Multi-LiDAR Systems with Online Extrinsic Calibration</h1>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002092755.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002092755.png"></p>
 <h1 id="摘要">摘要</h1>
 <p>组合多个LIDARS使机器人能够最大化其对环境的感知意识，并获得足够的测量。本文提出了一种实现鲁棒和同步的外参标定，里程计和多个LIDAR的建图系统。</p>
 <p>我们的方法从测量预处理开始，从原始测量中提取边缘和平面特征，在运动和外参初始化过程之后，基于滑动窗口的多激光雷达里程计将板载运行，以估计具有在线标定和收敛性检测的位姿。</p>
@@ -618,7 +618,7 @@
 <li>使用二阶段方法进行建图，捕获传感器噪声并传播不确定性，来消除姿势估计和外参估计的外部扰动，这种方法使建图过程能够了解不确定性，并有助于我们保持全局地图的一致性以及提高系统的鲁棒性以进行长期导航任务。</li>
 </ul>
 <p>据我们所知，M-LOAM是第一个对多激光雷达外参标定和SLAM的完整解决方案，该系统在手持设备和自动驾驶汽车上进行了广泛的实验评估，从室内办事处到户外城市道路的各种情景，优于基于Sota Lidar的方法。关于各种平台上的校准，我们的方法实现了外参上的平移的厘米级精度和旋转的分数。对于不同尺度的SLAM，已成功应用M-LOAM以提供准确的姿势和地图结果。 图1可视化每个阶段的M-Loam的输出。</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002095249.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002095249.png"></p>
 <h1 id="相关工作">相关工作</h1>
 <h2 id="lidar-based-slam">LiDAR-Based SLAM</h2>
 <h2 id="multi-sensor-calibration">Multi-Sensor Calibration</h2>
@@ -636,7 +636,7 @@
 </ul>
 <h2 id="符号约定">符号约定</h2>
 <p>命名法如表I所示</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002103027.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002103027.png"></p>
 <p>我们考虑一个由一个主要激光雷达和多个辅助灵敏器组成的系统，主激光雷达作为<code>base_frame</code>，我们使用()<span class="math inline">\(^{l^{1}} /()^{b}\)</span>来表示，对于其他辅助雷达，使用()<span class="math inline">\(^{l^{i, i&gt;1}}\)</span>来表示。</p>
 <p>我们记<span class="math inline">\(\mathcal{F}\)</span>为从原始激光雷达提取的有效特征，每个特征都表示为3D空间中的一个点：<span class="math inline">\(\mathbf{p}=[x, y, z]^{\top}\)</span>。</p>
 <p>状态向量，由平移和旋转部件组成，记为<span class="math inline">\(\mathbf{x}=[\mathbf{t}, \mathbf{q}]\)</span>，其中<span class="math inline">\(\mathbf{t}\)</span>是3x1向量，<span class="math inline">\(\mathbf{q}\)</span>是汉密尔顿四元数，但在我们需要旋转向量的情况下，我们在SO(3)中使用3×3旋转矩阵<span class="math inline">\(\mathbf{R}\)</span>.</p>
@@ -693,7 +693,7 @@
 </ul>
 <p>如[63]中的研究，LIDARS深度测量误差（也称为传感器噪声）主要受目标距离的影响，矩阵<span class="math inline">\(\mathbf{Z}\)</span>被简单的设置为常值矩阵。</p>
 <blockquote>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002114842.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002114842.png"></p>
 </blockquote>
 <p>然后，我们定义SE(3)中受小扰动的随机变量：</p>
 <p><span class="math display">\[
@@ -706,7 +706,7 @@
 </ul>
 <p>这种表示允许我们在状态空间中储存变换的均值作为<span class="math inline">\(\overline{\mathbf{T}}\)</span>，并使用<span class="math inline">\(\xi\)</span>作为扰动。</p>
 <blockquote>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002114918.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002114918.png"></p>
 </blockquote>
 <p>我们考虑<span class="math inline">\(\Xi\)</span>包含两个部分的来源：</p>
 <ul>
@@ -727,7 +727,7 @@
 <li>主激光雷达的局部地图应与辅助LIDAR共享重叠的FOV，用于在改进中匹配以缩短校准阶段，这可以通过移动机器人来实现</li>
 </ul>
 <p>图 2 展示了 M-LOAM 的流水线。 系统从测量预处理（第 V 部分）开始，即从去噪点云中提取和跟踪边缘和平面特征</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/02/20211002195854.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/02/20211002195854.png"></p>
 <p>初始化模块（第VI部分）提供了所有必要的值，包括姿势和外参，用于启动后续的非线性优的M-LO。M-LO融合多激光雷达测量在滑动窗口内优化里程计和外参，如果外参已经收敛，我们跳过外参初始化以及细化步骤，然后进入纯里程计和建图阶段。</p>
 <p>概率建图模块（第VIII节）构造了一种具有足够特征的全局地图，以消除里程计累计漂移。 里程计和建图模块分别运行在隔离的线程上。</p>
 <h1 id="测量预处理">测量预处理</h1>
@@ -742,7 +742,7 @@
 <li>对于边缘点集合<span class="math inline">\(\hat{\mathcal{E}}^{l_{k}^{i}}\)</span>中的点，将从前一帧的边缘点集合<span class="math inline">\(\mathcal{E}^{l_{k-1}^{i}}\)</span>中查找两个最近邻的边缘点以形成边缘线关联。</li>
 <li>对于平面点集合<span class="math inline">\(\hat{\mathcal{H}}^{l_{k}^{i}}\)</span>中的点，则从上一帧的边缘点集合<span class="math inline">\(\mathcal{H}^{l_{k-1}^{i}}\)</span>中查找3个最近邻点作为平面关联。</li>
 </ul>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/03/20211003174638.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/03/20211003174638.png"></p>
 <h1 id="初始化">初始化</h1>
 <p>优化多个LIDARS的状态是高度非线性的，需要给出初始估计值。本节介绍了我们的运动和外在初始化方法，不需要任何先前的传感器套件的机械配置。 它还不涉及任何手动努力，使其对自主机器人特别有用。</p>
 <h2 id="scan-based-motion-estimation">Scan-Based Motion Estimation</h2>
@@ -884,7 +884,7 @@ $$
 <li><span class="math inline">\(N+1\)</span>是滑动窗口中的状态数量</li>
 </ul>
 <p>为了建立这些状态之间的数据关联，我们建立了局部地图</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/04/20211004171829.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/04/20211004171829.png"></p>
 <p>图4对<code>Graph-base</code>的构造进行了可视化，我们使用<span class="math inline">\(p\)</span>来索引滑动窗口中的枢轴状态，并设置<span class="math inline">\(\mathbf{x}_p\)</span>作为局部地图的原点（起始）。</p>
 <p>利用从枢轴帧到其他帧的相对变换，通过连接前N帧（如<span class="math inline">\(\mathcal{F}^{l_{k}^{i}}, k \in[1, N]\)</span>）的特征点来构造局部地图。第i个激光雷达的局部特征地图由局部边缘地图和局部平面地图组成，记为<span class="math inline">\(\mathcal{M}^{l^{i}}\)</span>。</p>
 <p>我们分割全状态向量<span class="math inline">\(\mathcal{X}\)</span>为3个部分：<span class="math inline">\(\mathcal{X}_{f},\mathcal{X}_{v},\mathcal{X}_e\)</span>：</p>
@@ -950,7 +950,7 @@ f_{\mathcal{M}}(\mathcal{X}) &amp;=f_{\mathcal{M}}\left(\mathcal{X}_{v}\right) \
 <p>在以无人监督的方式工作在线标定时，判断标定是否收敛是有意义的，收敛后，我们就可以固定外参。这对我们的系统有益，因为里程计和建图都是从辅助雷达获得更多几何约束，以便更准确地进行位姿估计。</p>
 <p>如[34]中得出，作为信息矩阵的最小特征值的退化因子λ揭示了基于优化的状态估计问题的条件。通过这项工作的影响，我们使用λ表示是否包含足够的约束来获取准确的外参。</p>
 <p>更新外参和收敛性监视器的详细流水线总结如算法1所示：</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/04/20211004233254.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/04/20211004233254.png"></p>
 <p>算法采用式（19）定义的函数<span class="math inline">\(f_{\mathcal{M}}(\cdot)\)</span>，以及使用当前的外参作为输入，并返回优化后的外参。</p>
 <ul>
 <li>在第4行，我们从<code>cost function</code>的信息矩阵中计算<span class="math inline">\(\lambda\)</span>，</li>
@@ -975,7 +975,7 @@ f_{\mathcal{M}}(\mathcal{X}) &amp;=f_{\mathcal{M}}\left(\mathcal{X}_{v}\right) \
 <li><span class="math inline">\(\mathbf{x}_{b_{k}}^{w} \mathbf{x}_{l^{i}}^{b}\)</span>表示第k帧时刻第i个激光雷达的状态</li>
 </ul>
 <p>我们使用Section VII-B中的方法查找<span class="math inline">\(\mathcal{F}^{l_{k}^{i}}\)</span>和<span class="math inline">\(\mathcal{G}_{\mathcal{F}}^{w_{k}}\)</span>之前的特征关联。在求解式（21）之后，求解的位姿将用于将特征点转换到世界坐标系，然后添加到全局地图上。为了降低计算和内存复杂性，地图也使用体素滤波器[71]进行降采样。但是，优化的精度取决于地图质量。图5展示了使用不确定的pose得到的带有噪声的地图点。我们认为，三个不确定性来源使地图点嘈杂：传感器噪声，退化姿态估计和外参扰动。</p>
-<p><img src="http://s1.nsloop.com:59080/images/2021/10/05/20211005104501.png"></p>
+<p><img src="https://s1.nsloop.com:58443/images/2021/10/05/20211005104501.png"></p>
 <p>在下一节中，我们将激光测量点和位姿求解的不确定性传播到地图点上。结果，每个地图点都被建模为高斯变量。 然后，我们提出了一种考虑不确定性的方法来提高多激光雷达建图算法的鲁棒性和准确性。</p>
 <h2 id="不确定性传播">不确定性传播</h2>
 <p>继续在第III-C节中描述，我们现在计算协方差<span class="math inline">\(\Xi\)</span>，mapping的位姿通过求解式（21）的NLS问题得到，我们直接计算信息矩阵的逆，即<span class="math inline">\(\mathbf{\Xi}_{\mathbf{x}_{b_{k}}^{w}}=\boldsymbol{\Lambda}^{-1}\)</span>作为协方差。</p>
@@ -1034,19 +1034,10 @@ f_{\mathcal{M}}(\mathcal{X}) &amp;=f_{\mathcal{M}}\left(\mathcal{X}_{v}\right) \
     
 <nav id="article-nav">
     
-        <a href="/2022/02/27/Fast-LIO%E7%B3%BB%E5%88%97/IKFOM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" id="article-nav-newer" class="article-nav-link-wrap">
-            <strong class="article-nav-caption">Newer</strong>
-            <div class="article-nav-title">
-                
-                    IKFOM论文阅读
-                
-            </div>
-        </a>
     
-    
-        <a href="/2022/02/01/%E4%BC%A0%E6%84%9F%E5%99%A8%E6%A0%87%E5%AE%9A/LIDAR_CAMERA%E6%A0%87%E5%AE%9A_6/" id="article-nav-older" class="article-nav-link-wrap">
+        <a href="/2022/03/06/Fast-LIO%E7%B3%BB%E5%88%97/ROLI%E6%BF%80%E5%85%89%E9%9B%B7%E8%BE%BEIMU%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%8A%E6%A0%87%E5%AE%9A/" id="article-nav-older" class="article-nav-link-wrap">
             <strong class="article-nav-caption">Older</strong>
-            <div class="article-nav-title"></div>
+            <div class="article-nav-title">ROLI激光雷达IMU初始化及标定</div>
         </a>
     
 </nav>
@@ -1094,7 +1085,7 @@ f_{\mathcal{M}}(\mathcal{X}) &amp;=f_{\mathcal{M}}\left(\mathcal{X}_{v}\right) \
     <script>
     var disqus_config = function () {
         
-            this.page.url = 'http://yoursite.com/2022/02/01/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/';
+            this.page.url = 'http://yoursite.com/2022/04/11/M_LOAM%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/';
         
         this.page.identifier = 'M_LOAM论文阅读';
     };
