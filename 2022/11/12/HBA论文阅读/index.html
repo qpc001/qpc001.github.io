@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://s1.nsloop.com:58443/images/2022/12/11/1670766625-0.png">
 <meta property="og:image" content="https://s1.nsloop.com:58443/images/2022/12/11/1670766690-0_1.png">
 <meta property="article:published_time" content="2022-11-12T12:16:30.000Z">
-<meta property="article:modified_time" content="2023-06-27T14:17:32.971Z">
+<meta property="article:modified_time" content="2023-06-27T14:35:24.273Z">
 <meta property="article:author" content="EpsilonJohn">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s1.nsloop.com:58443/images/2022/12/07/1670343283-0.png">
@@ -671,14 +671,14 @@
 <p>平面调整方法通过最小化点到平面的总和距离，直接优化点云的一致性。在平面调整中，每个平面特征用两个参数表示，即平面到原点的距离和平面法向量<a href="LiDAR%20SLAM%20With%20Plane%20Adjustment%20for%20Indoor%20Environment">6</a>，在[16]中，作者同时优化了激光雷达姿态和几何平面特征。该方法在优化过程中需要对所有特征的参数进行维护和更新，而随着地图规模的扩大，特征的总数会迅速增长，导致代价函数的维数很大。虽然使用舒尔补法可以将优化变量简化为激光雷达位姿，但在实际操作中，该方法在优化过程中容易产生位姿估计故障。</p>
 <p>BA调整方法改进了平面调整技术，通过在优化前消除特征估计参数，使用一个封闭形式的解<a href="BALM:%20Bundle%20Adjustment%20for%20Lidar%20Mapping">5</a>，在<a href="BALM:%20Bundle%20Adjustment%20for%20Lidar%20Mapping">5</a>中，作者将点云分割为多个体素，每个体素包含一个平面特征。将原来的点到面最小化问题转化为每个体素中点协方差特征值的最小化问题。这种方法需要遍历每个特征内的每个点来推导Hessian矩阵，而Hessian矩阵的时间复杂度是点数的平方，计算量很大。该问题在后续工作<a href="**Efficient%20and%20Consistent%20Bundle%20Adjustment%20on%20Lidar%20Point%20Clouds**">9</a>中得到解决，该工作将同一姿态观察到的特征的所有点进行了聚合，从根本上消除了时间复杂度对点数的依赖。</p>
 <p>尽管如此，在上述所有的平面和束调整方法中，计算复杂度仍然是位姿数量的三次方，对于大比例尺地图来说并不实用。此外，当地图中的散度大于或接近最大体素大小时，这些方法可能具有较慢的收敛速度。</p>
-<p>我们提出的分层束调整方法同时利用了BA和姿态图优化。我们使用BA直接最小化点到面距离和位姿图优化来平滑有效地更新激光雷达的位姿，以避免位姿估计中的故障。通过分层设计，我们可以用比原来的<a href="BALM">5</a>小得多的Hessian矩阵大小并行解决多个BA问题。通过分层设计，我们可以用比原来的<a href="BALM:%20Bundle%20Adjustment%20for%20Lidar%20Mapping">5</a>小得多的Hessian矩阵大小并行解决多个BA问题。此外，我们可以根据初始姿态轨迹的质量灵活地设置从底层到顶层的BA参数。</p>
+<p>我们提出的分层束调整方法同时利用了BA和姿态图优化。我们使用BA直接最小化点到面距离和位姿图优化来平滑有效地更新激光雷达的位姿，以避免位姿估计中的故障。通过分层设计，我们可以用比原来的<a href="BALM">5</a>小得多的Hessian矩阵大小并行解决多个BA问题。此外，我们可以根据初始姿态轨迹的质量灵活地设置从底层到顶层的BA参数。</p>
 <h1 id="方法">方法</h1>
 <h2 id="概览">概览</h2>
 <p>所提方法的系统工作流程如图2所示。输入是来自每次激光雷达扫描的原始点或去畸变点云，以及它们在全局坐标系中相应姿态的初始估计，这可以从一般激光雷达里程计或同步运动和建图(SLAM)算法中获得。该方法由两个过程组成，自底向上(见第III-B节)和自顶向下(见第III-C节)，迭代直到收敛。</p>
 <p><img src="https://s1.nsloop.com:58443/images/2022/12/07/1670343704-0.png"></p>
 <p>在自底向上的过程中，对较小的局部窗口内的LiDAR帧进行局部BA，构建从第一层到第二层的关键帧(如图1)。这个过程是分层执行的，直到满足最优层数，并在顶层关键帧上执行全局BA。然后利用各优化层和相邻层之间的因子构建位姿图(如图1所示)。</p>
 <p><img src="https://s1.nsloop.com:58443/images/2022/12/07/1670343687-0.png"></p>
-<p>如图1所示，<code>first layer</code>(在上文中的bottom layer)描述了初始LiDAR帧和姿态的集合。类似地，<code>second laye</code>r表示使用局部BA从<code>first layer</code>创建的LiDAR关键帧和姿态的集合。<code>top layer</code>是指最后剩下的LiDAR关键帧的集合(在图1中，顶层指第三层)。</p>
+<p>如图1所示，<code>first layer</code>(在上文中的bottom layer)描述了初始LiDAR帧和姿态的集合。类似地，<code>second layer</code>表示使用局部BA从<code>first layer</code>创建的LiDAR关键帧和姿态的集合。<code>top layer</code>是指最后剩下的LiDAR关键帧的集合(在图1中，顶层指第三层)。</p>
 <p>核心思想：</p>
 <ul>
 <li>从底层到顶层分层创建LiDAR关键帧的过程称为自底向上过程。</li>
